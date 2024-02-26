@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{%load static%}
+
+
+{%block title%} <title>About Us</title>{% endblock %}
+
+{%block content%}
+       <!-- About Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="about-img position-relative overflow-hidden p-5 pe-0">
+                            <img class="img-fluid w-100" src="{% static 'img/about.jpg' %}" alt="">
+                        </div>
+                    </div>
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                        <h1 class="mb-4">#1 Place To Find The Perfect Property</h1>
+                        <p class="mb-4">Welcome to Hunters Real Estate, your trusted partner in hunting down your dream property</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>Years of experience in the real estate industry</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>Committed to Excellence and Integrity</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>Wide Range of Properties for Sale and Rent</p>
+                        {% comment %} <a class="btn btn-primary py-3 px-5 mt-3" href="">Read More</a> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+
+        <!-- Team Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="text-center mx-auto mb-5 wow fadeInUp" style="max-width: 600px;">
+                    <h1 class="mb-3">Contact With Our Advisor</h1>
+                    <p>If you have any query or need advise for your property don't worry. We have dedicated advisor for you</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6 wow fadeInUp">
+                        <div class="team-item rounded overflow-hidden">
+                            <div class="position-relative">
+                                <img class="img-fluid" src="{% static 'img/tausif.jpg' %}" alt="">
+                                <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/tausif.islam.184"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.instagram.com/tausif_islam_001"><i class="fab fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center p-4 mt-3">
+                                <h5 class="fw-bold mb-0">Md Tausif Ul Islam</h5>
+                                {% comment %} <small>Senior Advisor</small> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 wow fadeInUp">
+                        <div class="team-item rounded overflow-hidden">
+                            <div class="position-relative">
+                                <img class="img-fluid" src="{% static 'img/siam.png' %}" alt="">
+                                <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/khalidi.siam"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://twitter.com/khalidi_siam"><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.linkedin.com/in/m-k-khalidi-siam/"><i class="fab fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center p-4 mt-3">
+                                <h5 class="fw-bold mb-0">M K Khalidi Siam</h5>
+                                {% comment %} <small>Senior Advisor</small> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 wow fadeInUp">
+                        <div class="team-item rounded overflow-hidden">
+                            <div class="position-relative">
+                                <img class="img-fluid" src="{% static 'img/reshad.jpg' %}" alt="">
+                                <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
+                                    <a class="btn btn-square mx-1" href="https://www.facebook.com/blaezing.reshad"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.threads.net/@blazerrk"><i class="fab fa-instagram"></i></a>
+                                    <a class="btn btn-square mx-1" href="https://www.linkedin.com/in/reshadromimkhan13102/"><i class="fab fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                            <div class="text-center p-4 mt-3">
+                                <h5 class="fw-bold mb-0">Md Reshad Romim Khan</h5>
+                                {% comment %} <small>Special Advisor</small> {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End -->
+        
+{%endblock%}

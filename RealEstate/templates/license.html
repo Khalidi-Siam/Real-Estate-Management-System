@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{%load static%}
+
+
+{%block title%} <title>License </title>{% endblock %}
+{%block content%}
+
+        <br>
+        <div class="container">
+            <div class="license-header mb-4">
+                <strong>Hunters Real Estate License</strong>
+            </div>
+            <div class="license-details">
+                <p>This license is issued to Hunters Real Estate, hereinafter referred to as the "Licensee," by the Government of People's Republic of Bangladesh, hereinafter referred to as the "Licensing Authority," in accordance with the real estate regulations of The People's Republic of Bangladesh.</p>
+                <!-- Additional license details... -->
+            </div>
+            <div class="license-signatures">
+                <p>Authorized Signatures:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>For Hunters Real Estate:<br>
+                        <em>XXXX XXXX<br>
+                        Executive officer<br>
+                        {% comment %} Hunting Down Your Perfect Home<br> {% endcomment %}
+                        05.08.2023</em></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>For The People's Republic of Bangladesh:<br>
+                        <em>XXXX XXXX<br>
+                        Tax Officer, DNCC <br>
+                        </em>16.08.2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+{%endblock%}
