@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{%load static%}
+
+
+{%block title%} <title>Sign Up</title>{% endblock %}
+
+
+{%block content%}
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center">Sign Up</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" name="username" id="username" class="form-control" required>
+                                {% if username_error %}
+                                    <small class="text-danger">{{ username_error }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" required>
+                                {% if email_error %}
+                                    <small class="text-danger">{{ email_error }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
+                                {% if pass_error %}
+                                    <small class="text-danger">{{ pass_error }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="DOB" class="form-label">DOB</label>
+                                <input type="date" name="DOB" id="DOB", class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <input type="radio" name="gender" value="Male" class="form-check-input"> Male
+                                <input type="radio" name="gender" value="Female" class="form-check-input"> Female
+                            </div>
+                            <div class="mb-3">
+                                <label for="NID" class="form-label">NID</label>
+                                <input type="nid" id="nid" name="nid"  required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="Contact_No" class="form-label">Contact No</label>
+                                <input type="tel" id="phone" name="contact_no" pattern="+8801-[0-9]{4}-[0-9]{5}"  required/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

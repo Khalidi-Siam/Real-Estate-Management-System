@@ -21,3 +21,6 @@ def testimonial(request):
 
 def home(request):
     return render(request, "index.html")
+
+def notFound(request):
+    return render(request, "404.html")
