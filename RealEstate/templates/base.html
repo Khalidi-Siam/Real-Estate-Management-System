@@ -77,13 +77,13 @@
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ username }}</a>
                                 <div class="dropdown-menu rounded-0 m-0">
                                 <a href="profile" class="dropdown-item"> Profile </a>
-                                <a href = "account/signout" class = "dropdown-item"> Sign Out </a>
+                                <a href = "{%url 'signup'%}" class = "dropdown-item"> Sign Out </a>
                                 </div>
                             {% else %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Sign in/Sign Up</a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                <a href="account/signin" class="dropdown-item">Sign In</a>
-                                <a href="account/signup" class="dropdown-item">Sign Up</a>
+                                <a href="{%url 'signin'%}" class="dropdown-item">Sign In</a>
+                                <a href="{%url 'signup'%}" class="dropdown-item">Sign Up</a>
                                 </div>
                             {% endif %}
                         </div>
