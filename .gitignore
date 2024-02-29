@@ -1,8 +1,18 @@
+#Virtual Environment
 env/
 
+#Compiled Python file
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-*.sqlite3
+#database
+*db.sqlite3
+
+#IDE files
+.vscode/
+.idea/
+
+#log files
+*.log
