@@ -50,4 +50,5 @@ def signin(request):
 def signout(request):
     logout(request)
     request.session['isLoggedIn'] = False
-    return redirect('/')
+    next_page = request.GET.get('next', '/')
+    return redirect(next_page)
