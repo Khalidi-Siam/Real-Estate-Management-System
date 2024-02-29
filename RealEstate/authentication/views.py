@@ -52,3 +52,14 @@ def signout(request):
     request.session['isLoggedIn'] = False
     next_page = request.GET.get('next', '/')
     return redirect(next_page)
+
+
+def profile(request):
+    user_profile = UserProfile.objects.get(user = request.user)
+    profile_fields = get_profile_fields(user_profile)
+    return render(request, "profile.html", {'profile_fields':profile_fields})
+
+
+def get_profile_fields(user_profile):
+    fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture']]
+    return {field: getattr(user_profile, field, None) for field in fields}

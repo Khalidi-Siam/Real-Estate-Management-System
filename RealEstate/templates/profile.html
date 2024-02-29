@@ -1,0 +1,26 @@
+{%extends 'base.html'%}
+{%load static %}
+{% load custom_filters %}
+
+{% comment %} {% block title %} Profile {% endblock %} {% endcomment %}
+
+{%block content%}
+<!-- USER PROFILE Start -->
+{% if profile_fields %}
+    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" width="100" height="100">
+
+    <table class="table">
+        <tbody>
+            {% for field, value in profile_fields.items %}
+                <tr>
+                    <td><strong>{{ field|format_field_name }}</strong></td>
+                    <td>{{ value }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No profile found</p>
+{% endif %}
+{%endblock%}
+<!-- USER PROFILE END -->
