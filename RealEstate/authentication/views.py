@@ -40,6 +40,7 @@ def signin(request):
 
             if user is not None:
                 login(request, user)
+                request.session['isLoggedIn'] = True
                 return redirect('/')
     
     else:
@@ -48,4 +49,5 @@ def signin(request):
 
 def signout(request):
     logout(request)
+    request.session['isLoggedIn'] = False
     return redirect('/')
