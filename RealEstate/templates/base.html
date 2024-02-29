@@ -74,10 +74,10 @@
                         <a href="contact" class="nav-item nav-link">Contact</a>
                         <div class="nav-item dropdown">
                             {% if request.session.isLoggedIn %}
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ username }}</a>
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
                                 <div class="dropdown-menu rounded-0 m-0">
                                 <a href="profile" class="dropdown-item"> Profile </a>
-                                <a href = "{%url 'signup'%}" class = "dropdown-item"> Sign Out </a>
+                                <a href = "{%url 'signout'%}" class = "dropdown-item"> Sign Out </a>
                                 </div>
                             {% else %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Sign in/Sign Up</a>

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from authentication.models import UserProfile
 # Create your views here.
 def about(request):
     return render(request, "about.html")
@@ -20,6 +20,10 @@ def testimonial(request):
     return render(request, "testimonial.html")
 
 def home(request):
+    if request.session.get('isLoggedIn', False):
+        user_profile = UserProfile.objects.get(user = request.user)
+        name = user_profile.name
+        return render(request, "index.html", {'name': name})
     return render(request, "index.html")
 
 def notFound(request):
