@@ -4,7 +4,7 @@
 
 
 {% block content %}
-<div class="container mt-5">
+{% comment %} <div class="container mt-5">
     <h2>Add Property</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -28,7 +28,19 @@
         <!-- Add more fields as needed based on the property type -->
         <button type="submit" class="btn btn-primary">Add Property</button>
     </form>
-</div>
+</div> {% endcomment %}
+
+<h1>Add Property</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="Type">Select Property Type:</label>
+        <select name="Type">
+            <option value="commercial">Commercial</option>
+            <option value="land">Land</option>
+            <option value="residential">Residential</option>
+        </select>
+        <button type="submit">Next</button>
+    </form>
 {% endblock %}
 
 
