@@ -1,0 +1,35 @@
+{%extends "base.html"%}
+{%load static %}
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Add Property</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="Type" class="form-label">Property Type</label>
+            <select class="form-select" id="Type" name="Type">
+                <option value="commercial">Commercial</option>
+                <option value="land">Land</option>
+                <option value="residential">Residential</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            {{ form.Media.label_tag }} {{ form.Media }}
+        </div>
+        <div class="mb-3">
+            {{ form.Name.label_tag }} {{ form.Name }}
+        </div>
+        <div class="mb-3">
+            {{ form.Description.label_tag }} {{ form.Description }}
+        </div>
+        <!-- Add more fields as needed based on the property type -->
+        <button type="submit" class="btn btn-primary">Add Property</button>
+    </form>
+</div>
+{% endblock %}
+
+
+
