@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%block content%}
+  <div class="container mt-5">
+    <h1>{{ property_fields.Property_Name }}</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <img class="img-fluid" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}" style="width: 500px; height: 400px;">
+      </div>
+      <div class="col-md-6">
+        {% comment %} <p>{{ property_fields.Property_Description }}</p> {% endcomment %}
+        
+        {% for field, value in property_fields.items %}
+          {% if field != 'Property_Pictures' %}
+            <p><strong>{{ field|title }}:</strong> {{ value }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <br>
+  {% comment %} <a href="#" class="btn btn-primary">Edit Property </a> {% endcomment %}
+  <a href="#" class="btn btn-primary">Property Calculator</a>
+
+  {%endblock%}

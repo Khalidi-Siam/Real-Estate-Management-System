@@ -101,10 +101,10 @@ def add_property_data(request, property_type):
             property_instance.property_type = property_type
             property_instance.save()
 
-            return redirect('property-list')  
+            return redirect('property_list')  
     else:
         form = form_class()
-    return render(request, 'add_property_data.html', {'form': form})
+    return render(request, 'add_property_data.html', {'form': form, 'property_type':property_type})
 
 
 def update_property(request, property_id):
@@ -119,6 +119,17 @@ def update_property(request, property_id):
         form = PropertyForm(instance=property_instance)
     return render(request, 'update_property.html', {'form': form})
 
+def property_detail(request, pk):
+    property_instance = AllProperty.objects.get(pk = pk)
+    property_fields = get_property_fields(property_instance)
+    property_fields['Property_Pictures'] = property_instance.Property_Pictures
+    print(property_fields)
+
+    return render(request, "property_detail.html", {'property_fields':property_fields})
+
+def get_property_fields(property):
+    fields = [field.name for field in AllProperty._meta.get_fields() if field.name not in ['id', 'user', 'Property_Pictures', 'residentialproperty','commercialproperty', 'landproperty']]
+    return {field: getattr(property, field, None) for field in fields}
 
 # def update_property(request, property_id):
 #     property_instance = AllProperty.objects.get(pk=property_id)
@@ -132,15 +143,8 @@ def update_property(request, property_id):
 #     return render(request, 'update_property.html', {'form': form})
 
 def property_list(request):
-    residential_property = ResidentialProperty.objects.all()
-    commercial_property = CommercialProperty.objects.all()
-    land_property = LandProperty.objects.all()
-    total_list = {'residential_property': residential_property, 
-                'commercial_property': commercial_property,
-                'land_property': land_property
-                }
-
-    return render(request, "property_list.html", total_list)
+    total_list = AllProperty.objects.all()
+    return render(request, "property_list.html", {'total_list': total_list})
 
 
 
