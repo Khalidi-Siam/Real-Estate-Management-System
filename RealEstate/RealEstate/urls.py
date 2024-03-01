@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from authentication import views as authentic_view
 from authentication.views import signin,password_reset_confirm 
+from property.views import calculate
 urlpatterns = [
     path('', include('basic.urls')),
     path('admin/', admin.site.urls),
@@ -37,5 +38,6 @@ urlpatterns = [
     path('password-reset/complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
          name='password_reset_complete'),
+    path('property-calculate/',calculate, name = 'calculate' )
     # Other URL patterns               
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
