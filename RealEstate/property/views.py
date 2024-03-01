@@ -147,3 +147,5 @@ def property_list(request):
 def property_type(request):
     return render(request, "property_type.html")
 
+def calculate(request):
+    return render(request, "Calculate.html")
