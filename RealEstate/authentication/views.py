@@ -4,8 +4,35 @@ from .forms import SignUpForm, SignInForm, EditProfileForm
 from .models import UserProfile
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import SetPasswordForm
+from django.shortcuts import render, redirect
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes
 
 # Create your views here.
+User = get_user_model()
+
+def password_reset_confirm(request, uidb64, token):
+    try:
+        uid = force_bytes(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                # Redirect to reset confirmation page after password reset
+                return redirect('password_reset_complete')
+        else:
+            form = SetPasswordForm(user)
+        return render(request, 'password_reset_confirm.html', {'form': form})
+    else:
+        return render(request, 'password_reset_invalid.html')
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
