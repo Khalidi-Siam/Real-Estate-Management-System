@@ -1,0 +1,59 @@
+{%extends "base.html"%}
+
+{%load static%}
+
+
+{%block title%} <title>Property Calulator</title>{% endblock %}
+
+{%block content%}
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center">Property calculator</h2>
+
+                        <script>
+                        function addNumbers() {
+                            var num1 = parseFloat(document.getElementById('number1').value) || 0;
+                            var num2 = parseFloat(document.getElementById('number2').value) || 0;
+                            var num3 = parseFloat(document.getElementById('number3').value) || 0;
+                            var num4 = parseFloat(document.getElementById('number4').value) || 0;
+                            var sum = (num1*num2)+(num3*num4);
+                            document.getElementById('result').innerText = 'Result: ' + sum;
+                        }
+                        </script>
+                        </head>
+                        <body>
+                        <!-- Input fields for the numbers, each wrapped in a div for stacking -->
+                        <div>
+                            Per Square Feet Price  <input type="number" id="number1" placeholder="Per Square Feet Price">
+                        </div>
+                        <div>
+                            Total Square feet <input type="number" id="number2" placeholder="Total Square feet">
+                        </div>
+                        <div>
+                            Parking Square feet  <input type="number" id="number3" placeholder="Parking Square feet">
+                        </div>
+                        <div>
+                            parking per square feet price <input type="number" id="number4" placeholder="parking per square feet price">
+                        </div>
+                        <div>
+                            
+                        </div>
+                        <!-- Button to trigger the addition, also wrapped in a div -->
+                        <div>
+                            <button onclick="addNumbers()">Calculate</button>
+                        </div>
+
+                        <!-- Paragraph to display the result -->
+                        <p id="result"></p>
+
+                        </body>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{%endblock%}
