@@ -26,7 +26,7 @@
                     <div class="p-4 pb-0">
                         <h5 class="text-primary mb-3">${{ property.Price }}</h5>
                         <a class="d-block h5 mb-2" href="{% url 'property_detail' pk=property.pk %}">{{ property.Property_Name}}</a>
-                        <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ property.city }}, {{ property.District }}, {{ property.postal_code }}</p>
+                        <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ property.City }}, {{ property.District }}, {{ property.Postal_code }}</p>
                     </div>
                     <div class="d-flex border-top">
                         {% comment %} <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.total_area }} Sqft</small> {% endcomment %}

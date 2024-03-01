@@ -9,5 +9,6 @@ urlpatterns = [
     path('property_list', views.property_list, name = "property_list"),
     path('property_type', views.property_type, name = "property_type"),
     path('property_list/<int:pk>', views.property_detail, name = "property_detail"),
+    path('property-calculate/',views.calculate, name = 'calculate'),
 
 ]
