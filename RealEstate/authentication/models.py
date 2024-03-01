@@ -9,7 +9,7 @@ class UserProfile(models.Model):
         (2, 'Female'),
         (3, 'Other'),
     ]
-    user = models.OneToOneField(User, on_delete = models.CASCADE, null = True)
+    user = models.OneToOneField(User, on_delete = models.CASCADE, null = True, related_name = "UserProfile")
     name = models.CharField(max_length = 50)
     email = models.EmailField(max_length=100)
     contact_no = models.CharField(max_length=20, null = True)
@@ -18,7 +18,7 @@ class UserProfile(models.Model):
     dob = models.DateField(null = True)
 
     address = models.TextField(null = True)
-    profile_picture = models.ImageField(upload_to='media/profile_picture', null = True)
+    profile_picture = models.ImageField(upload_to='profile_picture', null = True)
 
     def __str__(self):
         return self.name

@@ -7,18 +7,35 @@
 {%block content%}
 <!-- USER PROFILE Start -->
 {% if profile_fields %}
-    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" width="100" height="100">
+    <img src="{{ profile_fields.profile_picture.url }}" alt="Profile Picture" width="100" height="100">
 
     <table class="table">
         <tbody>
             {% for field, value in profile_fields.items %}
-                <tr>
-                    <td><strong>{{ field|format_field_name }}</strong></td>
-                    <td>{{ value }}</td>
-                </tr>
+                {% if field != 'profile_picture' %}
+                    <tr>
+                        <td><strong>{{ field|format_field_name }}</strong></td>
+                        <td>
+                        {% if field == 'gender' %}
+                            {% if value == 1 %}
+                                Male
+                            {% elif value == 2 %}
+                                Female
+                            {% elif value == 3 %}
+                                Other
+                            {% endif %}
+                        {% else %}
+                            {{ value }}
+
+                        {% endif %}
+
+                        </td>
+                    </tr>
+                {%endif%}
             {% endfor %}
         </tbody>
     </table>
+    <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
 {% else %}
     <p>No profile found</p>
 {% endif %}

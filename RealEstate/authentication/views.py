@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from .forms import SignUpForm, SignInForm
+from .forms import SignUpForm, SignInForm, EditProfileForm
 from .models import UserProfile
 from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def signup(request):
@@ -47,19 +48,42 @@ def signin(request):
         form = SignInForm()
     return render(request, "signin.html", {'form': form})
 
+@login_required
 def signout(request):
     logout(request)
     request.session['isLoggedIn'] = False
     next_page = request.GET.get('next', '/')
     return redirect(next_page)
 
-
+@login_required
 def profile(request):
     user_profile = UserProfile.objects.get(user = request.user)
     profile_fields = get_profile_fields(user_profile)
+    profile_fields['profile_picture'] = user_profile.profile_picture
     return render(request, "profile.html", {'profile_fields':profile_fields})
 
 
 def get_profile_fields(user_profile):
     fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture']]
     return {field: getattr(user_profile, field, None) for field in fields}
+
+@login_required
+def edit_profile(request):
+    # user_profile = request.UserProfile
+    user_profile = UserProfile.objects.get(user = request.user)
+
+    if request.method == 'POST':    
+        form = EditProfileForm(request.POST, request.FILES, instance = user_profile)
+        if form.is_valid():
+            request.user.email = form.cleaned_data['email']
+            request.user.username = form.cleaned_data['email']
+            request.user.save()
+
+            form.save()
+            return redirect('profile')
+        
+    else:
+        print(user_profile)
+        form = EditProfileForm(instance=user_profile)
+
+    return render(request, 'edit_profile.html', {'form':form})
