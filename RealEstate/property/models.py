@@ -1,19 +1,18 @@
 from django.db import models
 from authentication.models import UserProfile
-# Create your models here.
 
-class Allproperty(models.Model):
+# Create your models here.
+class AllProperty(models.Model):
     PROPERTY_TYPES = (
         ('commercial', 'Commercial'),
         ('land', 'Land'),
         ('residential', 'Residential'),
     )
-    
-    user = models.OneToOneField(UserProfile, on_delete = models.CASCADE)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='properties')
     Name = models.CharField(max_length=200)
     Description = models.TextField(default=None)
     Price = models.IntegerField(default=0)
-    # Media = models.ImageField(upload_to='pics')
+    Media = models.ImageField(upload_to='pics',default=None)
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     city = models.CharField(max_length=100)
@@ -21,9 +20,11 @@ class Allproperty(models.Model):
     District = models.CharField(max_length=100)
     Rent = models.BooleanField(default=False)
     Sale = models.BooleanField(default=False)
-    type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
-    
-class ResidentialProperty(Allproperty):
+    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
+
+
+
+class ResidentialProperty(AllProperty):
 
     House_No = models.CharField(max_length=8)
     floor_count = models.PositiveIntegerField(default=1)
@@ -35,8 +36,11 @@ class ResidentialProperty(Allproperty):
     has_balcony = models.BooleanField(default=False)
     year_built = models.DateTimeField(null=True, blank=True)
 
+    
 
-class CommercialProperty(Allproperty):
+
+
+class CommercialProperty(AllProperty):
 
     House_No = models.CharField(max_length=8)
     business_type = models.CharField(max_length=100)
@@ -47,9 +51,12 @@ class CommercialProperty(Allproperty):
     has_conference_room = models.BooleanField(default=False)
     year_built = models.DateTimeField(null=True, blank=True)
 
+    
 
-class LandProperty(Allproperty):
+class LandProperty(AllProperty):
     land_area = models.DecimalField(max_digits=8, decimal_places=2)
     land_type = models.CharField(max_length=100)
     road_access = models.BooleanField(default=True)
     is_fenced = models.BooleanField(default=False)
+
+    
