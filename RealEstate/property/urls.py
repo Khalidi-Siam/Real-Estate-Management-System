@@ -1,9 +1,19 @@
-from . import views
+# from . import views
+# from django.urls import path
+
+# urlpatterns = [
+#     path('add_property', views.add_property, name = "add_property"),
+#     path('add_commercial_property', views.add_commercial_property, name = "add_commercial_property"),
+#     path('add_land_property', views.add_land_property, name = "add_land_property"),
+#     path('add_residential_property', views.add_residential_property, name = "add_residential_property"),
+# ]
 from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('add_property', views.add_property, name = "add_property"),
-    path('add_commercial_property', views.add_commercial_property, name = "add_commercial_property"),
-    path('add_land_property', views.add_land_property, name = "add_land_property"),
-    path('add_residential_property', views.add_residential_property, name = "add_residential_property"),
+    path('add_property/', views.add_property, name="add_property"),
+    path('add_property_data/<str:property_type>/', views.add_property_data, name="add_property_data"),
+    # path('add_commercial_property/', views.add_commercial_property, name="add_commercial_property"),
+    # path('add_land_property/', views.add_land_property, name="add_land_property"),
+    # path('add_residential_property/', views.add_residential_property, name="add_residential_property"),
 ]

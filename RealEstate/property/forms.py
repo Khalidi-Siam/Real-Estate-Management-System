@@ -2,21 +2,26 @@ from django import forms
 from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty
 
 class PropertyForm(forms.ModelForm):
-    class meta:
+    class Meta:
         model = AllProperty
-        fields = "__all__"
+        fields = '__all__'
+        
+
 
 class CommercialPropertyForm(forms.ModelForm):
     class Meta:
         model = CommercialProperty
         fields = '__all__'
+        exclude = ['user', 'property_type', 'year_built']
 
 class LandPropertyForm(forms.ModelForm):
     class Meta:
         model = LandProperty
         fields = '__all__'
+        exclude = ['user', 'property_type']
 
 class ResidentialPropertyForm(forms.ModelForm):
     class Meta:
         model = ResidentialProperty
         fields = '__all__'
+        exclude = ['user', 'property_type', 'year_built']

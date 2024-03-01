@@ -8,18 +8,21 @@ class AllProperty(models.Model):
         ('land', 'Land'),
         ('residential', 'Residential'),
     )
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='properties')
-    Name = models.CharField(max_length=200)
-    Description = models.TextField(default=None)
+    Action = (
+        ('rent','Rent'),
+        ('sell','Sell'),
+    )
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='properties', null = True)
+    Property_Name = models.CharField(max_length=200)
+    Property_Description = models.TextField(null=True, blank=True)
     Price = models.IntegerField(default=0)
-    Media = models.ImageField(upload_to='pics',default=None)
+    Property_Pictures = models.ImageField(upload_to='pics',default=None)
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     city = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=4)
     District = models.CharField(max_length=100)
-    Rent = models.BooleanField(default=False)
-    Sale = models.BooleanField(default=False)
+    Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
 
 
@@ -34,7 +37,7 @@ class ResidentialProperty(AllProperty):
     has_pool = models.BooleanField(default=False)
     has_garden = models.BooleanField(default=False)
     has_balcony = models.BooleanField(default=False)
-    year_built = models.DateTimeField(null=True, blank=True)
+    year_built = models.DateField(null=True, blank=True)
 
     
 
@@ -49,7 +52,7 @@ class CommercialProperty(AllProperty):
     has_elevator = models.BooleanField(default=False)
     has_security_system = models.BooleanField(default=False)
     has_conference_room = models.BooleanField(default=False)
-    year_built = models.DateTimeField(null=True, blank=True)
+    year_built = models.DateField(null=True, blank=True)
 
     
 

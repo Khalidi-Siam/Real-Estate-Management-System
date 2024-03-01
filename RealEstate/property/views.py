@@ -1,63 +1,116 @@
 from django.shortcuts import render, redirect
-from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty
+from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty,UserProfile
 from .forms import PropertyForm, LandPropertyForm, CommercialPropertyForm, ResidentialPropertyForm
 from django.urls import reverse
 
 
 # Create your views here.
 
+# def add_property(request):
+#     if request.session.get('isLoggedIn', False):
+#         if request.method == 'POST':
+#             selected_type = request.POST.get('Type')
+#             if selected_type in ['commercial', 'land', 'residential']:
+#                 # Create an instance of AllProperty and set the selected type
+#                 all_property = AllProperty(property_type=selected_type)
+#                 all_property.save()
+
+#                 # Redirect to the appropriate add view based on the selected type
+#                 if selected_type == 'commercial':
+#                     return redirect('add_commercial_property')
+#                 elif selected_type == 'land':
+#                     return redirect('add_land_property')
+#                 elif selected_type == 'residential':
+#                     return redirect('add_residential_property')
+
+#         return render(request, 'add_Property.html')
+
+#     else:
+#         return redirect('signin')
+
+# def add_commercial_property(request):
+#     if request.method == 'POST':
+#         user_profile = UserProfile.objects.get(user=request.user)
+#         form = CommercialPropertyForm(request.POST, request.FILES)
+        
+#         if form.is_valid():
+#             commercial_property = form.save(commit=False)
+#             commercial_property.user = user_profile
+#             commercial_property.save()  # Save the CommercialProperty instance
+
+
+#             return redirect('property-list')  # Change to your property list URL
+#     else:
+#         form = CommercialPropertyForm()
+#     return render(request, 'add_commercial_property.html', {'form': form})
+
+
+# def add_land_property(request):
+#     if request.method == 'POST':
+#         form = LandPropertyForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('property-list')  # Change to your property list URL
+#     else:
+#         form = LandPropertyForm()
+#     return render(request, 'add_land_property.html', {'form': form})
+
+# def add_residential_property(request):
+#     if request.method == 'POST':
+#         form = ResidentialPropertyForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('property-list')  # Change to your property list URL
+#     else:
+#         form = ResidentialPropertyForm()
+#     return render(request, 'add_residential_property.html', {'form': form})
+
 def add_property(request):
     if request.session.get('isLoggedIn', False):
-            if request.method == 'POST':
-                selected_type = request.POST.get('Type')
-                if selected_type == 'commercial':
-                    return redirect('add-commercial-property')
-                elif selected_type == 'land':
-                    return redirect('add-land-property')
-                elif selected_type == 'residential':
-                    return redirect('add-residential-property')
-            return render(request, 'add_Property.html')
+        if request.method == 'POST':
+            selected_type = request.POST.get('Type')
+            if selected_type in ['commercial', 'land', 'residential']:
+                
+                return redirect('add_property_data', property_type=selected_type)
+
+        return render(request, 'add_property.html')
 
     else:
         return redirect('signin')
 
-def add_commercial_property(request):
+def add_property_data(request, property_type):
+    if property_type == 'commercial':
+        form_class = CommercialPropertyForm
+    elif property_type == 'land':
+        form_class = LandPropertyForm
+    elif property_type == 'residential':
+        form_class = ResidentialPropertyForm
+    else:
+        return redirect('add_property')
+
     if request.method == 'POST':
-        form = CommercialPropertyForm(request.POST, request.FILES)
+        user_profile = UserProfile.objects.get(user=request.user)
+        form = form_class(request.POST, request.FILES)
+        
+        if form.is_valid():
+            property_instance = form.save(commit=False)
+            property_instance.user = user_profile
+            property_instance.property_type = property_type
+            property_instance.save()
+
+            return redirect('property-list')  
+    else:
+        form = form_class()
+    return render(request, 'add_property_data.html', {'form': form})
+
+
+def update_property(request, property_id):
+    property_instance = AllProperty.objects.get(pk=property_id)
+    if request.method == 'POST':
+        form = PropertyForm(request.POST, request.FILES, instance=property_instance)
         if form.is_valid():
             form.save()
-            return redirect('property-list')  # Change to your property list URL
+            return redirect('property_list')  
     else:
-        form = CommercialPropertyForm()
-    return render(request, 'add_commercial_property.html', {'form': form})
-
-def add_land_property(request):
-    if request.method == 'POST':
-        form = LandPropertyForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('property-list')  # Change to your property list URL
-    else:
-        form = LandPropertyForm()
-    return render(request, 'add_land_property.html', {'form': form})
-
-def add_residential_property(request):
-    if request.method == 'POST':
-        form = ResidentialPropertyForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('property-list')  # Change to your property list URL
-    else:
-        form = ResidentialPropertyForm()
-    return render(request, 'add_residential_property.html', {'form': form})
-
-# def update_property(request, property_id):
-#     property_instance = AllProperty.objects.get(pk=property_id)
-#     if request.method == 'POST':
-#         form = PropertyForm(request.POST, request.FILES, instance=property_instance)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('property_list')  # Redirect to a view that lists all properties
-#     else:
-#         form = PropertyForm(instance=property_instance)
-#     return render(request, 'update_property.html', {'form': form})
+        form = PropertyForm(instance=property_instance)
+    return render(request, 'update_property.html', {'form': form})
