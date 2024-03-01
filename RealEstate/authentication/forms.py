@@ -30,7 +30,13 @@ class SignInForm(AuthenticationForm):
         model = User
         fields = ['username', 'password']
 
+# class EditUserForm(forms.ModelForm):
+#     class Meta:
+#         model = User
+#         fields = '__all__'
+
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = '__all__'
+        exclude = ['user']
