@@ -61,3 +61,17 @@ def add_residential_property(request):
 #     else:
 #         form = PropertyForm(instance=property_instance)
 #     return render(request, 'update_property.html', {'form': form})
+
+def property_list(request):
+    residential_property = ResidentialProperty.objects.all()
+    commercial_property = CommercialProperty.objects.all()
+    land_property = LandProperty.objects.all()
+    total_list = {'residential_property': residential_property, 
+                'commercial_property': commercial_property,
+                'land_property': land_property
+                }
+
+    return render(request, "property_list.html", total_list)
+
+def property_type(request):
+    return render(request, "property_type.html")

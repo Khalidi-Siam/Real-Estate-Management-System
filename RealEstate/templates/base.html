@@ -62,16 +62,15 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto">
                         <a href="/" class="nav-item nav-link active">Home</a>
-                        {% comment %} <a href="about" class="nav-item nav-link">About</a> {% endcomment %}
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Property</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="property-list" class="dropdown-item">Property List</a>
-                                <a href="property-type" class="dropdown-item">Property Type</a>
-                                <a href="property-agent" class="dropdown-item">Property Agent</a>
+                                <a href="{% url 'property_list' %}" class="dropdown-item">Property List</a>
+                                <a href="{% url 'property_type' %}" class="dropdown-item">Property Type</a>
+                                {% comment %} <a href="{% url 'property_agent' %}" class="dropdown-item">Property Agent</a> {% endcomment %}
                             </div>
                         </div>
-                        <a href="contact" class="nav-item nav-link">Contact</a>
+                        <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         <div class="nav-item dropdown">
                             {% if is_logged_in %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
