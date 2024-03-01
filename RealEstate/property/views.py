@@ -1,5 +1,8 @@
-from django.shortcuts import render, redirect
+
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty,UserProfile
+
+
 from .forms import PropertyForm, LandPropertyForm, CommercialPropertyForm, ResidentialPropertyForm
 from django.urls import reverse
 
@@ -112,5 +115,35 @@ def update_property(request, property_id):
             form.save()
             return redirect('property_list')  
     else:
+
         form = PropertyForm(instance=property_instance)
     return render(request, 'update_property.html', {'form': form})
+
+
+# def update_property(request, property_id):
+#     property_instance = AllProperty.objects.get(pk=property_id)
+#     if request.method == 'POST':
+#         form = PropertyForm(request.POST, request.FILES, instance=property_instance)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('property_list')  # Redirect to a view that lists all properties
+#     else:
+#         form = PropertyForm(instance=property_instance)
+#     return render(request, 'update_property.html', {'form': form})
+
+def property_list(request):
+    residential_property = ResidentialProperty.objects.all()
+    commercial_property = CommercialProperty.objects.all()
+    land_property = LandProperty.objects.all()
+    total_list = {'residential_property': residential_property, 
+                'commercial_property': commercial_property,
+                'land_property': land_property
+                }
+
+    return render(request, "property_list.html", total_list)
+
+
+
+def property_type(request):
+    return render(request, "property_type.html")
+
