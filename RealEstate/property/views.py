@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty
 from .forms import PropertyForm, LandPropertyForm, CommercialPropertyForm, ResidentialPropertyForm
 from django.urls import reverse
@@ -72,6 +72,8 @@ def property_list(request):
                 }
 
     return render(request, "property_list.html", total_list)
+
+
 
 def property_type(request):
     return render(request, "property_type.html")
