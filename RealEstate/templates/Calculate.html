@@ -12,32 +12,36 @@
                 <div class="card">
                     <div class="card-body">
                         <h2 class="text-center">Property calculator</h2>
-
+                        <br>
                         <script>
                         function addNumbers() {
                             var num1 = parseFloat(document.getElementById('number1').value) || 0;
                             var num2 = parseFloat(document.getElementById('number2').value) || 0;
                             var num3 = parseFloat(document.getElementById('number3').value) || 0;
                             var num4 = parseFloat(document.getElementById('number4').value) || 0;
-                            var sum = (num1*num2)+(num3*num4);
-                            document.getElementById('result').innerText = 'Result: ' + sum;
+                            var sum = (num1*num2)+(num3*num4)+' TK';
+                            document.getElementById('result').innerText = 'Total Amount: ' + sum;
                         }
                         </script>
                         </head>
                         <body>
                         <!-- Input fields for the numbers, each wrapped in a div for stacking -->
                         <div>
-                            Per Square Feet Price  <input type="number" id="number1" placeholder="Per Square Feet Price">
+                            Per Square Feet Price: <input type="number" id="number1" placeholder="Per Square Feet Price">
                         </div>
+                        <br>
                         <div>
-                            Total Square feet <input type="number" id="number2" placeholder="Total Square feet">
+                            Total Square feet: <input type="number" id="number2" placeholder="Total Square feet">
                         </div>
+                        <br>
                         <div>
-                            Parking Square feet  <input type="number" id="number3" placeholder="Parking Square feet">
+                            Parking Square feet: <input type="number" id="number3" placeholder="Parking Square feet">
                         </div>
+                        <br>
                         <div>
-                            parking per square feet price <input type="number" id="number4" placeholder="parking per square feet price">
+                            Parking per square feet price: <input type="number" id="number4" placeholder="Parking per square feet price">
                         </div>
+                        <br>
                         <div>
                             
                         </div>
