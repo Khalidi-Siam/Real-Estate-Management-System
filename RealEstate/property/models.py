@@ -55,6 +55,7 @@ class CommercialProperty(AllProperty):
         ('office', 'Office'),
         ('community_Center', 'community_Center'),
         ('shop', 'Shop'),
+        ('other', 'Other')
         
     )
     House_No = models.CharField(max_length=8)

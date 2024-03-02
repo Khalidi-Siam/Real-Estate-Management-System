@@ -1,44 +1,58 @@
-{%load static%}
-         <!-- Category Start -->
-         <div class="container-xxl py-5">
-            <div class="container">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" style="max-width: 600px;">
-                    <h1 class="mb-3">Property Types</h1>
-                    {% comment %} <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p> {% endcomment %}
-                </div>
-                <div class="row g-4">
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="residential_property_detail">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="{% static 'img/icon-apartment.png' %}" alt="Icon">
-                                </div>
-                                <h6>Residential</h6>
-                                {% comment %} <span>123 Properties</span> {% endcomment %}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="commercial_property_detail">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="{% static 'img/icon-villa.png' %}" alt="Icon">
-                                </div>
-                                <h6>Commercial</h6>
-                                {% comment %} <span>123 Properties</span> {% endcomment %}
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                        <a class="cat-item d-block bg-light text-center rounded p-3" href="land_property_detail">
-                            <div class="rounded p-4">
-                                <div class="icon mb-3">
-                                    <img class="img-fluid" src="{% static 'img/icon-house.png' %}" alt="Icon">
-                                </div>
-                                <h6>Land</h6>
-                                {% comment %} <span>123 Properties</span> {% endcomment %}
-                            </div>
-                        </a>
-                    </div>
+{% load static %}
 
+<!-- Category Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" style="max-width: 600px;">
+            <h1 class="mb-3">Property Types</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-sm-6 wow fadeInUp">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=residential">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="{% static 'img/icon-apartment.png' %}" alt="Icon">
+                        </div>
+                        <h6>Residential</h6>
+                        <!-- You can add a span here to display the number of properties -->
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=commercial">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="{% static 'img/icon-villa.png' %}" alt="Icon">
+                        </div>
+                        <h6>Commercial</h6>
+                        <!-- You can add a span here to display the number of properties -->
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-sm-6 wow fadeInUp">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=land">
+                    <div class="rounded p-4">
+                        <div class="icon mb-3">
+                            <img class="img-fluid" src="{% static 'img/icon-house.png' %}" alt="Icon">
+                        </div>
+                        <h6>Land</h6>
+                        <!-- You can add a span here to display the number of properties -->
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Category End -->
+
+<!-- Property List -->
+<div class="row">
+    {% for property in total_list %}
+        {% if not request.GET.type or request.GET.type == property.Property_type %}
+            <div class="col-lg-4 col-md-6">
+                <!-- Property Item HTML -->
+                <!-- Include your existing property item HTML here -->
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
