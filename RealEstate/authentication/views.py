@@ -10,6 +10,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.shortcuts import render, redirect
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.contrib import messages
 
 # Create your views here.
 User = get_user_model()
@@ -48,7 +49,7 @@ def signup(request):
             user_profile.user = user
             user_profile.save()
 
-
+            messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')
     
     else:
@@ -58,6 +59,7 @@ def signup(request):
 
 
 def signin(request):
+    
     if request.method == 'POST':
         form = SignInForm(request, data=request.POST)
         if form.is_valid():
@@ -69,10 +71,16 @@ def signin(request):
             if user is not None:
                 login(request, user)
                 request.session['isLoggedIn'] = True
-                return redirect('/')
+                messages.success(request, "Successfully Signed in")
+                return redirect("/")
+            
+            else:
+                messages.error(request, "Invalid credentials")
+                
     
-    else:
+    else:        
         form = SignInForm()
+    
     return render(request, "signin.html", {'form': form})
 
 @login_required
@@ -80,6 +88,7 @@ def signout(request):
     logout(request)
     request.session['isLoggedIn'] = False
     next_page = request.GET.get('next', '/')
+    messages.success(request, "Successfully Signed Out")
     return redirect(next_page)
 
 @login_required

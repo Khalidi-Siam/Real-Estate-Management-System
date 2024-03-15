@@ -18,10 +18,25 @@ class SignUpForm(forms.ModelForm):
         return email
 
     def clean_confirm_password(self):
+        specialSym = ["$", "@", "#", "%", "*", "^", "!"]
         password = self.cleaned_data.get("password")
         confirm_password = self.cleaned_data.get("confirm_password")
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
+        
+        if(len(password) <= 6):
+            raise forms.ValidationError("Password must be greater than 6 character")
+        
+        if not any(char.isdigit() for char in password):
+            raise forms.ValidationError("Password must have at least one digit")
+        
+        if not any(char.isupper() for char in password):
+            raise forms.ValidationError("Password must have at least one uppercase letter")
+        
+        if not any(char in specialSym for char in password):
+            raise forms.ValidationError("Password must have at least one special character")
+        
+
         return confirm_password
 
 

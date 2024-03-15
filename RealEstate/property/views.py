@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty,UserProfile
 from .forms import PropertyForm, LandPropertyForm, CommercialPropertyForm, ResidentialPropertyForm
+from django.contrib import messages
 
 
 def add_property(request):
@@ -37,7 +38,11 @@ def add_property_data(request, property_type):
             property_instance.property_type = property_type
             property_instance.save()
 
-            return redirect('property_list')  
+            messages.success(request, "Property added Successfully")
+            return redirect('property_list')
+
+        else:
+            messages.error(request, "Something went wrong!")  
     else:
         form = form_class()
     return render(request, 'add_property_data.html', {'form': form, 'property_type':property_type})
@@ -49,10 +54,12 @@ def update_property(request, property_id):
         form = PropertyForm(request.POST, request.FILES, instance=property_instance)
         if form.is_valid():
             form.save()
+            messages.success(request, "Property updated Successfully")
             return redirect('property_list')  
+        
     else:
-
         form = PropertyForm(instance=property_instance)
+        
     return render(request, 'update_property.html', {'form': form})
 
 def property_detail(request, pk):
