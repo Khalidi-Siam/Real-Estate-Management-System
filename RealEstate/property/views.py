@@ -1,7 +1,6 @@
-
 from django.shortcuts import render, redirect
 from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty,UserProfile
-from .forms import PropertyForm, LandPropertyForm, CommercialPropertyForm, ResidentialPropertyForm
+from .forms import *
 from django.contrib import messages
 
 
@@ -66,12 +65,39 @@ def property_detail(request, pk):
     property_instance = AllProperty.objects.get(pk = pk)
     property_fields = get_property_fields(property_instance)
     property_fields['Property_Pictures'] = property_instance.Property_Pictures
-    print(property_fields)
+    all_review = Reviews.objects.filter(property = property_instance)
+    user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
+    # print(all_review.comment)
+    # print(property_fields)
+    # print(str(property_instance.user.email) == str(request.user))
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            if str(property_instance.user.email) == str(request.user): #condtion check sothat property owner couldn't review his own property
+                messages.error(request, "You can't review your own property.")
+                return redirect('property_detail', pk = pk)
+            elif user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
+                messages.error(request, "You have already reviewed this property.")
+                return redirect('property_detail', pk = pk)
+            else:
+                form = ReviewForm(request.POST)
+                if form.is_valid():
+                    review = form.save(commit=False)
+                    review.user = request.user.UserProfile
+                    review.property = property_instance
 
-    return render(request, "property_detail.html", {'property_fields':property_fields})
+                    review.save()
+                    return redirect('property_detail', pk = pk)
+            
+        else:
+            return redirect('signin')
+        
+    else:
+        form = ReviewForm()
+
+    return render(request, "property_detail.html", {'property_fields':property_fields, 'form':form, 'all_review':all_review})
 
 def get_property_fields(property):
-    fields = [field.name for field in AllProperty._meta.get_fields() if field.name not in ['id', 'user', 'Property_Pictures', 'residentialproperty','commercialproperty', 'landproperty']]
+    fields = [field.name for field in AllProperty._meta.get_fields() if field.name not in ['id', 'user', 'Property_Pictures', 'residentialproperty','commercialproperty', 'landproperty', 'reviews']]
     return {field: getattr(property, field, None) for field in fields}
 
 

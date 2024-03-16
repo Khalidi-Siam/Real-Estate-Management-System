@@ -1,5 +1,5 @@
 from django import forms
-from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty
+from .models import *
 
 class PropertyForm(forms.ModelForm):
     class Meta:
@@ -25,3 +25,10 @@ class ResidentialPropertyForm(forms.ModelForm):
         model = ResidentialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Reviews
+        fields = ['comment', 'rating']
+
