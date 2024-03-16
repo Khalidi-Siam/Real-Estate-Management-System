@@ -86,3 +86,16 @@ class LandProperty(AllProperty):
     Is_fenced = models.BooleanField(default=False)
 
     
+class Reviews(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete = models.CASCADE)
+    property = models.ForeignKey(AllProperty, on_delete = models.CASCADE)
+    comment = models.TextField(max_length = 1000)
+    rating = models.IntegerField(default = 0)
+    date = models.DateTimeField(auto_now_add = True)
+
+    class Meta:
+        unique_together = (('property', 'user'),)
+
+    def __str__(self):
+        return f"{self.property.Property_Name} - {self.user.name}"
+

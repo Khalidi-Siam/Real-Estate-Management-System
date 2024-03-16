@@ -100,7 +100,7 @@ def profile(request):
 
 
 def get_profile_fields(user_profile):
-    fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture']]
+    fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture', 'properties', 'reviews']]
     return {field: getattr(user_profile, field, None) for field in fields}
 
 @login_required
