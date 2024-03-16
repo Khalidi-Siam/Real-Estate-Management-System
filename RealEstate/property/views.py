@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import AllProperty, CommercialProperty, LandProperty, ResidentialProperty,UserProfile
+from .models import AllProperty, UserProfile
 from .forms import *
 from django.contrib import messages
 
@@ -66,12 +66,10 @@ def property_detail(request, pk):
     property_fields = get_property_fields(property_instance)
     property_fields['Property_Pictures'] = property_instance.Property_Pictures
     all_review = Reviews.objects.filter(property = property_instance)
-    user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
-    # print(all_review.comment)
-    # print(property_fields)
-    # print(str(property_instance.user.email) == str(request.user))
+
     if request.method == "POST":
         if request.user.is_authenticated:
+            user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
             if str(property_instance.user.email) == str(request.user): #condtion check sothat property owner couldn't review his own property
                 messages.error(request, "You can't review your own property.")
                 return redirect('property_detail', pk = pk)
