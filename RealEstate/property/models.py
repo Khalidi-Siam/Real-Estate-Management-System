@@ -26,6 +26,9 @@ class AllProperty(models.Model):
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
 
+    def __str__(self):
+        return self.Property_Name
+
 
 
 class ResidentialProperty(AllProperty):

@@ -55,3 +55,10 @@ class EditProfileForm(forms.ModelForm):
         model = UserProfile
         fields = '__all__'
         exclude = ['user']
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.exclude(pk = self.instance.user.pk).filter(email = email).exists():
+            raise forms.ValidationError("This email already Exists")
+        
+        return email

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import AllProperty, UserProfile
 from .forms import *
 from django.contrib import messages
+from django.db.models import Q
 
 
 def add_property(request):
@@ -34,7 +35,7 @@ def add_property_data(request, property_type):
         if form.is_valid():
             property_instance = form.save(commit=False)
             property_instance.user = user_profile
-            property_instance.property_type = property_type
+            property_instance.Property_type = property_type
             property_instance.save()
 
             messages.success(request, "Property added Successfully")
@@ -63,14 +64,30 @@ def update_property(request, property_id):
 
 def property_detail(request, pk):
     property_instance = AllProperty.objects.get(pk = pk)
-    property_fields = get_property_fields(property_instance)
-    property_fields['Property_Pictures'] = property_instance.Property_Pictures
+    
+    if hasattr(property_instance, 'residentialproperty'):
+        specific_property_instance = property_instance.residentialproperty
+    elif hasattr(property_instance, 'commercialproperty'):
+        specific_property_instance = property_instance.commercialproperty
+    elif hasattr(property_instance, 'landproperty'):
+        specific_property_instance = property_instance.landproperty
+    else:
+        # Handle the case where the property instance does not belong to any specific type
+        specific_property_instance = None
+
+    if(specific_property_instance):
+        property_fields = vars(specific_property_instance)
+        property_fields['Property_Pictures'] = property_instance.Property_Pictures
+
+    else:
+        property_fields = {}
+
     all_review = Reviews.objects.filter(property = property_instance)
 
     if request.method == "POST":
         if request.user.is_authenticated:
             user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
-            if str(property_instance.user.email) == str(request.user): #condtion check sothat property owner couldn't review his own property
+            if str(property_instance.user.email) == str(request.user): #condition check sothat property owner couldn't review his own property
                 messages.error(request, "You can't review your own property.")
                 return redirect('property_detail', pk = pk)
             elif user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
@@ -94,13 +111,17 @@ def property_detail(request, pk):
 
     return render(request, "property_detail.html", {'property_fields':property_fields, 'form':form, 'all_review':all_review})
 
-def get_property_fields(property):
-    fields = [field.name for field in AllProperty._meta.get_fields() if field.name not in ['id', 'user', 'Property_Pictures', 'residentialproperty','commercialproperty', 'landproperty', 'reviews']]
-    return {field: getattr(property, field, None) for field in fields}
 
 
 def property_list(request):
-    total_list = AllProperty.objects.all()
+    # total_list = AllProperty.objects.all()
+    
+
+    total_list = AllProperty.objects.filter(
+        Q(residentialproperty__isnull=False) | 
+        Q(commercialproperty__isnull=False) |
+        Q(landproperty__isnull=False)
+    ).select_related('residentialproperty', 'commercialproperty', 'landproperty')
     return render(request, "property_list.html", {'total_list': total_list})
 
 
