@@ -31,41 +31,43 @@
             <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
         </div>
         <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
+            {% for review in top_review %}
             <div class="testimonial-item bg-light rounded p-3">
-                <div class="bg-white border rounded p-4">
-                    <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
+                <div class="bg-white border rounded p-4">                    
                     <div class="d-flex align-items-center">
-                        <img class="img-fluid flex-shrink-0 rounded" src="{% static 'img/testimonial-1.jpg' %}" style="width: 45px; height: 45px;">
+                        {%if review.user.profile_picture%}
+                            <img class="img-fluid flex-shrink-0 rounded" src="{{review.user.profile_picture.url}}" style="width: 45px; height: 45px;">
+                        {%else%}
+                            <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
+                        {%endif%}
                         <div class="ps-3">
-                            <h6 class="fw-bold mb-1">Client Name</h6>
-                            <small>Profession</small>
+                            <h6 class="fw-bold mb-1">{{ review.user.name }}</h6>
+                            <small>
+                                {% if review.rating == 5 %}
+                                <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i>
+                                {% elif review.rating == 4 %}
+                                    <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i>
+                                {% elif review.rating == 3 %}
+                                    <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                {% elif review.rating == 2 %}
+                                    <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                {% elif review.rating == 1 %}
+                                    <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                {% endif %}
+                            </small>
                         </div>
                     </div>
+                    <p>{{ review.comment }}</p>
                 </div>
             </div>
-            <div class="testimonial-item bg-light rounded p-3">
-                <div class="bg-white border rounded p-4">
-                    <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                    <div class="d-flex align-items-center">
-                        <img class="img-fluid flex-shrink-0 rounded" src="{% static 'img/testimonial-2.jpg' %}" style="width: 45px; height: 45px;">
-                        <div class="ps-3">
-                            <h6 class="fw-bold mb-1">Client Name</h6>
-                            <small>Profession</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-item bg-light rounded p-3">
-                <div class="bg-white border rounded p-4">
-                    <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                    <div class="d-flex align-items-center">
-                        <img class="img-fluid flex-shrink-0 rounded" src="{% static 'img/testimonial-3.jpg' %}" style="width: 45px; height: 45px;">
-                        <div class="ps-3">
-                            <h6 class="fw-bold mb-1">Client Name</h6>
-                            <small>Profession</small>
-                        </div>
-                    </div>
-                </div>
+            {% endfor %}
+        </div>
+
+<br>
+        <!-- Button "Your feedback" -->
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <a href="{% url 'testimonial' %}" class="btn btn-primary btn-bg">See All</a>
             </div>
         </div>
     </div>

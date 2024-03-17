@@ -75,41 +75,15 @@ def property_detail(request, pk):
         # Handle the case where the property instance does not belong to any specific type
         specific_property_instance = None
 
+
+    property_fields = {}
+    
     if(specific_property_instance):
         property_fields = vars(specific_property_instance)
         property_fields['Property_Pictures'] = property_instance.Property_Pictures
 
-    else:
-        property_fields = {}
 
-    all_review = Reviews.objects.filter(property = property_instance)
-
-    if request.method == "POST":
-        if request.user.is_authenticated:
-            user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
-            if str(property_instance.user.email) == str(request.user): #condition check sothat property owner couldn't review his own property
-                messages.error(request, "You can't review your own property.")
-                return redirect('property_detail', pk = pk)
-            elif user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
-                messages.error(request, "You have already reviewed this property.")
-                return redirect('property_detail', pk = pk)
-            else:
-                form = ReviewForm(request.POST)
-                if form.is_valid():
-                    review = form.save(commit=False)
-                    review.user = request.user.UserProfile
-                    review.property = property_instance
-
-                    review.save()
-                    return redirect('property_detail', pk = pk)
-            
-        else:
-            return redirect('signin')
-        
-    else:
-        form = ReviewForm()
-
-    return render(request, "property_detail.html", {'property_fields':property_fields, 'form':form, 'all_review':all_review})
+    return render(request, "property_detail.html", {'property_fields':property_fields})
 
 
 
