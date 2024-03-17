@@ -26,9 +26,3 @@ class ResidentialPropertyForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built']
 
-
-class ReviewForm(forms.ModelForm):
-    class Meta:
-        model = Reviews
-        fields = ['comment', 'rating']
-
