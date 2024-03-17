@@ -34,7 +34,7 @@ def add_property_data(request, property_type):
         if form.is_valid():
             property_instance = form.save(commit=False)
             property_instance.user = user_profile
-            property_instance.property_type = property_type
+            property_instance.Property_type = property_type
             property_instance.save()
 
             return redirect('property_list')  

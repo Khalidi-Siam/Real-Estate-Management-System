@@ -87,11 +87,12 @@ def profile(request):
     user_profile = UserProfile.objects.get(user = request.user)
     profile_fields = get_profile_fields(user_profile)
     profile_fields['profile_picture'] = user_profile.profile_picture
+    print(profile_fields)
     return render(request, "profile.html", {'profile_fields':profile_fields})
 
 
 def get_profile_fields(user_profile):
-    fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture']]
+    fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture','properties']]
     return {field: getattr(user_profile, field, None) for field in fields}
 
 @login_required
