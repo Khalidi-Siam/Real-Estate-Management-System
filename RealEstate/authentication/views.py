@@ -76,6 +76,9 @@ def signin(request):
             
             else:
                 messages.error(request, "Invalid credentials")
+
+        else:
+            messages.error(request, "Invalid Credentials")
                 
     
     else:        
@@ -105,7 +108,6 @@ def get_profile_fields(user_profile):
 
 @login_required
 def edit_profile(request):
-    # user_profile = request.UserProfile
     user_profile = UserProfile.objects.get(user = request.user)
 
     if request.method == 'POST':    

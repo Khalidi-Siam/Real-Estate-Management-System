@@ -28,12 +28,31 @@
     <div class="col-md-6">
       <img class="img-fluid" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}" style="width: 500px; height: 400px;">
     </div>
-    <div class="col-md-6">
-      {% for field, value in property_fields.items %}
-        {% if field != 'Property_Pictures' %}
-          <p><strong>{{ field|title }}:</strong> {{ value }}</p>
-        {% endif %}
-      {% endfor %}
+    <hr>
+  
+      <table class="table">
+        <tbody>
+          {% for field, value in property_fields.items %}
+            {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id'%}
+              {%if value == True %}
+                <tr>
+                  <td><strong>{{ field|title }}:</strong></td> <td>Yes</td>
+                </tr>
+
+              {%elif value == False%}
+                <tr>
+                  <td><strong>{{ field|title }}:</strong></td> <td>No</td>
+                </tr>
+              {%else%}
+                <tr>
+                  <td><strong>{{ field|title }}:</strong></td> <td>{{ value|title }}</td>
+                </tr>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </tbody>
+
+      </table>
       <hr>
         <h2>Add Review</h2>
         <form method="post">
