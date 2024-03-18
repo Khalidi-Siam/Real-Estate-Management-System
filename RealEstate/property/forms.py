@@ -26,3 +26,10 @@ class ResidentialPropertyForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built']
 
+class PropertyTypeForm(forms.Form):
+    Type = forms.ChoiceField(choices=[
+        ('commercial', 'Commercial'),
+        ('land', 'Land'),
+        ('residential', 'Residential')
+    ])
+
