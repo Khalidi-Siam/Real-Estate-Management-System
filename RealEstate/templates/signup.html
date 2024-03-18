@@ -75,8 +75,8 @@ $(document).ready(function() {
       return;
     }
 
-    if (password.length <= 6) {
-      $('#password-error').text("Password must be greater than 6 characters.");
+    if (password.length <= 7) {
+      $('#password-error').text("Password must be atleast 8 characters long.");
       return;
     }
 

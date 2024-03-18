@@ -27,13 +27,16 @@ def password_reset_confirm(request, uidb64, token):
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
+                messages.success(request, "Your password has been reset sucessfully.")
                 # Redirect to reset confirmation page after password reset
-                return redirect('password_reset_complete')
+                return redirect('login')
         else:
             form = SetPasswordForm(user)
         return render(request, 'password_reset_confirm.html', {'form': form})
     else:
-        return render(request, 'password_reset_invalid.html')
+        messages.error(request, "The password reset link is invalid")
+        return redirect('password_reset')
+    
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -51,6 +54,9 @@ def signup(request):
 
             messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')
+        
+        else:
+            messages.error(request, "The email already in use")
     
     else:
         form = SignUpForm()
@@ -121,7 +127,6 @@ def edit_profile(request):
             return redirect('profile')
         
     else:
-        print(user_profile)
         form = EditProfileForm(instance=user_profile)
 
     return render(request, 'edit_profile.html', {'form':form})

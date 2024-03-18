@@ -7,13 +7,18 @@ from django.db.models import Q
 
 def add_property(request):
     if request.session.get('isLoggedIn', False):
+        
         if request.method == 'POST':
-            selected_type = request.POST.get('Type')
-            if selected_type in ['commercial', 'land', 'residential']:
+            form = PropertyTypeForm(request.POST)
+            if form.is_valid():
+                selected_type = form.cleaned_data['Type']
+                if selected_type in ['commercial', 'land', 'residential']:                    
+                    return redirect('add_property_data', property_type=selected_type)
                 
-                return redirect('add_property_data', property_type=selected_type)
+        else:
+            form = PropertyTypeForm()
 
-        return render(request, 'add_property.html')
+        return render(request, 'add_property.html', {'form':form})
 
     else:
         return redirect('signin')
