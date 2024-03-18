@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from authentication import views as authentic_view
 from authentication.views import signin,password_reset_confirm 
-from property.views import calculate
+
 urlpatterns = [
     path('', include('basic.urls')),
     path('admin/', admin.site.urls),

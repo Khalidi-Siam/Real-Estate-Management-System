@@ -1,38 +1,27 @@
-{%extends "base.html"%}
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
 
-{%load static%}
+{% block title %}
+<title>Sign In</title>
+{% endblock %}
 
-
-{%block title%} <title>Sign In</title>{% endblock %}
-
-{%block content%}
-    <div class="container">
-        <div class="row justify-content-center align-items-center min-vh-100">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="text-center">Sign IN</h2>
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Email</label>
-                                <input type="text" name="username" id="username" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" name="password" id="password" class="form-control" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Sign in</button>
-                            <p> Forget Password? <a href = "{% url 'password_reset' %}">RESET NOW! </a></p>
-                        </form>
-                    </div>
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center">Sign IN</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                        <p> Forget Password? <a href="{% url 'password_reset' %}">RESET NOW! </a></p>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-
-
-
-{%endblock%}
+</div>
+{% endblock %}

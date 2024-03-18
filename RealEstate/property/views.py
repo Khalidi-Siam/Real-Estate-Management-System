@@ -108,5 +108,20 @@ def property_list(request):
 def property_type(request):
     return render(request, "property_type.html")
 
+
 def calculate(request):
-    return render(request, "Calculate.html")
+    if request.method == 'POST':
+        form = PropertyCalculatorForm(request.POST)
+        if form.is_valid():
+            per_sqft_price = form.cleaned_data['per_sqft_price']
+            total_sqft = form.cleaned_data['total_sqft']
+            parking_sqft = form.cleaned_data['parking_sqft']
+            parking_price_per_sqft = form.cleaned_data['parking_price_per_sqft']
+            
+            total_amount = (per_sqft_price * total_sqft) + (parking_sqft * parking_price_per_sqft)
+            
+            return render(request, 'Calculate.html', {'form': form, 'total_amount': total_amount})
+    else:
+        form = PropertyCalculatorForm()
+
+    return render(request, 'Calculate.html', {'form': form})
