@@ -33,3 +33,12 @@ class PropertyTypeForm(forms.Form):
         ('residential', 'Residential')
     ])
 
+
+
+class PropertyCalculatorForm(forms.Form):
+    per_sqft_price = forms.FloatField(label='Per Square Feet Price', required=True)
+    total_sqft = forms.FloatField(label='Total Square Feet', required=True)
+    parking_sqft = forms.FloatField(label='Parking Square Feet', required=True)
+    parking_price_per_sqft = forms.FloatField(label='Parking per Square Feet Price', required=True)
+
+

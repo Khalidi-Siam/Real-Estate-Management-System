@@ -55,8 +55,6 @@ def signup(request):
             messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')
         
-        else:
-            messages.error(request, "The email already in use")
     
     else:
         form = SignUpForm()
@@ -79,13 +77,6 @@ def signin(request):
                 request.session['isLoggedIn'] = True
                 messages.success(request, "Successfully Signed in")
                 return redirect("/")
-            
-            else:
-                messages.error(request, "Invalid credentials")
-
-        else:
-            messages.error(request, "Invalid Credentials")
-                
     
     else:        
         form = SignInForm()
