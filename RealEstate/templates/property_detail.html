@@ -1,39 +1,51 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{%block title%}
+<title> Property Details </title>
+{%endblock%}
+
 {% block content %}
-
 <div class="container mt-5">
-  <h1>{{ property_fields.Property_Name }}</h1>
   <div class="row">
+    <!-- Property Image Section -->
     <div class="col-md-6">
-      <img class="img-fluid" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}" style="width: 500px; height: 400px;">
+      <div class="card shadow-lg">
+        <img class="card-img-top img-fluid rounded-top" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}">
+      </div>
     </div>
-    <hr>  
-      <table class="table">
-        <tbody>
-          {% for field, value in property_fields.items %}
-            {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id'%}
-              {%if value == True %}
-                <tr>
-                  <td><strong>{{ field|title }}:</strong></td> <td>Yes</td>
-                </tr>
-
-              {%elif value == False%}
-                <tr>
-                  <td><strong>{{ field|title }}:</strong></td> <td>No</td>
-                </tr>
-              {%else%}
-                <tr>
-                  <td><strong>{{ field|title }}:</strong></td> <td>{{ value|title }}</td>
-                </tr>
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
+    
+    <!-- Property Details Section -->
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">{{ property_fields.Property_Name }}</h1>
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                {% for field, value in property_fields.items %}
+                  {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' %}
+                    <tr>
+                      <th class="text-muted">{{ field|title }}</th>
+                      <td>
+                        {% if value == True %}
+                          <span class="text-success">&#10004;</span> <!-- Green tick -->
+                        {% elif value == False %}
+                          <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                        {% else %}
+                          {{ value|title }}
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-
 {% endblock %}
-

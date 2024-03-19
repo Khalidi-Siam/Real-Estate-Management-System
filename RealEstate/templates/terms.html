@@ -1,37 +1,35 @@
 {% extends "base.html" %}
-{%load static%}
+{% load static %}
 
-{%block title%} <title>Terms&Conditions</title>{% endblock %}
+{% block title %}
+<title>Terms & Conditions</title>
+{% endblock %}
 
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="mb-4">Terms and Conditions</h1>
+                    <p class="lead">Welcome to our real estate website. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions:</p>
 
-{%block getStarted%}
-{%include "partials/_getStarted.html"%}
-{%endblock%}
+                    <h3 class="mt-5">1. Use of Website</h3>
+                    <p>Your use of the website is subject to the terms and conditions outlined in this agreement...</p>
 
-{%block search%}
-{%include "partials/_search.html"%}
-{%endblock%}
+                    <h3 class="mt-5">2. Intellectual Property</h3>
+                    <p>The content, trademarks, logos, and other intellectual property displayed on the website are owned by us...</p>
 
+                    <h3 class="mt-5">3. Privacy Policy</h3>
+                    <p>Our Privacy Policy details how we collect, use, and protect your personal information...</p>
 
+                    <!-- More terms and conditions here -->
 
-{%block content%}
-<div class="container">
-            <h1>Terms and Conditions</h1>
-            <p>Welcome to our real estate website. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions:</p>
-            
-            <h3>1. Use of Website</h3>
-            <p>Your use of the website is subject to the terms and conditions set forth in this agreement...</p>
-    
-            <h3>2. Intellectual Property</h3>
-            <p>The content, trademarks, logos, and other intellectual property displayed on the website are owned by us...</p>
-    
-            <h3>3. Privacy Policy</h3>
-            <p>Our Privacy Policy outlines how we collect, use, and protect your personal information...</p>
-    
-            <!-- More terms and conditions here -->
-    
-            <h3>Contact Us</h3>
-            <p>If you have any questions about these terms and conditions, please <a href = 'contact'> contact us. </a> </p>
+                    <h3 class="mt-5">Contact Us</h3>
+                    <p>If you have any questions about these terms and conditions, please <a href="contact" class="text-decoration-none">contact us</a>.</p>
+                </div>
+            </div>
         </div>
-
-{%endblock%}
+    </div>
+</div>
+{% endblock %}
