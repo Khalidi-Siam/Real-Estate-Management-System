@@ -41,9 +41,18 @@ class SignUpForm(forms.ModelForm):
 
 
 class SignInForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': (
+            "Invalid email or password. Please try again."
+        ),
+    }
     class Meta:
         model = User
         fields = ['username', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Email'
 
 
 class EditProfileForm(forms.ModelForm):
@@ -62,8 +71,7 @@ class EditProfileForm(forms.ModelForm):
         if User.objects.exclude(pk = self.instance.user.pk).filter(email = email).exists():
             raise forms.ValidationError("This email already Exists")
         
-        return email
-    
+        return email   
 
 
 class PasswordResetConfirmForm(forms.Form):

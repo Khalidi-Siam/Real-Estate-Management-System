@@ -1,49 +1,41 @@
 {% extends "base.html" %}
-{%load static%}
+{% load static %}
 
-{%block title%} <title>FAQs</title>{% endblock %}
+{% block title %}
+<title>FAQs</title>
+{% endblock %}
 
-
-{%block getStarted%}
-{%include "partials/_getStarted.html"%}
-{%endblock%}
-
-{%block search%}
-{%include "partials/_search.html"%}
-{%endblock%}
-
-
-{%block content%}
+{% block content %}
 <!-- FAQS section start -->
-<div class="container">
-    <h2>Frequently Asked Questions</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Frequently Asked Questions</h2>
     <div class="accordion" id="faqAccordion">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Question 1: What is Hunters Real Estate?
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <strong>Question 1:</strong> What is Hunters Real Estate?
                 </button>
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
-                    Hunters Real Estate is your trusted partner in hunting down your dream home. Here you will find wide Range of Properties for Sale and Rent
+                    Hunters Real Estate is your trusted partner in hunting down your dream home. Here you will find a wide range of properties for sale and rent.
                 </div>
             </div>
         </div>
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingTwo">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Question 2: How can I contact support?
+                    <strong>Question 2:</strong> How can I contact support?
                 </button>
             </h2>
             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
                 <div class="accordion-body">
-                    You can contact our support team through email or phone. You will find our contact info<a href = 'contact'> here </a>.
+                    You can contact our support team through email or phone. You will find our contact info <a href="contact" class="text-decoration-none">here</a>.
                 </div>
             </div>
         </div>
         <!-- More accordion items here -->
     </div>
 </div>
-{%endblock%}
+{% endblock %}
 <!-- FAQS section end -->

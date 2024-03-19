@@ -76,7 +76,11 @@ def signin(request):
                 login(request, user)
                 request.session['isLoggedIn'] = True
                 messages.success(request, "Successfully Signed in")
-                return redirect("/")
+                next_url = request.GET.get('next')
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    return redirect("/")
     
     else:        
         form = SignInForm()
