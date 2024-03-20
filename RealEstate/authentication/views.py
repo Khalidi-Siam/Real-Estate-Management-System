@@ -125,3 +125,14 @@ def edit_profile(request):
         form = EditProfileForm(instance=user_profile)
 
     return render(request, 'edit_profile.html', {'form':form})
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        request.user.delete()
+        logout(request)
+        messages.success(request, "Account deleted successfully")
+        return redirect('/')
+    
+    else:
+        return redirect('profile')
