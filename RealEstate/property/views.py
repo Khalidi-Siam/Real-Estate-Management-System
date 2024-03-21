@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, UserProfile
 from .forms import *
 from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from urllib.parse import urlencode
 
 def add_property(request):
     if request.session.get('isLoggedIn', False):
@@ -100,6 +100,7 @@ def property_list(request):
 
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
+    saved_searches = SavedSearch.objects.filter(user=request.user)[:5]
 
     # Check if form is submitted and valid
     if filter_form.is_valid():
@@ -143,9 +144,20 @@ def property_list(request):
         elif ordering_choice == 'price_desc':
             properties = properties.order_by('-Price')
 
+    saved_search_name = request.GET.get('saved_search_name')
+    if saved_search_name:
+        if request.user.is_authenticated:  
+            existing_search = SavedSearch.objects.filter(user=request.user, name=saved_search_name).first()
+            if not existing_search:
+                SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = request.GET.dict())
+
+        else:
+            return redirect(reverse('signin') + '?next=' + request.path)
+
     context = {
         'filtered_properties': properties,
         'filter_form': filter_form,
+        'saved_searches':saved_searches,
     }
     return render(request, 'property_list.html', context)
 
@@ -171,3 +183,26 @@ def calculate(request):
         form = PropertyCalculatorForm()
 
     return render(request, 'Calculate.html', {'form': form})
+
+
+def saved_searches(request):
+    if request.user.is_authenticated:
+        saved_searches = SavedSearch.objects.filter(user=request.user)
+        return render(request, 'saved_searches.html', {'saved_searches': saved_searches})
+    
+    else:
+        return render(request, "signin.html")
+    
+@login_required
+def delete_saved_search(request, saved_search_id):
+    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+    if saved_search.user == request.user:
+        saved_search.delete()
+    return redirect('saved_searches')
+    
+
+def apply_saved_search(request, saved_search_id):
+    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+    criteria_str = urlencode(saved_search.criteria)
+    # Redirect to property list page with saved search criteria in the query string
+    return redirect(reverse('property_list') + '?' + criteria_str)

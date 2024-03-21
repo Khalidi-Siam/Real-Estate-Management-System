@@ -1,6 +1,7 @@
 from django.db import models
 from authentication.models import UserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 # Create your models here.
 class AllProperty(models.Model):
     PROPERTY_TYPES = (
@@ -99,3 +100,11 @@ class LandProperty(AllProperty):
     Road_size_in_sqft = models.IntegerField
     Is_fenced = models.BooleanField(default=False)
 
+
+class SavedSearch(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    criteria = models.JSONField()  # Store filter criteria as JSON data
+
+    def __str__(self):
+        return self.name
