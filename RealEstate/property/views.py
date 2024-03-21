@@ -107,36 +107,20 @@ def property_list(request):
         cleaned_data = filter_form.cleaned_data
         property_type = cleaned_data.get('property_type')
         property_on = cleaned_data.get('property_on')
-
-        # if property_on:
-        #     if property_on == "rent":
-        #         properties.filter(Property_on = "rent")
-
-        #     elif property_on == "sell":
-        #         properties.filter(Property_on ="sell")
-
-        city = cleaned_data.get('city')
-        price_min = cleaned_data.get('price_min')
-        price_max = cleaned_data.get('price_max')
+        area = cleaned_data.get('area')
 
         # Filter properties based on form data
         properties = properties.filter(Property_type=property_type) if property_type else properties
         properties = properties.filter(Property_on=property_on) if property_on else properties
-        properties = properties.filter(City=city) if city else properties
-        properties = properties.filter(Price__gte=price_min) if price_min else properties
-        properties = properties.filter(Price__lte=price_max) if price_max else properties
+        properties = properties.filter(Area=area) if area else properties
 
         # Additional filters based on property type
         if property_type == 'residential':
             bedrooms = cleaned_data.get('bedrooms')
             bathrooms = cleaned_data.get('bathrooms')
-            year_min = cleaned_data.get('year_min')
-            year_max = cleaned_data.get('year_max')
 
             properties = properties.filter(residentialproperty__Bedrooms=bedrooms) if bedrooms else properties
             properties = properties.filter(residentialproperty__Bathrooms=bathrooms) if bathrooms else properties
-            properties = properties.filter(residentialproperty__Year__gte=year_min) if year_min else properties
-            properties = properties.filter(residentialproperty__Year__lte=year_max) if year_max else properties
 
         elif property_type == 'commercial':
             business_type = cleaned_data.get('business_type')
@@ -149,18 +133,22 @@ def property_list(request):
 
         elif property_type == 'land':
             land_type = cleaned_data.get('land_type')
-            road_size_min = cleaned_data.get('road_size_min')
-            road_size_max = cleaned_data.get('road_size_max')
 
             properties = properties.filter(landproperty__Land_type=land_type) if land_type else properties
-            properties = properties.filter(landproperty__Road_size_in_sqft__gte=road_size_min) if road_size_min else properties
-            properties = properties.filter(landproperty__Road_size_in_sqft__lte=road_size_max) if road_size_max else properties
+
+
+        ordering_choice = cleaned_data.get('ordering_choices')
+        if ordering_choice == 'price_asc':
+            properties = properties.order_by('Price')
+        elif ordering_choice == 'price_desc':
+            properties = properties.order_by('-Price')
 
     context = {
         'filtered_properties': properties,
         'filter_form': filter_form,
     }
     return render(request, 'property_list.html', context)
+
 
 
 def property_type(request):

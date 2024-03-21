@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load property_filters %}
 {%block title%}
 <title> Property Details </title>
 {%endblock%}
@@ -24,14 +24,16 @@
             <table class="table table-borderless">
               <tbody>
                 {% for field, value in property_fields.items %}
-                  {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' %}
+                  {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description'%}
                     <tr>
-                      <th class="text-muted">{{ field|title }}</th>
+                      <th class="text-muted">{{ field|format_field_name }}</th>
                       <td>
-                        {% if value == True %}
-                          <span class="text-success">&#10004;</span> <!-- Green tick -->
-                        {% elif value == False %}
-                          <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                        {%if value|get_type == 'bool'%}
+                          {% if value == True %}
+                            <span class="text-success">&#10004;</span> <!-- Green tick -->
+                          {% else %}
+                            <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                          {%endif%}
                         {% else %}
                           {{ value|title }}
                         {% endif %}
@@ -42,6 +44,16 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h5 class="card-title">Property Description</h5>
+          <p>{{ property_fields.Property_Description }}</p>
         </div>
       </div>
     </div>

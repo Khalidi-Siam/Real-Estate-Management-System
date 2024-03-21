@@ -4,29 +4,30 @@
         <div class="container">
             <div class="row g-2">
                 <div class="col-md-10">
-                    {% comment %} <form method="GET" action="{% url 'property-list' %}"> {% endcomment %}
+                    <form method="get" action="{% url 'property_list' %}">
                         <div class="row g-2">
                             <div class="col-md-4">
-                                <select class="form-select border-0 py-3" name="Sale/Rent">
-                                    <option selected>Sale/Rent</option>
-                                    <option value="residential">Sale</option>
-                                    <option value="commercial">Rent</option>
+                                <select class="form-select border-0 py-3" id="property_on" name="property_on">
+                                    <option value="">All</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="rent">Rent</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-select border-0 py-3" name="property_type">
-                                    <option selected>Property Type</option>
+                                <select class="form-select border-0 py-3" id="property_type" name="property_type">
+                                    <option value="">All</option>
                                     <option value="residential">Residential</option>
                                     <option value="commercial">Commercial</option>
                                     <option value="land">Land</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <select class="form-select border-0 py-3" name="location">
-                                    <option selected>Location</option>
-                                    <option value="Dhaka">Dhaka</option>
-                                    <option value="Rajshahi">Rajshahi</option>
-                                    <option value="Barisal">Barisal</option>
+                                <select class="form-select border-0 py-3" id="area" name="area">
+                                    <option value="">Area</option>
+                                    <option value="Gulshan">Gulshan</option>
+                                    <option value="Banani">Banani</option>
+                                    <option value="Dhanmondi">Dhanmondi</option>
+                                    <option value="Bashundhara R/A">Bashundhara R/A</option>
                                 </select>
                             </div>
                         </div>

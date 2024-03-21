@@ -38,7 +38,7 @@
                         {%if review.user.profile_picture%}
                             <img class="img-fluid flex-shrink-0 rounded" src="{{review.user.profile_picture.url}}" style="width: 45px; height: 45px;">
                         {%else%}
-                            <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
+                            <i class="bi bi-person-circle" style="font-size: 45px;"></i>
                         {%endif%}
                         <div class="ps-3">
                             <h6 class="fw-bold mb-1">{{ review.user.name }}</h6>
