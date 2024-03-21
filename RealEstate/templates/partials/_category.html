@@ -8,7 +8,7 @@
         </div>
         <div class="row g-4">
             <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=residential">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="{% url 'property_list' %}?property_type=residential">
                     <div class="rounded p-4">
                         <div class="icon mb-3">
                             <img class="img-fluid" src="{% static 'img/icon-apartment.png' %}" alt="Icon">
@@ -19,7 +19,7 @@
                 </a>
             </div>
             <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=commercial">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="{% url 'property_list' %}?property_type=commercial">
                     <div class="rounded p-4">
                         <div class="icon mb-3">
                             <img class="img-fluid" src="{% static 'img/icon-villa.png' %}" alt="Icon">
@@ -30,7 +30,7 @@
                 </a>
             </div>
             <div class="col-lg-3 col-sm-6 wow fadeInUp">
-                <a class="cat-item d-block bg-light text-center rounded p-3" href="?type=land">
+                <a class="cat-item d-block bg-light text-center rounded p-3" href="{% url 'property_list' %}?property_type=land">
                     <div class="rounded p-4">
                         <div class="icon mb-3">
                             <img class="img-fluid" src="{% static 'img/icon-house.png' %}" alt="Icon">

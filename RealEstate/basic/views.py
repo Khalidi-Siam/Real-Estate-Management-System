@@ -3,6 +3,7 @@ from authentication.models import UserProfile
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.urls import reverse
 # Create your views here.
 
 def about(request):
@@ -40,7 +41,7 @@ def testimonial(request):
                     return redirect('testimonial')
         
         else:
-            return redirect('signin')
+            return redirect(reverse('signin') + '?next=' + request.path)
         
     else:
         form = ReviewForm()

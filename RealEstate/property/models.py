@@ -10,8 +10,19 @@ class AllProperty(models.Model):
     )
     Action = (
         ('rent','Rent'),
-        ('sell','Sell'),
+        ('sale','Sale'),
     )
+
+    CITY_CHOICES = (
+        ('Dhaka', 'Dhaka'),
+    )
+    AREA_CHOICES = (
+        ('Gulshan', 'Gulshan'),
+        ('Banani', 'Banani'),
+        ('Dhanmondi', 'Dhanmondi'),
+        ('Bashundhara R/A', 'Bashundhara R/A'),
+    )
+
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='properties', null = True)
     Property_Name = models.CharField(max_length=200)
     Property_Description = models.TextField(null=True, blank=True)
@@ -20,9 +31,9 @@ class AllProperty(models.Model):
     Property_Pictures = models.ImageField(upload_to='pics',default=None)
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
-    City = models.CharField(max_length=100)
+    City = models.CharField(max_length=100, choices=CITY_CHOICES)
     Postal_code = models.CharField(max_length=4)
-    District = models.CharField(max_length=100)
+    Area = models.CharField(max_length=100, choices=AREA_CHOICES)
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
 

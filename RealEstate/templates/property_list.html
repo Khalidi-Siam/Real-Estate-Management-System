@@ -22,9 +22,9 @@
                             <label for="property_type" class="form-label">Property Type</label>
                             <select class="form-select" id="property_type" name="property_type">
                                 <option value="">All</option>
-                                <option value="residential">Residential</option>
-                                <option value="commercial">Commercial</option>
-                                <option value="land">Land</option>
+                                <option value="residential" {% if request.GET.property_type == "residential" %} selected {% endif %}>Residential</option>
+                                <option value="commercial" {% if request.GET.property_type == "commercial" %} selected {% endif %}>Commercial</option>
+                                <option value="land" {% if request.GET.property_type == "land" %} selected {% endif %}>Land</option>
                             </select>
                         </div>
                         <!-- Bedrooms -->
@@ -40,83 +40,107 @@
                         <!-- Business Type -->
                         <div class="mb-3" id="business_type_field" style="display: none;">
                             <label for="business_type" class="form-label">Business Type</label>
-                            <input type="text" class="form-control" id="business_type" name="business_type" placeholder="Business Type">
+                            <select class="form-select" id="business_type" name="business_type">
+                                <option value="">All</option>
+                                <option value="office" {% if request.GET.business_type == "office" %} selected {% endif %}>Office</option>
+                                <option value="community_center" {% if request.GET.business_type == "community_center" %} selected {% endif %}>Community Center</option>
+                                <option value="shop" {% if request.GET.business_type == "shop" %} selected {% endif %}>Shop</option>
+                                <option value="other" {% if request.GET.business_type == "other" %} selected {% endif %}>Other</option>
+                            </select>
                         </div>
                         <!-- Land Type -->
                         <div class="mb-3" id="land_type_field" style="display: none;">
                             <label for="land_type" class="form-label">Land Type</label>
-                            <input type="text" class="form-control" id="land_type" name="land_type" placeholder="Land Type">
+                            <select class="form-select" id="land_type" name="land_type">
+                                <option value="">All</option>
+                                <option value="Farmland" {% if request.GET.land_type == "Farmland" %} selected {% endif %}>Farmland</option>
+                                <option value="Playground" {% if request.GET.land_type == "Playground" %} selected {% endif %}>Playground</option>
+                                <option value="warehouse" {% if request.GET.land_type == "warehouse" %} selected {% endif %}>Warehouse</option>
+                            </select>
                         </div>
                         <!-- Property On -->
                         <div class="mb-3">
                             <label for="property_on" class="form-label">Property On</label>
                             <select class="form-select" id="property_on" name="property_on">
                                 <option value="">All</option>
-                                <option value="sell">Sell</option>
-                                <option value="rent">Rent</option>
+                                <option value="sale" {% if request.GET.property_on == "sale" %} selected {% endif %}>Sale</option>
+                                <option value="rent" {% if request.GET.property_on == "rent" %} selected {% endif %}>Rent</option>
                             </select>
                         </div>
-                        <!-- City -->
+                        <!-- Area -->
                         <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                            <label for="area" class="form-label">Area</label>
+                            <select class="form-select" id="area" name="area">
+                                <option value="">Area</option>
+                                <option value="Gulshan" {% if request.GET.area == "Gulshan" %} selected {% endif %}>Gulshan</option>
+                                <option value="Banani" {% if request.GET.area == "Banani" %} selected {% endif %}>Banani</option>
+                                <option value="Dhanmondi" {% if request.GET.area == "Dhanmondi" %} selected {% endif %}>Dhanmondi</option>
+                                <option value="Bashundhara R/A" {% if request.GET.area == "Bashundhara R/A" %} selected {% endif %}>Bashundhara R/A</option>
+                            </select>
                         </div>
-                        <!-- Price Range -->
+                        <!-- Ordering -->
                         <div class="mb-3">
-                            <label for="price_min" class="form-label">Min Price</label>
-                            <input type="number" class="form-control" id="price_min" name="price_min" placeholder="Min Price">
+                            <label for="ordering_choices" class="form-label">Order By</label>
+                            <select class="form-select" id="ordering_choices" name="ordering_choices">
+                                <option value="">Price: Low to High</option>
+                                <option value="price_desc" {% if request.GET.ordering_choices == "price_desc" %} selected {% endif %}>Price: High to Low</option>
+                            </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="price_max" class="form-label">Max Price</label>
-                            <input type="number" class="form-control" id="price_max" name="price_max" placeholder="Max Price">
-                        </div>
+
                         <button type="submit" class="btn btn-primary">Apply Filters</button>
                     </form>
                 </div>
             </div>
         </div>
+
         <div class="col-md-9">
             <!-- Property List as Right-side Panel -->
             <div class="property-list-container" style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;">
                 <div class="row g-4">
-                    {% for property in filtered_properties %}
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="property-item rounded overflow-hidden">
-                            <!-- Property details -->
-                            <div class="position-relative overflow-hidden">
-                                <a href="{% url 'property_detail' pk=property.pk %}">
-                                    {% comment %} <img class="img-fluid property-image" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name }}"> {% endcomment %}
-                                    <img class="img-fluid" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name }}" style="width: 350px; height: 250px;">
-                                </a>
-                                <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">{{ property.Property_on }}</div>
-                                <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">{{ property.Property_type }}</div>
+                    {%if filtered_properties%}
+                        {% for property in filtered_properties %}
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="property-item rounded overflow-hidden">
+                                <!-- Property details -->
+                                <div class="position-relative overflow-hidden">
+                                    <a href="{% url 'property_detail' pk=property.pk %}">
+                                        {% comment %} <img class="img-fluid property-image" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name }}"> {% endcomment %}
+                                        <img class="img-fluid" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name }}" style="width: 350px; height: 250px;">
+                                    </a>
+                                    <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">{{ property.Property_on }}</div>
+                                    <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">{{ property.Property_type }}</div>
+                                </div>
+                                <div class="p-4 pb-0">
+                                    <h5 class="text-primary mb-3">${{ property.Price }}</h5>
+                                    <a class="d-block h5 mb-2" href="{% url 'property_detail' pk=property.pk %}">{{ property.Property_Name }}</a>
+                                    <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ property.City }}, {{ property.Postal_code }}</p>
+                                </div>
+                                {% if property.Property_type == "residential"%}
+                                    <div class="d-flex border-top">
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i>{{ property.residentialproperty.Bedrooms }} Bed</small>
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-bath text-primary me-2"></i>{{ property.residentialproperty.Bathrooms }} Bath</small>    
+                                        <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
+                                    </div>
+                                {% elif property.Property_type == "commercial" %}
+                                    <div class="d-flex border-top">
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.commercialproperty.Business_type }}</small>
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-car text-primary me-2"></i>{{ property.commercialproperty.Parking_spaces }} Sqft</small>    
+                                        <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
+                                    </div>
+                                {% elif property.Property_type == "land" %}
+                                    <div class="d-flex border-top">
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.landproperty.Land_type }}</small>
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft}} Sqft</small>    
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="p-4 pb-0">
-                                <h5 class="text-primary mb-3">${{ property.Price }}</h5>
-                                <a class="d-block h5 mb-2" href="{% url 'property_detail' pk=property.pk %}">{{ property.Property_Name }}</a>
-                                <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ property.City }}, {{ property.Postal_code }}</p>
-                            </div>
-                            {% if property.Property_type == "residential"%}
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i>{{ property.residentialproperty.Bedrooms }} Bed</small>
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-bath text-primary me-2"></i>{{ property.residentialproperty.Bathrooms }} Bath</small>    
-                                    <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
-                                </div>
-                            {% elif property.Property_type == "commercial" %}
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.commercialproperty.Business_type }}</small>
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-car text-primary me-2"></i>{{ property.commercialproperty.Parking_spaces }} Sqft</small>    
-                                    <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
-                                </div>
-                            {% elif property.Property_type == "land" %}
-                                <div class="d-flex border-top">
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.landproperty.Land_type }}</small>
-                                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft}} Sqft</small>    
-                                </div>
-                            {% endif %}
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-lg-12 text-center my-5">
+                            <h2 class="text-muted">No results found.</h2>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -124,13 +148,11 @@
 </div>
 
 
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#property_type').change(function() {
-            var propertyType = $(this).val();
+        // Function to show relevant fields based on the selected property type
+        function showFieldsForPropertyType(propertyType) {
             if (propertyType == 'residential') {
                 $('#bedrooms_field').show();
                 $('#bathrooms_field').show();
@@ -152,8 +174,28 @@
                 $('#business_type_field').hide();
                 $('#land_type_field').hide();
             }
+        }
+        
+        // Get the initial property type from the URL query parameter
+        var initialPropertyType = getUrlParameter('property_type');
+        // Show fields based on the initial property type selection
+        showFieldsForPropertyType(initialPropertyType);
+        
+        // Change event handler for property type selection
+        $('#property_type').change(function() {
+            var propertyType = $(this).val();
+            showFieldsForPropertyType(propertyType);
         });
+        
+        // Function to get URL query parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
     });
 </script>
+
 {% endblock %}
 
