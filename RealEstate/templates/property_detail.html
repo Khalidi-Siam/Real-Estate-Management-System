@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
 {% load property_filters %}
@@ -54,6 +56,11 @@
         <div class="card-body">
           <h5 class="card-title">Property Description</h5>
           <p>{{ property_fields.Property_Description }}</p>
+          
+          {%if request.user.id == property_fields.user_id %}
+          
+          <a href="{% url 'update_property' property_fields.id %}" class="btn btn-primary">Update Property</a>
+          {% endif %}
         </div>
       </div>
     </div>

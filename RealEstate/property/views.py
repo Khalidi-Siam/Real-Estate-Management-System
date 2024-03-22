@@ -1,3 +1,5 @@
+
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, UserProfile
 from .forms import *
@@ -91,13 +93,13 @@ def property_detail(request, pk):
         property_fields['Property_Pictures'] = property_instance.Property_Pictures
 
 
-    return render(request, "property_detail.html", {'property_fields':property_fields})
+    return render(request, "property_detail.html", {'property_fields':property_fields,'property.id':pk})
 
 
 
 def property_list(request):
 
-    total_list = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
+    properties = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
     
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
@@ -221,7 +223,6 @@ def apply_saved_search(request, saved_search_id):
 def posted_properties(request):
     if request.user.is_authenticated:
         properties = AllProperty.objects.filter(user=request.user.UserProfile)
-        print(properties)
-        return render(request, 'posted_properties.html', {'properties': properties})
+        return render(request, 'posted_properties.html', {'filtered_properties': properties})
     else:
         return redirect('signin')
