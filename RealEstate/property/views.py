@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, UserProfile
 from .forms import *
@@ -48,7 +46,7 @@ def add_property_data(request, property_type):
             property_instance.Property_type = property_type
             property_instance.save()
 
-            messages.success(request, "Property added Successfully")
+            messages.success(request, "Property added Successfully. Wait for the approval")
             return redirect('property_list')
 
         else:
@@ -225,4 +223,5 @@ def posted_properties(request):
         properties = AllProperty.objects.filter(user=request.user.UserProfile)
         return render(request, 'posted_properties.html', {'filtered_properties': properties})
     else:
-        return redirect('signin')
+        return redirect(reverse('signin') + '?next=' + request.path)
+    
