@@ -438,3 +438,16 @@
     padding-right: 0;
     border-right: none;
 }
+
+/* Adjust width of email input field dynamically */
+#email-input {
+    width: calc(100% - 90px); /* Adjust as needed based on your button size and spacing */
+    max-width: calc(100% - 90px); /* Add max-width to prevent overlap */
+    transition: width 0.3s ease; /* Add transition for smoother resizing */
+}
+
+/* Adjust width of email input field dynamically when focused */
+#email-input:focus {
+    width: calc(100% - 90px); /* Adjust as needed based on your button size and spacing */
+    max-width: calc(100% - 90px); /* Add max-width to prevent overlap */
+}

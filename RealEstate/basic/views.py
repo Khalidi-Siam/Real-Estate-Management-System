@@ -3,7 +3,14 @@ from authentication.models import UserProfile
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.core.mail import send_mail
+import os
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from django.conf import settings  
 from django.urls import reverse
+
 # Create your views here.
 
 def about(request):
@@ -54,3 +61,60 @@ def home(request):
 
 def notFound(request):
     return render(request, "404.html")
+
+
+
+def subscribe(request):
+    if request.method == 'POST':
+        form = SubscribeForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            
+            # Send email
+            subject = 'Thank you for subscribing!'
+            message = 'We appreciate your subscription.'
+            from_email = os.environ.get('DB_MAIL')  # Replace with your email
+            recipient_list = [email]
+            
+            send_mail(subject, message, from_email, recipient_list)
+            
+            form.save()
+            return render(request, 'base.html', {'form': SubscribeForm(), 'success': True})
+    else:
+        form = SubscribeForm()
+    return render(request, 'base.html', {'form': form})
+
+
+
+def send_email(request):
+    if request.method == 'POST':
+        form = SendEmailForm(request.POST, request.FILES)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+
+            # Fetching subscribers' email addresses
+            subscribers = Subscriber.objects.values_list('email', flat=True)
+
+            # Creating email message
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=settings.EMAIL_HOST_USER,  # Use host email from Django settings
+                to=subscribers,  # Using subscribers' email addresses
+            )
+
+            # Adding attachment if exists
+            attachment = request.FILES.get('attachment')
+            if attachment:
+                email.attach(attachment.name, attachment.read(), attachment.content_type)
+
+            # Sending email
+            try:
+                email.send()
+                return HttpResponse('Email sent successfully!')
+            except Exception as e:
+                return HttpResponse(f'Failed to send email. Error: {e}')
+    else:
+        form = SendEmailForm()
+    return render(request, 'send_email.html', {'form': form})

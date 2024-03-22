@@ -67,13 +67,20 @@
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="{% url 'property_list' %}" class="dropdown-item">Property List</a>
                                 <a href="{% url 'property_type' %}" class="dropdown-item">Property Type</a>
+
+                        
                                 <a href="{% url 'posted_properties' %}" class="dropdown-item">View Posted Properties</a>
                                 <a href="{% url 'calculate' %}" class="dropdown-item"> Property Calculator</a>
                                 {% comment %} <a href="{% url 'property_agent' %}" class="dropdown-item">Property Agent</a> {% endcomment %}
                             </div>
                         </div>
-                        <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+			{% if request.user.UserProfile.is_agent %}
+                        <a href="{% url 'send_email' %}" class="nav-item nav-link">Send Newsletter</a>
+			{% else %}
+                        <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>s
+			{% endif %}                           
                         <a href="{%url 'saved_searches'%}?next={{request.path}}" class="nav-item nav-link"> Saved Search </a>
+
                         <div class="nav-item dropdown">
                             {% if is_logged_in %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
@@ -91,6 +98,7 @@
                         </div>
 
                     </div>
+
                     {% if request.user.UserProfile.is_agent %}
                     <a href="{% url 'agent_dashboard'%}" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
                     {% else %}
@@ -106,6 +114,7 @@
         </div>
     {% endfor %}
 {% endif %}
+
 
         {%block getStarted%}
         <!--get started part appear here-->
@@ -188,9 +197,85 @@
                     <div class="col-lg-3 col-md-6">
                         <h5 class="text-white mb-4">Newsletter</h5>
                         <p>Want to receive our updates...signup with your email</p>
-                        <div class="position-relative mx-auto" style="max-width: 400px;">
-                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Subscribe</button>
+                        <style>
+                            /* Style for the container of the email input field and button */
+                            .subscribe-container {
+                                max-width: 600px; /* Adjust max-width as needed to accommodate longer email addresses */
+                                display: flex;
+                                flex-wrap: wrap; /* Allow items to wrap to the next line */
+                            }
+                        
+                            /* Style for the email input field */
+                            #email-input {
+                                flex-grow: 1; /* Allow the input field to grow to fill available space */
+                                margin-right: 10px; /* Add spacing between input field and button */
+                                margin-bottom: 10px; /* Add spacing between rows */
+                            }
+                        
+                            /* Style for the subscribe button */
+                            #subscribe-button {
+                                flex-shrink: 0; /* Prevent the button from shrinking */
+                            }
+                        </style>
+                        
+                        <form id="subscribe-form" method="POST" action="{% url 'subscribe' %}">
+                            {% csrf_token %}
+                            <!-- Container for email input field and button -->
+                            <div class="subscribe-container">
+                                <!-- Email input field -->
+                                <input type="email" id="email-input" name="email" class="form-control bg-transparent py-3 ps-4 pe-5" placeholder="Your email">
+                                <!-- Subscribe button -->
+                                <button type="submit" id="subscribe-button" class="btn btn-primary py-2">Subscribe</button>
+                            </div>
+                            <!-- Error message container -->
+                            <div id="subscribe-message" class="mt-2"></div> <!-- This will display error messages -->
+                        </form>
+                        
+                        <script>
+                            document.getElementById('subscribe-form').addEventListener('submit', function(event) {
+                                event.preventDefault();  // Prevent default form submission behavior
+                                var formData = new FormData(this);
+                                var email = formData.get('email');
+                                
+                                // Email validation
+                                if (!isValidEmail(email)) {
+                                    document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">Please enter a valid email address.</p>';
+                                    return; // Stop further execution
+                                }
+                                
+                                fetch(this.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-CSRFToken': '{{ csrf_token }}'
+                                    }
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        // Form submission successful
+                                        document.getElementById('subscribe-message').innerHTML = '<p class="text-success">Thank you for subscribing!</p>';
+                                    } else {
+                                        // Form submission failed
+                                        document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
+                                });
+                            });
+                        
+                            // Function to validate email address
+                            function isValidEmail(email) {
+                                // Regular expression for email validation
+                                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                return emailRegex.test(email);
+                            }
+                        </script>
+                        
+                        
+                        
+                        
                         </div>
                     </div>
                 </div>
