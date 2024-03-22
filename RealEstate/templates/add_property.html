@@ -1,46 +1,35 @@
 {%extends "base.html"%}
 {%load static %}
+{% load crispy_forms_tags %}
 
-
+{%block title%}
+<title>Select Property Type</title>
+{%endblock%}
 
 {% block content %}
-{% comment %} <div class="container mt-5">
-    <h2>Add Property</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="Type" class="form-label">Property Type</label>
-            <select class="form-select" id="Type" name="Type">
-                <option value="commercial">Commercial</option>
-                <option value="land">Land</option>
-                <option value="residential">Residential</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            {{ form.Media.label_tag }} {{ form.Media }}
-        </div>
-        <div class="mb-3">
-            {{ form.Name.label_tag }} {{ form.Name }}
-        </div>
-        <div class="mb-3">
-            {{ form.Description.label_tag }} {{ form.Description }}
-        </div>
-        <!-- Add more fields as needed based on the property type -->
-        <button type="submit" class="btn btn-primary">Add Property</button>
-    </form>
-</div> {% endcomment %}
+<style>
+    .custom-form {
+        max-width: 600px; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the form horizontally */
+    }
+</style>
 
-<h1>Add Property</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="Type">Select Property Type:</label>
-        <select name="Type">
-            <option value="commercial">Commercial</option>
-            <option value="land">Land</option>
-            <option value="residential">Residential</option>
-        </select>
-        <button type="submit">Next</button>
-    </form>
+
+<style>
+    /* Center the heading horizontally */
+    h1 {
+        text-align: center;
+    }
+</style>
+<br>
+<h1>Select Property Type</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="custom-form">
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Next</button>
+    </div>
+</form>
 {% endblock %}
 
 

@@ -1,13 +1,36 @@
 {%extends "base.html" %}
 {%load static %}
+{%load crispy_forms_tags%}
+
+{%block title%}
+<title>Input {{ property_type | title }} Property Info</title>
+{%endblock%}
 
 {%block content%}
-<h1>Add {{property_type | title}} Property</h1>
+<style>
+.custom-form {
+    max-width: 600px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the form horizontally */
+}
+</style>
+
+
+<style>
+    /* Center the heading */
+    h3 {
+        text-align: center;
+    }
+</style>
 <br>
+<h3>Input {{ property_type | title }} Property Info</h3>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <div class="custom-form">
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        
     </form>
 
 {%endblock%}

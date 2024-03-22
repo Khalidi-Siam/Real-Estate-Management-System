@@ -73,6 +73,7 @@
                             </div>
                         </div>
                         <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                        <a href="{%url 'saved_searches'%}?next={{request.path}}" class="nav-item nav-link"> Saved Search </a>
                         <div class="nav-item dropdown">
                             {% if is_logged_in %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
@@ -83,7 +84,7 @@
                             {% else %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Sign in/Sign Up</a>
                                 <div class="dropdown-menu rounded-0 m-0">
-                                <a href="{%url 'signin'%}" class="dropdown-item">Sign In</a>
+                                <a href="{%url 'signin'%}?next={{request.path}}" class="dropdown-item">Sign In</a>
                                 <a href="{%url 'signup'%}" class="dropdown-item">Sign Up</a>
                                 </div>
                             {% endif %}

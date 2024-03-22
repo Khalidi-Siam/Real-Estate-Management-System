@@ -24,8 +24,8 @@ class SignUpForm(forms.ModelForm):
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
         
-        if(len(password) <= 6):
-            raise forms.ValidationError("Password must be greater than 6 character")
+        if(len(password) <= 7):
+            raise forms.ValidationError("Password must be at least 8 character long")
         
         if not any(char.isdigit() for char in password):
             raise forms.ValidationError("Password must have at least one digit")
@@ -41,17 +41,39 @@ class SignUpForm(forms.ModelForm):
 
 
 class SignInForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': (
+            "Invalid email or password. Please try again."
+        ),
+    }
     class Meta:
         model = User
         fields = ['username', 'password']
 
-# class EditUserForm(forms.ModelForm):
-#     class Meta:
-#         model = User
-#         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Email'
+
 
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = '__all__'
         exclude = ['user']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['dob'].widget = forms.DateInput(attrs={'type': 'date'})
+
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.exclude(pk = self.instance.user.pk).filter(email = email).exists():
+            raise forms.ValidationError("This email already Exists")
+        
+        return email   
+
+
+class PasswordResetConfirmForm(forms.Form):
+    new_password = forms.CharField(label='New Password', widget=forms.PasswordInput)
+    new_password_confirm = forms.CharField(label='Confirm New Password', widget=forms.PasswordInput)

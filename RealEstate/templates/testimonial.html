@@ -5,56 +5,84 @@
 {%block title%} <title>Testimonials</title>{% endblock %}
 
 
+{% block content %}
+<style>
+  .small-date {
+    font-size: smaller;
+}
+</style>
 
-{%block content%}
-        <!-- Testimonial Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Our Clients Say!</h1>
-                    <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
-                </div>
-                <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-1.jpg" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-2.jpg" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="img/testimonial-3.jpg" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="row mt-5">
+    <div class="col-md-12">
+      <h2>Reviews</h2>
+      {% if all_review %}
+        {% for review in all_review %}
+          <div class="card mb-3">
+            <div class="card-body">
+              {%if review.user.profile_picture%}
+                <img class="img-fluid flex-shrink-0 rounded" src="{{review.user.profile_picture.url}}" style="width: 45px; height: 45px;">
+              {%else%}
+                <i class="bi bi-person-circle" style="font-size: 45px;"></i>
+              {%endif%}
+              <h5 class="card-title">{{ review.user }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted small-date">{{ review.date }}</h6>
+              
+              <p class="card-text">Rating:
+                {% if review.rating == 5 %}
+                  <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i>
+                {% elif review.rating == 4 %}
+                  <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i>
+                {% elif review.rating == 3 %}
+                  <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                {% elif review.rating == 2 %}
+                  <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                {% elif review.rating == 1 %}
+                  <i class="fa fa-star" style="color: #FFD700;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                {% endif %}
+              </p>
+              <p class="card-text">{{ review.comment }}</p>
             </div>
-        </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No reviews yet.</p>
+      {% endif %}
+    </div>
+  </div>
+  <hr>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css">
+<style>
+    fieldset, label { margin: 0; padding: 0; }
+    body { margin: 20px; }
+    h1 { font-size: 1.5em; margin: 10px; }
+    .rating { border: none; float: left; }
+    .rating > input { display: none; }
+    .rating > label:before { margin: 5px; font-size: 1.25em; font-family: FontAwesome; display: inline-block; content: "\f005"; }
+    .rating > .half:before { content: "\f089"; position: absolute; }
+    .rating > label { color: #ddd; float: right; }
+    .rating > input:checked ~ label,
+    .rating:not(:checked) > label:hover,
+    .rating:not(:checked) > label:hover ~ label { color: #FFD700; }
+    .rating > input:checked + label:hover,
+    .rating > input:checked ~ label:hover,
+    .rating > label:hover ~ input:checked ~ label,
+    .rating > input:checked ~ label:hover ~ label { color: #FFED85; }
+</style>
+
+<h2>Your Feedback</h2>
+<form method="post">
+    {% csrf_token %}
+    <fieldset class="rating">
+        <input type="radio" id="star5" name="rating" value="5" /><label class="full" for="star5" title="Awesome - 5 stars"></label>
+        <input type="radio" id="star4" name="rating" value="4" /><label class="full" for="star4" title="Pretty good - 4 stars"></label>
+        <input type="radio" id="star3" name="rating" value="3" /><label class="full" for="star3" title="Meh - 3 stars"></label>
+        <input type="radio" id="star2" name="rating" value="2" /><label class="full" for="star2" title="Kinda bad - 2 stars"></label>
+        <input type="radio" id="star1" name="rating" value="1" /><label class="full" for="star1" title="Sucks big time - 1 star"></label>
+    </fieldset>
+
+    <textarea id="comment" name="comment" class="form-control mt-3" placeholder="Write your review here..." rows="4"></textarea>
+    <button id="submit-review" class="btn btn-primary mt-3" type="submit">Submit Review</button>
+</form>
         <!-- Testimonial End -->
 
-
-{%endblock%}
+{% endblock %}

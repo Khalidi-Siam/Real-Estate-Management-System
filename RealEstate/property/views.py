@@ -1,22 +1,31 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import AllProperty, UserProfile
 from .forms import *
 from django.contrib import messages
-
+from django.db.models import Q
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from urllib.parse import urlencode
 
 def add_property(request):
     if request.session.get('isLoggedIn', False):
+        
         if request.method == 'POST':
-            selected_type = request.POST.get('Type')
-            if selected_type in ['commercial', 'land', 'residential']:
+            form = PropertyTypeForm(request.POST)
+            if form.is_valid():
+                selected_type = form.cleaned_data['Type']
+                if selected_type in ['commercial', 'land', 'residential']:                    
+                    return redirect('add_property_data', property_type=selected_type)
                 
-                return redirect('add_property_data', property_type=selected_type)
+        else:
+            form = PropertyTypeForm()
 
-        return render(request, 'add_property.html')
+        return render(request, 'add_property.html', {'form':form})
 
     else:
-        return redirect('signin')
-
+        return redirect(reverse('signin') + '?next=' + request.path)
+    
+@login_required
 def add_property_data(request, property_type):
     if property_type == 'commercial':
         form_class = CommercialPropertyForm
@@ -34,7 +43,7 @@ def add_property_data(request, property_type):
         if form.is_valid():
             property_instance = form.save(commit=False)
             property_instance.user = user_profile
-            property_instance.property_type = property_type
+            property_instance.Property_type = property_type
             property_instance.save()
 
             messages.success(request, "Property added Successfully")
@@ -46,7 +55,7 @@ def add_property_data(request, property_type):
         form = form_class()
     return render(request, 'add_property_data.html', {'form': form, 'property_type':property_type})
 
-
+@login_required
 def update_property(request, property_id):
     property_instance = AllProperty.objects.get(pk=property_id)
     if request.method == 'POST':
@@ -63,53 +72,151 @@ def update_property(request, property_id):
 
 def property_detail(request, pk):
     property_instance = AllProperty.objects.get(pk = pk)
-    property_fields = get_property_fields(property_instance)
-    property_fields['Property_Pictures'] = property_instance.Property_Pictures
-    all_review = Reviews.objects.filter(property = property_instance)
-
-    if request.method == "POST":
-        if request.user.is_authenticated:
-            user_review = Reviews.objects.filter(property = property_instance, user = request.user.UserProfile).first()
-            if str(property_instance.user.email) == str(request.user): #condtion check sothat property owner couldn't review his own property
-                messages.error(request, "You can't review your own property.")
-                return redirect('property_detail', pk = pk)
-            elif user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
-                messages.error(request, "You have already reviewed this property.")
-                return redirect('property_detail', pk = pk)
-            else:
-                form = ReviewForm(request.POST)
-                if form.is_valid():
-                    review = form.save(commit=False)
-                    review.user = request.user.UserProfile
-                    review.property = property_instance
-
-                    review.save()
-                    return redirect('property_detail', pk = pk)
-            
-        else:
-            return redirect('signin')
-        
+    
+    if hasattr(property_instance, 'residentialproperty'):
+        specific_property_instance = property_instance.residentialproperty
+    elif hasattr(property_instance, 'commercialproperty'):
+        specific_property_instance = property_instance.commercialproperty
+    elif hasattr(property_instance, 'landproperty'):
+        specific_property_instance = property_instance.landproperty
     else:
-        form = ReviewForm()
+        # Handle the case where the property instance does not belong to any specific type
+        specific_property_instance = None
 
-    return render(request, "property_detail.html", {'property_fields':property_fields, 'form':form, 'all_review':all_review})
 
-def get_property_fields(property):
-    fields = [field.name for field in AllProperty._meta.get_fields() if field.name not in ['id', 'user', 'Property_Pictures', 'residentialproperty','commercialproperty', 'landproperty', 'reviews']]
-    return {field: getattr(property, field, None) for field in fields}
+    property_fields = {}
+    
+    if(specific_property_instance):
+        property_fields = vars(specific_property_instance)
+        property_fields['Property_Pictures'] = property_instance.Property_Pictures
+
+
+    return render(request, "property_detail.html", {'property_fields':property_fields})
+
 
 
 def property_list(request):
+
     total_list = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
-    return render(request, "property_list.html", {'total_list': total_list})
+    
+    # Create an instance of the form
+    filter_form = PropertyFilterForm(request.GET or None)
+
+    # Check if form is submitted and valid
+    if filter_form.is_valid():
+        # Get cleaned data from the form
+        cleaned_data = filter_form.cleaned_data
+        property_type = cleaned_data.get('property_type')
+        property_on = cleaned_data.get('property_on')
+        area = cleaned_data.get('area')
+
+        # Filter properties based on form data
+        properties = properties.filter(Property_type=property_type) if property_type else properties
+        properties = properties.filter(Property_on=property_on) if property_on else properties
+        properties = properties.filter(Area=area) if area else properties
+
+        # Additional filters based on property type
+        if property_type == 'residential':
+            bedrooms = cleaned_data.get('bedrooms')
+            bathrooms = cleaned_data.get('bathrooms')
+
+            properties = properties.filter(residentialproperty__Bedrooms=bedrooms) if bedrooms else properties
+            properties = properties.filter(residentialproperty__Bathrooms=bathrooms) if bathrooms else properties
+
+        elif property_type == 'commercial':
+            business_type = cleaned_data.get('business_type')
+            has_conference = cleaned_data.get('has_conference')
+            has_security = cleaned_data.get('has_security')
+
+            properties = properties.filter(commercialproperty__Business_type=business_type) if business_type else properties
+            properties = properties.filter(commercialproperty__Has_conference_room=True) if has_conference else properties
+            properties = properties.filter(commercialproperty__Has_security_system=True) if has_security else properties
+
+        elif property_type == 'land':
+            land_type = cleaned_data.get('land_type')
+
+            properties = properties.filter(landproperty__Land_type=land_type) if land_type else properties
+
+
+        ordering_choice = cleaned_data.get('ordering_choices')
+        if ordering_choice == 'price_asc':
+            properties = properties.order_by('Price')
+        elif ordering_choice == 'price_desc':
+            properties = properties.order_by('-Price')
+    
+    if request.user.is_authenticated:
+        saved_searches = SavedSearch.objects.filter(user=request.user)[:5]
+    else:
+        saved_searches = None
+
+    saved_search_name = request.GET.get('saved_search_name')
+    if saved_search_name:
+        if request.user.is_authenticated:
+            if SavedSearch.objects.filter(user = request.user).count() >= 12:
+                messages.error(request, "You can only save up to 12 searches. Please delete from Saved Search to add new")
+            else:
+                existing_search = SavedSearch.objects.filter(user=request.user, name=saved_search_name).first()
+                if not existing_search:
+                    SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = request.GET.dict())
+                    messages.success(request, "search saved successfully")
+                # else:
+                #     messages.error(request, "You can't save two search with same name")
+        else:
+            return redirect(reverse('signin') + '?next=' + request.path)
+                
+    context = {
+        'filtered_properties': properties,
+        'filter_form': filter_form,
+        'saved_searches':saved_searches,
+    }
+    return render(request, 'property_list.html', context)
+
 
 
 
 def property_type(request):
     return render(request, "property_type.html")
 
+
 def calculate(request):
-    return render(request, "Calculate.html")
+    if request.method == 'POST':
+        form = PropertyCalculatorForm(request.POST)
+        if form.is_valid():
+            per_sqft_price = form.cleaned_data['per_sqft_price']
+            total_sqft = form.cleaned_data['total_sqft']
+            parking_sqft = form.cleaned_data['parking_sqft']
+            parking_price_per_sqft = form.cleaned_data['parking_price_per_sqft']
+            
+            total_amount = (per_sqft_price * total_sqft) + (parking_sqft * parking_price_per_sqft)
+            
+            return render(request, 'Calculate.html', {'form': form, 'total_amount': total_amount})
+    else:
+        form = PropertyCalculatorForm()
+
+    return render(request, 'Calculate.html', {'form': form})
+
+
+def saved_searches(request):
+    if request.user.is_authenticated:
+        saved_searches = SavedSearch.objects.filter(user=request.user)
+        return render(request, 'saved_searches.html', {'saved_searches': saved_searches})
+    
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
+    
+@login_required
+def delete_saved_search(request, saved_search_id):
+    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+    if saved_search.user == request.user:
+        saved_search.delete()
+    return redirect('saved_searches')
+    
+
+def apply_saved_search(request, saved_search_id):
+    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+    criteria_str = urlencode(saved_search.criteria)
+    # Redirect to property list page with saved search criteria in the query string
+    return redirect(reverse('property_list') + '?' + criteria_str)
 
 def posted_properties(request):
     if request.user.is_authenticated:

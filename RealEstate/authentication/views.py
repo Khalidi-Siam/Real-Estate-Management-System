@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib import messages
+from django.urls import reverse
 
 # Create your views here.
 User = get_user_model()
@@ -27,13 +28,16 @@ def password_reset_confirm(request, uidb64, token):
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
                 form.save()
+                messages.success(request, "Your password has been reset sucessfully.")
                 # Redirect to reset confirmation page after password reset
-                return redirect('password_reset_complete')
+                return redirect('login')
         else:
             form = SetPasswordForm(user)
         return render(request, 'password_reset_confirm.html', {'form': form})
     else:
-        return render(request, 'password_reset_invalid.html')
+        messages.error(request, "The password reset link is invalid")
+        return redirect('password_reset')
+    
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -51,6 +55,7 @@ def signup(request):
 
             messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')
+        
     
     else:
         form = SignUpForm()
@@ -72,11 +77,14 @@ def signin(request):
                 login(request, user)
                 request.session['isLoggedIn'] = True
                 messages.success(request, "Successfully Signed in")
-                return redirect("/")
-            
-            else:
-                messages.error(request, "Invalid credentials")
-                
+                next_url = request.GET.get('next')
+                if next_url:
+                    if(next_url == "/authentication/signup"):
+                        return redirect("/")
+                    else:
+                        return redirect(next_url)
+                else:
+                    return redirect("/")
     
     else:        
         form = SignInForm()
@@ -105,7 +113,6 @@ def get_profile_fields(user_profile):
 
 @login_required
 def edit_profile(request):
-    # user_profile = request.UserProfile
     user_profile = UserProfile.objects.get(user = request.user)
 
     if request.method == 'POST':    
@@ -119,7 +126,17 @@ def edit_profile(request):
             return redirect('profile')
         
     else:
-        print(user_profile)
         form = EditProfileForm(instance=user_profile)
 
     return render(request, 'edit_profile.html', {'form':form})
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        request.user.delete()
+        logout(request)
+        messages.success(request, "Account deleted successfully")
+        return redirect('/')
+    
+    else:
+        return redirect('profile')
