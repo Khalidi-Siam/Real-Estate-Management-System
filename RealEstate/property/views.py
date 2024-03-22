@@ -100,7 +100,7 @@ def get_property_fields(property):
 
 
 def property_list(request):
-    total_list = AllProperty.objects.all()
+    total_list = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
     return render(request, "property_list.html", {'total_list': total_list})
 
 
@@ -110,3 +110,11 @@ def property_type(request):
 
 def calculate(request):
     return render(request, "Calculate.html")
+
+def posted_properties(request):
+    if request.user.is_authenticated:
+        properties = AllProperty.objects.filter(user=request.user.UserProfile)
+        print(properties)
+        return render(request, 'posted_properties.html', {'properties': properties})
+    else:
+        return redirect('signin')

@@ -67,6 +67,7 @@
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="{% url 'property_list' %}" class="dropdown-item">Property List</a>
                                 <a href="{% url 'property_type' %}" class="dropdown-item">Property Type</a>
+                                <a href="{% url 'posted_properties' %}" class="dropdown-item">View Posted Properties</a>
                                 <a href="{% url 'calculate' %}" class="dropdown-item"> Property Calculator</a>
                                 {% comment %} <a href="{% url 'property_agent' %}" class="dropdown-item">Property Agent</a> {% endcomment %}
                             </div>
@@ -89,7 +90,11 @@
                         </div>
 
                     </div>
+                    {% if request.user.UserProfile.is_agent %}
+                    <a href="{% url 'agent_dashboard'%}" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
+                    {% else %}
                     <a href="{% url 'add_property'%}" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
+                    {% endif %}
                 </div>
             </nav>
         </div>

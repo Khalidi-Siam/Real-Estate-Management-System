@@ -10,5 +10,7 @@ urlpatterns = [
     path('property_type', views.property_type, name = "property_type"),
     path('property_list/<int:pk>', views.property_detail, name = "property_detail"),
     path('property-calculate/',views.calculate, name = 'calculate'),
-
+    path('posted-properties/', views.posted_properties, name='posted_properties'),
+    path('update-property/<int:property_id>/', views.update_property, name='update_property'),
+    
 ]

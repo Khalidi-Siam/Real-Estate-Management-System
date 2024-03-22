@@ -25,7 +25,8 @@ class AllProperty(models.Model):
     District = models.CharField(max_length=100)
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
-
+    Approval_by_Agent = models.CharField(max_length = 50, null = True)
+ 
 
 
 class ResidentialProperty(AllProperty):
