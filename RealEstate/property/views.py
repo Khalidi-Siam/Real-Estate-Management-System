@@ -96,8 +96,9 @@ def property_detail(request, pk):
 
 
 def property_list(request):
-    properties = AllProperty.objects.all()
 
+    total_list = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
+    
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
 
@@ -172,6 +173,7 @@ def property_list(request):
 
 
 
+
 def property_type(request):
     return render(request, "property_type.html")
 
@@ -215,3 +217,11 @@ def apply_saved_search(request, saved_search_id):
     criteria_str = urlencode(saved_search.criteria)
     # Redirect to property list page with saved search criteria in the query string
     return redirect(reverse('property_list') + '?' + criteria_str)
+
+def posted_properties(request):
+    if request.user.is_authenticated:
+        properties = AllProperty.objects.filter(user=request.user.UserProfile)
+        print(properties)
+        return render(request, 'posted_properties.html', {'properties': properties})
+    else:
+        return redirect('signin')

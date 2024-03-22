@@ -9,10 +9,12 @@ urlpatterns = [
     path('property_list', views.property_list, name = "property_list"),
     path('property_type', views.property_type, name = "property_type"),
     path('property_list/<int:pk>', views.property_detail, name = "property_detail"),
+    path('posted-properties/', views.posted_properties, name='posted_properties'),
+    path('update-property/<int:property_id>/', views.update_property, name='update_property'),
     path('property-calculate/',views.calculate, name = "calculate"),
     path('saved-searches', views.saved_searches, name = "saved_searches"),
     path('apply-saved-search/<int:saved_search_id>/', views.apply_saved_search, name="apply_saved_search"),
-    # path('delete-saved-search', views.delete_saved_search, name = "delete_saved_search"),
     path('property/delete-saved-search/<int:saved_search_id>/', views.delete_saved_search, name='delete_saved_search'),
+
 
 ]

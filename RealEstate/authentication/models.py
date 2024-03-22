@@ -19,6 +19,7 @@ class UserProfile(models.Model):
 
     address = models.TextField(null = True)
     profile_picture = models.ImageField(upload_to='profile_picture', null = True)
+    is_agent = models.BooleanField(default = False)
 
     def __str__(self):
         return self.name

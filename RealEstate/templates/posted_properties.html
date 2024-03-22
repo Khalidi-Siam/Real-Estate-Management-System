@@ -1,0 +1,19 @@
+<!-- posted_properties.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posted Properties</title>
+</head>
+<body>
+    <h1>Your Posted Properties</h1>
+    <ul>
+        {% for property in properties %}
+            <li>{{ property.Property_Name }}</li>
+            <a href="{% url 'update_property' property.id %}" class="btn btn-primary">Update Property</a> <!-- Adjust based on your Property model -->
+        {% endfor %}
+    </ul>
+</body>
+</html>
