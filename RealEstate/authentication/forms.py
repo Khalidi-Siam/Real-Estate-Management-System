@@ -3,6 +3,7 @@ from .models import UserProfile
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 
+
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
@@ -36,7 +37,6 @@ class SignUpForm(forms.ModelForm):
         if not any(char in specialSym for char in password):
             raise forms.ValidationError("Password must have at least one special character")
         
-
         return confirm_password
 
 
@@ -58,17 +58,15 @@ class SignInForm(AuthenticationForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = '__all__'
-        exclude = ['user']
+        fields = ['name', 'email', 'contact_no', 'gender', 'nid', 'dob', 'address', 'profile_picture']  # Include only necessary fields
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['dob'].widget = forms.DateInput(attrs={'type': 'date'})
 
-
     def clean_email(self):
         email = self.cleaned_data['email']
-        if User.objects.exclude(pk = self.instance.user.pk).filter(email = email).exists():
+        if User.objects.exclude(pk=self.instance.user.pk).filter(email=email).exists():
             raise forms.ValidationError("This email already Exists")
         
         return email   
