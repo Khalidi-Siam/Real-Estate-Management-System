@@ -4,12 +4,13 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from django.core.mail import send_mail
-from django.http import HttpResponse
 import os
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.conf import settings  
+from django.urls import reverse
+
 # Create your views here.
 
 def about(request):
@@ -47,7 +48,7 @@ def testimonial(request):
                     return redirect('testimonial')
         
         else:
-            return redirect('signin')
+            return redirect(reverse('signin') + '?next=' + request.path)
         
     else:
         form = ReviewForm()

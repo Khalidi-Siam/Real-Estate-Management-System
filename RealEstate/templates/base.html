@@ -67,7 +67,9 @@
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="{% url 'property_list' %}" class="dropdown-item">Property List</a>
                                 <a href="{% url 'property_type' %}" class="dropdown-item">Property Type</a>
-                                <!-- <a href="#" class="dropdown-item">View Posted Properties</a> -->
+
+                        
+                                <a href="{% url 'posted_properties' %}" class="dropdown-item">View Posted Properties</a>
                                 <a href="{% url 'calculate' %}" class="dropdown-item"> Property Calculator</a>
                                 {% comment %} <a href="{% url 'property_agent' %}" class="dropdown-item">Property Agent</a> {% endcomment %}
                             </div>
@@ -76,8 +78,9 @@
                         <a href="{% url 'send_email' %}" class="nav-item nav-link">Send Newsletter</a>
 			{% else %}
                         <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>s
-			{% endif %}
-                        <!-- <a href="#" class="nav-item nav-link"> Saved Search </a> -->
+			{% endif %}                           
+                        <a href="{%url 'saved_searches'%}?next={{request.path}}" class="nav-item nav-link"> Saved Search </a>
+
                         <div class="nav-item dropdown">
                             {% if is_logged_in %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
@@ -95,11 +98,12 @@
                         </div>
 
                     </div>
-                    <!-- {% if request.user.UserProfile.is_agent %}
-                    <a href="#" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
-                    {% else %} -->
+
+                    {% if request.user.UserProfile.is_agent %}
+                    <a href="{% url 'agent_dashboard'%}" class="btn btn-primary px-3 d-none d-lg-flex">Dashboard</a>
+                    {% else %}
                     <a href="{% url 'add_property'%}" class="btn btn-primary px-3 d-none d-lg-flex">Add Property</a>
-                    <!-- {% endif %} -->
+                    {% endif %}
                 </div>
             </nav>
         </div>

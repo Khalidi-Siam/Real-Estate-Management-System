@@ -1,0 +1,58 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-9">
+    <!-- Property List as Right-side Panel -->
+    <div class="property-list-container" style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;">
+        <div class="row g-4">
+            {%if filtered_properties%}
+                {% for property in filtered_properties %}
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="property-item rounded overflow-hidden">
+                        <!-- Property details -->
+                        <div class="position-relative overflow-hidden">
+                            <a href="{% url 'property_detail' pk=property.pk %}">
+                                <img class="img-fluid" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name }}" style="width: 350px; height: 250px;">
+                            </a>
+                            <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">{{ property.Property_on }}</div>
+                            <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">{{ property.Property_type }}</div>
+                        </div>
+                        <div class="p-4 pb-0">
+                            <h5 class="text-primary mb-3">${{ property.Price }}</h5>
+                            <a class="d-block h5 mb-2" href="{% url 'property_detail' pk=property.pk %}">{{ property.Property_Name }}</a>
+                            <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ property.City }}, {{ property.Postal_code }}</p>
+                        </div>
+                        {% if property.Property_type == "residential"%}
+                            <div class="d-flex border-top">
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i>{{ property.residentialproperty.Bedrooms }} Bed</small>
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-bath text-primary me-2"></i>{{ property.residentialproperty.Bathrooms }} Bath</small>    
+                                <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
+                            </div>
+                        {% elif property.Property_type == "commercial" %}
+                            <div class="d-flex border-top">
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.commercialproperty.Business_type }}</small>
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-car text-primary me-2"></i>{{ property.commercialproperty.Parking_spaces }} Sqft</small>    
+                                <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft }} Sqft</small>
+                            </div>
+                        {% elif property.Property_type == "land" %}
+                            <div class="d-flex border-top">
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ property.landproperty.Land_type }}</small>
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ property.Total_area_in_sqft}} Sqft</small>    
+                            </div>
+                        {% endif %}
+                         
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-lg-12 text-center my-5">
+                    <h2 class="text-muted">No results found.</h2>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -22,7 +22,7 @@
               {%if review.user.profile_picture%}
                 <img class="img-fluid flex-shrink-0 rounded" src="{{review.user.profile_picture.url}}" style="width: 45px; height: 45px;">
               {%else%}
-                <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
+                <i class="bi bi-person-circle" style="font-size: 45px;"></i>
               {%endif%}
               <h5 class="card-title">{{ review.user }}</h5>
               <h6 class="card-subtitle mb-2 text-muted small-date">{{ review.date }}</h6>

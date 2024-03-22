@@ -14,7 +14,7 @@
           {% if profile_fields %}
             <div class="text-center mb-4">
               {% if profile_fields.profile_picture %}
-                <img src="{{ profile_fields.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" width="150" height="150">
+                <img src="{{ profile_fields.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" width="200" height="200">
               {% else %}
                 <div class="text-muted">
                   <i class="bi bi-person-circle" style="font-size: 150px;"></i>
@@ -53,13 +53,60 @@
             
             <div class="text-center mt-4">
               <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+              <button class="btn btn-danger" id="delete-account-btn">Delete Account</button>
             </div>
+            <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Account Deletion</h5>
+                      </div>
+                      <div class="modal-body">
+                          Are you sure you want to delete your account? This action cannot be undone.
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" id = "cancel-delete-btn" data-dismiss="modal">No</button>
+                          <button type="button" class="btn btn-danger" id="confirm-delete-btn">Yes</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            
+            <script>
+              document.getElementById('delete-account-btn').addEventListener('click', function() {
+                  $('#deleteConfirmationModal').modal('show');
+              });
+          
+              document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+                  // Create a form element
+                  var form = document.createElement('form');
+                  form.method = 'POST';
+                  form.action = "{% url 'delete_account' %}";  // URL for the delete_account view
+          
+                  // Create a hidden input field for CSRF token
+                  var csrfInput = document.createElement('input');
+                  csrfInput.type = 'hidden';
+                  csrfInput.name = 'csrfmiddlewaretoken';
+                  csrfInput.value = '{{ csrf_token }}';  // Use Django template tag to get CSRF token
+                  form.appendChild(csrfInput);
+          
+                  // Append the form to the document body and submit it
+                  document.body.appendChild(form);
+                  form.submit();
+              });
+          
+              document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+                  // Close the modal
+                  $('#deleteConfirmationModal').modal('hide');
+              });
+          </script>          
           {% else %}
             <p class="text-muted text-center">No profile found</p>
           {% endif %}
-        </div>
+          
+        </div>        
       </div>
-    </div>
-  </div>
+    </div>    
+  </div>  
 </div>
 {% endblock %}
