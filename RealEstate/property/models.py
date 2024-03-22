@@ -2,6 +2,8 @@ from django.db import models
 from authentication.models import UserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
+
 # Create your models here.
 class AllProperty(models.Model):
     PROPERTY_TYPES = (
@@ -38,10 +40,12 @@ class AllProperty(models.Model):
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     Approval_by_Agent = models.CharField(max_length = 50, null = True)
- 
+    Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
 
     def __str__(self):
         return self.Property_Name
+
+
 
 
 
@@ -56,14 +60,7 @@ class ResidentialProperty(AllProperty):
     Has_Pool = models.BooleanField(default=False)
     Has_Garden = models.BooleanField(default=False)
     Number_of_Balcony = models.PositiveIntegerField(default=1)
-    Year = models.IntegerField(
-        null=True,
-        blank=False,
-        validators=[
-        MinValueValidator(1900),
-        MaxValueValidator(2100)
-        ]
-    )
+    Year = models.DateField(null = True)
 
     
 
@@ -82,14 +79,7 @@ class CommercialProperty(AllProperty):
     Has_elevator = models.BooleanField(default=False)
     Has_security_system = models.BooleanField(default=False)
     Has_conference_room = models.BooleanField(default=False)
-    Year = models.IntegerField(
-        null=True,
-        blank=False,
-        validators=[
-        MinValueValidator(1900),
-        MaxValueValidator(2100)
-        ]
-    )
+    Year = models.DateField(null = True)
 
     
 

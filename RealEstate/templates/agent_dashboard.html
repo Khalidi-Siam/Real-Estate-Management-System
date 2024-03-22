@@ -18,7 +18,8 @@
         {% for property in pending_properties %}
           <tr>
             <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
-            <td><a href="{% url 'approve_property' property.pk %}" class="btn btn-primary">Approve</a></td>
+            <td><p>Pending</p></td>
+            {% comment %} <td><a href="{% url 'approve_property' property.pk %}" class="btn btn-primary">Approve</a></td> {% endcomment %}
           </tr>
         {% endfor %}
       {% else %}

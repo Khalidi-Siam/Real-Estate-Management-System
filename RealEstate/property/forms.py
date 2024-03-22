@@ -1,7 +1,9 @@
 from django import forms
 from .models import *
 
+
 class PropertyForm(forms.ModelForm):
+    
     class Meta:
         model = AllProperty
         fields = '__all__'
@@ -13,6 +15,9 @@ class CommercialPropertyForm(forms.ModelForm):
         model = CommercialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
 
 class LandPropertyForm(forms.ModelForm):
     class Meta:
@@ -25,6 +30,9 @@ class ResidentialPropertyForm(forms.ModelForm):
         model = ResidentialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
 
 class PropertyTypeForm(forms.Form):
     Type = forms.ChoiceField(choices=[

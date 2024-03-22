@@ -26,7 +26,7 @@
             <table class="table table-borderless">
               <tbody>
                 {% for field, value in property_fields.items %}
-                  {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description'%}
+                  {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' %}
                     <tr>
                       <th class="text-muted">{{ field|format_field_name }}</th>
                       <td>
@@ -56,8 +56,12 @@
         <div class="card-body">
           <h5 class="card-title">Property Description</h5>
           <p>{{ property_fields.Property_Description }}</p>
+          {% if request.user.UserProfile.is_agent %}
+            <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
+          {% endif %}
+
           
-          {%if request.user.id == property_fields.user_id %}
+          {%if request.user.UserProfile.id == property_fields.user_id %}
           
           <a href="{% url 'update_property' property_fields.id %}" class="btn btn-primary">Update Property</a>
           {% endif %}

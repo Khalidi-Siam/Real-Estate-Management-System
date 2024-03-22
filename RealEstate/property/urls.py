@@ -16,6 +16,6 @@ urlpatterns = [
     path('saved-searches', views.saved_searches, name = "saved_searches"),
     path('apply-saved-search/<int:saved_search_id>/', views.apply_saved_search, name="apply_saved_search"),
     path('property/delete-saved-search/<int:saved_search_id>/', views.delete_saved_search, name='delete_saved_search'),
-
+    path('property/<int:property_id>/documents/', views.view_property_documents, name='view_property_documents'),
 
 ]
