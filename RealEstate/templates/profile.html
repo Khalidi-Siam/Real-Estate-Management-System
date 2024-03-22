@@ -26,7 +26,7 @@
               <table class="table table-borderless">
                 <tbody>
                   {% for field, value in profile_fields.items %}
-                    {% if field != 'profile_picture' %}
+                    {% if field != 'profile_picture' and field != 'is_agent' %}
                       <tr>
                         <th>{{ field|format_field_name }}</th>
                         <td>
