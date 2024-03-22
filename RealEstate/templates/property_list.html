@@ -46,14 +46,14 @@
                             </select>
                         </div>
                         <!-- Bedrooms -->
-                        <div class="mb-3" id="bedrooms_field" style="display: none;">
+                        <div class="mb-3" id="bedrooms_field" {% if request.GET.bedrooms %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                             <label for="bedrooms" class="form-label">Bedrooms</label>
-                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Bedrooms">
+                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Bedrooms" value="{{ request.GET.bedrooms }}">
                         </div>
                         <!-- Bathrooms -->
-                        <div class="mb-3" id="bathrooms_field" style="display: none;">
+                        <div class="mb-3" id="bathrooms_field" {% if request.GET.bathrooms %} style="display: block;" {% else %} style="display: none;" {% endif %}>
                             <label for="bathrooms" class="form-label">Bathrooms</label>
-                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Bathrooms">
+                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Bathrooms" value="{{ request.GET.bathrooms }}">
                         </div>
                         <!-- Business Type -->
                         <div class="mb-3" id="business_type_field" style="display: none;">
