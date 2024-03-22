@@ -74,11 +74,11 @@
                                 {% comment %} <a href="{% url 'property_agent' %}" class="dropdown-item">Property Agent</a> {% endcomment %}
                             </div>
                         </div>
-			{% if request.user.UserProfile.is_agent %}
-                        <a href="{% url 'send_email' %}" class="nav-item nav-link">Send Newsletter</a>
-			{% else %}
-                        <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>s
-			{% endif %}                           
+                        {% if request.user.UserProfile.is_agent %}
+                            <a href="{% url 'send_email' %}" class="nav-item nav-link">Send Newsletter</a>
+                        {% else %}
+                            <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                        {% endif %}                           
                         <a href="{%url 'saved_searches'%}?next={{request.path}}" class="nav-item nav-link"> Saved Search </a>
 
                         <div class="nav-item dropdown">
