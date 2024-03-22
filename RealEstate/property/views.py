@@ -97,7 +97,9 @@ def property_detail(request, pk):
 
 def property_list(request):
 
-    properties = AllProperty.objects.filter(Approval_by_Agent__isnull=False)
+    properties = AllProperty.objects.filter(
+    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel')
+)
     
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
@@ -223,5 +225,14 @@ def posted_properties(request):
         properties = AllProperty.objects.filter(user=request.user.UserProfile)
         return render(request, 'posted_properties.html', {'filtered_properties': properties})
     else:
+
         return redirect(reverse('signin') + '?next=' + request.path)
     
+
+def view_property_documents(request, property_id):
+    property_instance = get_object_or_404(AllProperty, pk=property_id)
+    property_documents = property_instance.Property_Documents  # Assuming ManyToManyField for Property_Documents
+    
+    # Pass the property instance and property documents to the template
+    return render(request, 'view_property_documents.html', {'property_instance': property_instance, 'property_documents': property_documents})
+
