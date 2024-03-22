@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib import messages
+from django.urls import reverse
 
 # Create your views here.
 User = get_user_model()
@@ -78,7 +79,10 @@ def signin(request):
                 messages.success(request, "Successfully Signed in")
                 next_url = request.GET.get('next')
                 if next_url:
-                    return redirect(next_url)
+                    if(next_url == "/authentication/signup"):
+                        return redirect("/")
+                    else:
+                        return redirect(next_url)
                 else:
                     return redirect("/")
     

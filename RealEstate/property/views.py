@@ -100,7 +100,6 @@ def property_list(request):
 
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
-    saved_searches = SavedSearch.objects.filter(user=request.user)[:5]
 
     # Check if form is submitted and valid
     if filter_form.is_valid():
@@ -143,17 +142,27 @@ def property_list(request):
             properties = properties.order_by('Price')
         elif ordering_choice == 'price_desc':
             properties = properties.order_by('-Price')
+    
+    if request.user.is_authenticated:
+        saved_searches = SavedSearch.objects.filter(user=request.user)[:5]
+    else:
+        saved_searches = None
 
     saved_search_name = request.GET.get('saved_search_name')
     if saved_search_name:
-        if request.user.is_authenticated:  
-            existing_search = SavedSearch.objects.filter(user=request.user, name=saved_search_name).first()
-            if not existing_search:
-                SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = request.GET.dict())
-
+        if request.user.is_authenticated:
+            if SavedSearch.objects.filter(user = request.user).count() >= 12:
+                messages.error(request, "You can only save up to 12 searches. Please delete from Saved Search to add new")
+            else:
+                existing_search = SavedSearch.objects.filter(user=request.user, name=saved_search_name).first()
+                if not existing_search:
+                    SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = request.GET.dict())
+                    messages.success(request, "search saved successfully")
+                # else:
+                #     messages.error(request, "You can't save two search with same name")
         else:
             return redirect(reverse('signin') + '?next=' + request.path)
-
+                
     context = {
         'filtered_properties': properties,
         'filter_form': filter_form,
@@ -191,7 +200,7 @@ def saved_searches(request):
         return render(request, 'saved_searches.html', {'saved_searches': saved_searches})
     
     else:
-        return render(request, "signin.html")
+        return redirect(reverse('signin') + '?next=' + request.path)
     
 @login_required
 def delete_saved_search(request, saved_search_id):
