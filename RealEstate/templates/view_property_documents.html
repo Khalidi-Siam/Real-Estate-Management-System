@@ -13,7 +13,7 @@
     </ul>
 
     {% if request.user.is_authenticated and request.user.UserProfile.is_agent %}
-        <form action="{% url 'approve_property' property_instance.id %}" method="post" class="d-inline">
+        <form action="{% url 'approve_property' property_instance.id %}" method="post" action ="{%url 'agent_dashboard' %}"class="d-inline">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary">Approve Property</button>
         </form>

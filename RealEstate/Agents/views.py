@@ -19,9 +19,10 @@ def approve_property(request, property_id):
             property_instance = get_object_or_404(AllProperty, pk=property_id)
             property_instance.Approval_by_Agent = request.user.UserProfile.name
             property_instance.save()
-            return redirect('view_property_documents', property_id=property_instance.id)
+            return redirect('agent_dashboard')
         else:
-            return redirect('signin')  
+            return redirect('signin')
+          
     else:
         return redirect('agent_dashboard') 
     
