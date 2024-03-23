@@ -15,3 +15,8 @@ class SendEmailForm(forms.Form):
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
     attachment = forms.FileField(required=False)
+
+class ContactForm(forms.Form):
+    class Meta:
+        model = Contact
+        fields = "__all__"
