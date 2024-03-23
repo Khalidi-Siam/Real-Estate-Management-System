@@ -147,7 +147,8 @@ def contact(request):
             )
 
             # Save the form data to the database
-            contact = Contact.objects.create(name=name, email=email, subject=subject, message=message)
+            Contact.objects.create(name=name, email=email, subject=subject, message=message)
             success_message = "Query submitted successfully. We will contact you soon."
+            messages.success(request, success_message)
 
-    return render(request, 'contact.html', {'success_message': success_message})
+    return render(request, 'contact.html')
