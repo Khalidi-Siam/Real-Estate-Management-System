@@ -16,8 +16,8 @@ from django.urls import reverse
 def about(request):
     return render(request, "about.html")
 
-def contact(request):
-    return render(request, "contact.html")
+# def contact(request):
+#     return render(request, "contact.html")
 
 def faqs(request):
     return render(request, "faqs.html")
@@ -118,3 +118,36 @@ def send_email(request):
     else:
         form = SendEmailForm()
     return render(request, 'send_email.html', {'form': form})
+
+
+def contact(request):
+    success_message = None
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message1 = request.POST.get('message')
+        message = f"Coustomer mail: {email}\nCoustomer name: {name}\n\n {message1}"
+    
+        if name and email and subject and message:
+            # Send email
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,  # Use your host email as the sender
+                [settings.EMAIL_HOST_USER],  # Use your host email as the recipient
+                fail_silently=False,
+            )
+            send_mail(
+                "Your Query Submited",
+                "Thank You for submitting Query, We will Reach out Soon",
+                settings.EMAIL_HOST_USER,  # Use your host email as the sender
+                [email],  # Use your host email as the recipient
+                fail_silently=False,
+            )
+
+            # Save the form data to the database
+            contact = Contact.objects.create(name=name, email=email, subject=subject, message=message)
+            success_message = "Query submitted successfully. We will contact you soon."
+
+    return render(request, 'contact.html', {'success_message': success_message})
