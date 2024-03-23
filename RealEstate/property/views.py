@@ -217,7 +217,6 @@ def delete_saved_search(request, saved_search_id):
 def apply_saved_search(request, saved_search_id):
     saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
     criteria_str = urlencode(saved_search.criteria)
-    # Redirect to property list page with saved search criteria in the query string
     return redirect(reverse('property_list') + '?' + criteria_str)
 
 def posted_properties(request):
@@ -231,8 +230,7 @@ def posted_properties(request):
 
 def view_property_documents(request, property_id):
     property_instance = get_object_or_404(AllProperty, pk=property_id)
-    property_documents = property_instance.Property_Documents  # Assuming ManyToManyField for Property_Documents
+    property_documents = property_instance.Property_Documents
     
-    # Pass the property instance and property documents to the template
     return render(request, 'view_property_documents.html', {'property_instance': property_instance, 'property_documents': property_documents})
 
