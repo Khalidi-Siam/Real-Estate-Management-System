@@ -10,7 +10,7 @@ class SignUpForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['name', 'email', 'password', 'confirm_password']
+        fields = ['name', 'email', 'password', 'confirm_password', 'nid']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -38,6 +38,12 @@ class SignUpForm(forms.ModelForm):
             raise forms.ValidationError("Password must have at least one special character")
         
         return confirm_password
+    
+    def clean_nid(self):
+        nid = self.cleaned_data.get('nid')
+        if UserProfile.objects.filter(nid=nid).exists():
+            raise forms.ValidationError('This NID number is already in use.')
+        return nid
 
 
 class SignInForm(AuthenticationForm):
