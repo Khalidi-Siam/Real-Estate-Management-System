@@ -8,15 +8,17 @@ class PropertyForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['Approval_by_Agent', 'user']
 
-
 class CommercialPropertyForm(forms.ModelForm):
     class Meta:
         model = CommercialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
 
 class LandPropertyForm(forms.ModelForm):
     class Meta:
@@ -24,14 +26,22 @@ class LandPropertyForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'Property_type','Approval_by_Agent']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
+
 class ResidentialPropertyForm(forms.ModelForm):
     class Meta:
         model = ResidentialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
 
 class PropertyTypeForm(forms.Form):
     Type = forms.ChoiceField(choices=[
