@@ -32,18 +32,21 @@ def testimonial(request):
     if request.method == "POST":
         if request.user.is_authenticated:
             user_review = Reviews.objects.filter(user = request.user.UserProfile).first()
-
-            if user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
-                messages.error(request, "You have already give your feedback")
+            
+            form = ReviewForm(request.POST, instance=user_review)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.user = request.user.UserProfile
+                review.save()
+                if user_review:
+                    messages.success(request, "Your review has been updated successfully")
+                else:
+                    messages.success(request, "Your review has been submitted successfully")
                 return redirect('testimonial')
             else:
-                form = ReviewForm(request.POST)
-                if form.is_valid():
-                    review = form.save(commit=False)
-                    review.user = request.user.UserProfile
-                    review.save()
-                    messages.success(request, "Reviewed successfully")
-                    return redirect('testimonial')
+                messages.error(request, "You can't leave any field blank")
+            
+            return redirect('testimonial')
         
         else:
             return redirect(reverse('signin') + '?next=' + request.path)

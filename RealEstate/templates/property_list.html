@@ -1,5 +1,3 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -23,7 +21,7 @@
                         {% comment %} <label for="saved_searches_dropdown" class="form-label">Saved Searches</label> {% endcomment %}
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="saved_searches_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select From Your Saved Search
+                                Load From Your Saved Search
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="saved_searches_dropdown">
                                 <!-- List of 5 saved searches -->
@@ -227,8 +225,16 @@
                 $('#filterForm').submit();
             }
         });
+        // Function to remove saved_search_name parameter from URL
+        function removeSavedSearchParameter() {
+            var urlWithoutSavedSearch = window.location.href.replace(/[?&]saved_search_name=[^&]*/g, '');
+            history.replaceState({}, document.title, urlWithoutSavedSearch);
+        }
 
+        // Call the function to remove saved_search_name parameter when the page loads
+        removeSavedSearchParameter();
     });
+
 </script>
 
 {% endblock %}

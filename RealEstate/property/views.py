@@ -158,10 +158,12 @@ def property_list(request):
             else:
                 existing_search = SavedSearch.objects.filter(user=request.user, name=saved_search_name).first()
                 if not existing_search:
-                    SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = request.GET.dict())
+                    criteria = request.GET.dict()
+                    criteria.pop("saved_search_name")
+                    SavedSearch.objects.create(user=request.user, name = saved_search_name, criteria = criteria)
                     messages.success(request, "search saved successfully")
-                # else:
-                #     messages.error(request, "You can't save two search with same name")
+                else:
+                    messages.error(request, "You can't save two search with same name")
         else:
             return redirect(reverse('signin') + '?next=' + request.path)
                 
