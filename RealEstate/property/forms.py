@@ -2,12 +2,11 @@ from django import forms
 from .models import *
 
 
-class PropertyForm(forms.ModelForm):
-    
+class PropertyForm(forms.ModelForm):    
     class Meta:
         model = AllProperty
         fields = '__all__'
-        exclude = ['Approval_by_Agent']
+        exclude = ['Approval_by_Agent', 'user']
 
 
 class CommercialPropertyForm(forms.ModelForm):
@@ -68,11 +67,3 @@ class PropertyFilterForm(forms.Form):
     land_type = forms.ChoiceField(choices=[('', 'All'), ('Farmland', 'Farmland'), ('Playground', 'Playground'), ('warehouse', 'Warehouse')], required=False)
 
     ordering_choices = forms.ChoiceField(choices=[('', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
-
-
-
-class EmailForm(forms.Form):
-    subject = forms.CharField(max_length=100)
-    message = forms.CharField(widget=forms.Textarea)
-    recipient = forms.EmailField()
-    attachment = forms.FileField(required=False)

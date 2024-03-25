@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode
 
 def add_property(request):
-    if request.session.get('isLoggedIn', False):
-        
+    if request.user.is_authenticated:        
         if request.method == 'POST':
             form = PropertyTypeForm(request.POST)
             if form.is_valid():

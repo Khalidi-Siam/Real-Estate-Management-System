@@ -5,11 +5,12 @@
 
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6">
             <div class="card">
-                <div class="card-header">Edit Property</div>
+                {% comment %} <div class="card-header">Edit Property</div> {% endcomment %}
                 <div class="card-body">
+                    <h2 class="text-center">Update Property</h2>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form|crispy }}
