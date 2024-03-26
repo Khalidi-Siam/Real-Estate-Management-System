@@ -39,6 +39,10 @@ def password_reset_confirm(request, uidb64, token):
         return redirect('password_reset')
     
 def signup(request):
+    if request.user.is_authenticated:
+        messages.warning(request, "You have already Signed In")
+        return redirect('/')
+    
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -49,7 +53,7 @@ def signup(request):
 
             user = User.objects.create_user(username=email, email = email, password = password)
 
-            user_profile = UserProfile.objects.create(name = name, email = email)
+            user_profile = UserProfile.objects.create(name = name.capitalize(), email = email)
             user_profile.user = user
             user_profile.save()
 
@@ -64,6 +68,9 @@ def signup(request):
 
 
 def signin(request):
+    if request.user.is_authenticated:
+        messages.warning(request, "You have already Signed In")
+        return redirect('/')
     
     if request.method == 'POST':
         form = SignInForm(request, data=request.POST)
@@ -79,7 +86,7 @@ def signin(request):
                 messages.success(request, "Successfully Signed in")
                 next_url = request.GET.get('next')
                 if next_url:
-                    if(next_url == "/authentication/signup"):
+                    if(next_url == "/authentication/signup" or next_url == "/authentication/signin"):
                         return redirect("/")
                     else:
                         return redirect(next_url)
@@ -99,36 +106,43 @@ def signout(request):
     messages.success(request, "Successfully Signed Out")
     return redirect(next_page)
 
-@login_required
+
 def profile(request):
-    user_profile = UserProfile.objects.get(user = request.user)
-    profile_fields = get_profile_fields(user_profile)
-    profile_fields['profile_picture'] = user_profile.profile_picture
-    return render(request, "profile.html", {'profile_fields':profile_fields})
+    if request.user.is_authenticated:
+        user_profile = UserProfile.objects.get(user = request.user)
+        profile_fields = get_profile_fields(user_profile)
+        profile_fields['profile_picture'] = user_profile.profile_picture
+        return render(request, "profile.html", {'profile_fields':profile_fields})
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
 
 
 def get_profile_fields(user_profile):
     fields = [field.name for field in UserProfile._meta.get_fields() if field.name not in ['id', 'user', 'profile_picture', 'properties', 'reviews']]
     return {field: getattr(user_profile, field, None) for field in fields}
 
-@login_required
+
 def edit_profile(request):
-    user_profile = UserProfile.objects.get(user = request.user)
+    if request.user.is_authenticated:
+        user_profile = UserProfile.objects.get(user = request.user)
 
-    if request.method == 'POST':    
-        form = EditProfileForm(request.POST, request.FILES, instance = user_profile)
-        if form.is_valid():
-            request.user.email = form.cleaned_data['email']
-            request.user.username = form.cleaned_data['email']
-            request.user.save()
+        if request.method == 'POST':    
+            form = EditProfileForm(request.POST, request.FILES, instance = user_profile)
+            if form.is_valid():
+                request.user.email = form.cleaned_data['email']
+                request.user.username = form.cleaned_data['email']
+                request.user.save()
 
-            form.save()
-            return redirect('profile')
-        
+                form.save()
+                return redirect('profile')
+            
+        else:
+            form = EditProfileForm(instance=user_profile)
+
+        return render(request, 'edit_profile.html', {'form':form})
+    
     else:
-        form = EditProfileForm(instance=user_profile)
-
-    return render(request, 'edit_profile.html', {'form':form})
+        return redirect(reverse('signin') + '?next=' + request.path)
 
 @login_required
 def delete_account(request):
