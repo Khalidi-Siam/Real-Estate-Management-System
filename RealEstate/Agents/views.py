@@ -1,8 +1,7 @@
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from property.models import AllProperty  
-from authentication.models import UserProfile
+
 @login_required
 def agent_dashboard(request):
     if request.user.UserProfile.is_agent:
