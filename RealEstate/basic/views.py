@@ -9,6 +9,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings  
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 def about(request):
@@ -27,7 +28,19 @@ def terms(request):
     return render(request, "terms.html")
 
 def testimonial(request):
-    all_review = Reviews.objects.all()
+    all_review = Reviews.objects.all().order_by('-rating')
+
+    # Pagination
+    paginator = Paginator(all_review, 2)
+    page_number = request.GET.get('page')
+    try:
+        all_review = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        all_review = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results
+        all_review = paginator.page(paginator.num_pages)
 
     if request.method == "POST":
         if request.user.is_authenticated:

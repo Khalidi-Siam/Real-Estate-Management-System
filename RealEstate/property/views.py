@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def add_property(request):
     if request.user.is_authenticated:        
@@ -99,16 +100,9 @@ def property_detail(request, pk):
     return render(request, "property_detail.html", {'property_fields':property_fields,'property.id':pk})
 
 
-
-def property_list(request):
-
-    properties = AllProperty.objects.filter(
-    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel')
-)
-    
+def filtering(request, properties):
     # Create an instance of the form
     filter_form = PropertyFilterForm(request.GET or None)
-
     # Check if form is submitted and valid
     if filter_form.is_valid():
         # Get cleaned data from the form
@@ -150,7 +144,30 @@ def property_list(request):
             properties = properties.order_by('Price')
         elif ordering_choice == 'price_desc':
             properties = properties.order_by('-Price')
-    
+
+    # Pagination
+    paginator = Paginator(properties, 3)
+    page_number = request.GET.get('page')
+    try:
+        properties = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        properties = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results
+        properties = paginator.page(paginator.num_pages)
+
+    return properties, filter_form
+
+
+def property_list(request):
+    properties = AllProperty.objects.filter(
+    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel')
+)
+
+    properties, filter_form = filtering(request, properties)     
+        
+
     if request.user.is_authenticated:
         saved_searches = SavedSearch.objects.filter(user=request.user)[:5]
     else:
@@ -232,9 +249,15 @@ def apply_saved_search(request, saved_search_id):
 def posted_properties(request):
     if request.user.is_authenticated:
         properties = AllProperty.objects.filter(user=request.user.UserProfile)
-        return render(request, 'posted_properties.html', {'filtered_properties': properties})
-    else:
+        properties, filter_form = filtering(request, properties)
 
+        context = {
+            'filtered_properties': properties,
+            'filter_form': filter_form,
+        }  
+        return render(request, 'posted_properties.html', context)
+    
+    else:
         return redirect(reverse('signin') + '?next=' + request.path)
     
 
