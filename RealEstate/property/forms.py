@@ -76,4 +76,4 @@ class PropertyFilterForm(forms.Form):
 
     land_type = forms.ChoiceField(choices=[('', 'All'), ('Farmland', 'Farmland'), ('Playground', 'Playground'), ('warehouse', 'Warehouse')], required=False)
 
-    ordering_choices = forms.ChoiceField(choices=[('', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
+    ordering_choices = forms.ChoiceField(choices=[('', 'Default'), ('price_asc', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)

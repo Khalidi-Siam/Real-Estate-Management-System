@@ -50,6 +50,70 @@
       {% endif %}
     </div>
   </div>
+
+  <nav aria-label="Page navigation example">
+    <ul id="paginationLinks" class="pagination justify-content-center">
+        <!-- Previous Button -->
+        {% if all_review.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ all_review.previous_page_number }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Previous</span>
+        </li>
+        {% endif %}
+        
+        <!-- First Page -->
+        <li class="page-item {% if all_review.number == 1 %}active{% endif %}">
+            <a class="page-link" href="?page=1">1</a>
+        </li>
+        
+        <!-- Ellipsis if applicable -->
+        {% if all_review.number > 3 %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Pages within range -->
+        {% for i in all_review.paginator.page_range %}
+            {% if i > all_review.number|add:'-2' and i < all_review.number|add:'2' %}
+                {% if i != 1 and i != all_review.paginator.num_pages %}
+                <li class="page-item {% if all_review.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Ellipsis if applicable -->
+        {% if all_review.paginator.num_pages > all_review.number|add:'3' %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Last Page -->
+        {% if all_review.paginator.num_pages > 1 %}
+        <li class="page-item {% if all_review.number == all_review.paginator.num_pages %}active{% endif %}">
+            <a class="page-link" href="?page={{ all_review.paginator.num_pages }}">{{ all_review.paginator.num_pages }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- Next Button -->
+        {% if all_review.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ all_review.next_page_number }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+
+
+
   <hr>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css">
 <style>
