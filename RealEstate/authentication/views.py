@@ -147,10 +147,15 @@ def edit_profile(request):
 @login_required
 def delete_account(request):
     if request.method == 'POST':
-        request.user.delete()
-        logout(request)
-        messages.success(request, "Account deleted successfully")
-        return redirect('/')
-    
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            user.delete()
+            logout(request)
+            messages.success(request, "Account deleted successfully")
+            return redirect('/')
+        else:
+            messages.error(request, "Invalid password. Account deletion failed.")
+            return redirect('profile')
     else:
         return redirect('profile')
