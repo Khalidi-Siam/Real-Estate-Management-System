@@ -75,6 +75,19 @@ def update_property(request, property_id):
         return render(request, 'update_property.html', {'form': form})
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
+    
+    
+def delete_property(request, property_id):
+    if request.user.is_authenticated:
+        property_instance = AllProperty.objects.get(pk=property_id)
+        if request.method == 'POST':
+            property_instance.delete()
+            messages.success(request, "Property deleted successfully")
+            return redirect('posted_properties')
+        return render(request, 'property_detail.html', {'property_instance': property_instance})
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
+    
 
 def property_detail(request, pk):
     property_instance = AllProperty.objects.get(pk = pk)

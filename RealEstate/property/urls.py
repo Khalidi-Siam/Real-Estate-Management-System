@@ -12,6 +12,7 @@ urlpatterns = [
     path('property_list/<int:pk>', views.property_detail, name = "property_detail"),
     path('posted-properties/', views.posted_properties, name='posted_properties'),
     path('update-property/<int:property_id>/', views.update_property, name='update_property'),
+    path('property/delete/<int:property_id>/', views.delete_property, name='delete_property'),
     path('property-calculate/',views.calculate, name = "calculate"),
     path('saved-searches', views.saved_searches, name = "saved_searches"),
     path('apply-saved-search/<int:saved_search_id>/', views.apply_saved_search, name="apply_saved_search"),
