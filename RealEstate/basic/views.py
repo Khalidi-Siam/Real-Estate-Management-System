@@ -15,9 +15,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def about(request):
     return render(request, "about.html")
 
-# def contact(request):
-#     return render(request, "contact.html")
-
 def faqs(request):
     return render(request, "faqs.html")
 
@@ -170,5 +167,6 @@ def contact(request):
             Contact.objects.create(name=name, email=email, subject=subject, message=message)
             success_message = "Query submitted successfully. We will contact you soon."
             messages.success(request, success_message)
+            return redirect('contact')
 
     return render(request, 'contact.html')
