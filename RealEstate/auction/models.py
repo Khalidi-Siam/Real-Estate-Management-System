@@ -37,7 +37,7 @@ class Auc_Property(models.Model):
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
     Postal_code = models.CharField(max_length=4)
     Area = models.CharField(max_length=100, choices=AREA_CHOICES)
-    Property_on = models.CharField(max_length = 20, choices=Action, null =True)
+    #Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     #Approval_by_Agent = models.CharField(max_length = 50, null = True)
     Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)

@@ -94,7 +94,9 @@ def place_bid(request, pk):
     if request.method == 'POST':
         # Check if the current user is the seller
         if auction.seller == request.user.UserProfile:
-            return HttpResponseForbidden("You cannot place a bid on your own auction.")
+
+            messages.error(request, "You cannot place a bid on your own auction.")
+            return redirect('auction_detail', pk=auction.pk)
         
         form = BidForm(request.POST)
         if form.is_valid():

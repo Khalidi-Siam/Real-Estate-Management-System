@@ -1,17 +1,10 @@
 {% extends 'base.html' %}
 
-{% if user.is_authenticated and request.user.UserProfile.is_agent == False %}
-        <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
-{% endif %}
-
-{% block title %}Auction List{% endblock %}
+{% block title %} <title> Auction List </title>{% endblock %}
 
 {% block content %}
     <h2>Auction List</h2>
     <!-- Add Create Auction Button for Sellers -->
-    {% if user.is_authenticated and request.user.UserProfile.is_agent == False %}
-        <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
-    {% endif %}
     
     <ul>
         {% for auction in auctions %}
@@ -21,4 +14,7 @@
             </li>
         {% endfor %}
     </ul>
+    {% if user.is_authenticated and request.user.UserProfile.is_agent == False %}
+        <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
+    {% endif %}
 {% endblock %}

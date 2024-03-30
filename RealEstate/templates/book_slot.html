@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
+{%load crispy_forms_tags%}
 
 {% block title %}
-    Book Slot
+    <title> Book Slot </title>
 {% endblock %}
 
 {% block styles %}
@@ -11,12 +12,28 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Book a Time Slot</h1>
+<br>
+<style>
+    .custom-form {
+        max-width: 600px; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the form horizontally */
+    }
+    </style>
+    
+<style>
+    /* Center the heading */
+    h3 {
+        text-align: center;
+    }
+</style>
+    <h3>Book a Time Slot</h3>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <br>
-        <button type="submit">Book Slot</button>
+        <div class="custom-form">
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Book Slot</button>
+        </div>
+
+        
     </form>
 {% endblock %}
 
