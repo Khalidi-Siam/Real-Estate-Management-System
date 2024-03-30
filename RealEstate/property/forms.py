@@ -77,3 +77,17 @@ class PropertyFilterForm(forms.Form):
     land_type = forms.ChoiceField(choices=[('', 'All'), ('Farmland', 'Farmland'), ('Playground', 'Playground'), ('warehouse', 'Warehouse')], required=False)
 
     ordering_choices = forms.ChoiceField(choices=[('', 'Default'), ('price_asc', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
+
+
+
+class EmailForm(forms.Form):
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)
+    recipient = forms.EmailField()
+    attachment = forms.FileField(required=False)
+
+
+
+class BookingForm(forms.Form):
+    time_slot = forms.DateTimeField(label='Select a time slot', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+
