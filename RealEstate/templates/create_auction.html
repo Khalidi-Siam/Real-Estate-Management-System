@@ -1,10 +1,28 @@
 {% extends 'base.html' %}
+{%load crispy_forms_tags%}
 
 {% block content %}
-  <h2>Create Auction</h2>
+<style>
+  .custom-form {
+      max-width: 600px; /* Adjust the width as needed */
+      margin: 0 auto; /* Center the form horizontally */
+  }
+  </style>
+  <style>
+    /* Center the heading */
+    h3 {
+        text-align: center;
+    }
+</style>  
+  <h3>Create Auction</h3>
+
   <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <div class="custom-form">
+      {%csrf_token%}
+      {{ form|crispy }}
+      <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+
+
   </form>
 {% endblock %}
