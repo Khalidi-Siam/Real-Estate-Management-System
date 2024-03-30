@@ -60,7 +60,7 @@
             <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
           {% endif %}
 
-          
+          <a href="{% url 'book_slot' property_fields.id %}" class="btn btn-primary">Book Slot</a>
           {%if request.user.UserProfile.id == property_fields.user_id %}
           
           <a href="{% url 'update_property' property_fields.id %}" class="btn btn-primary">Update Property</a>

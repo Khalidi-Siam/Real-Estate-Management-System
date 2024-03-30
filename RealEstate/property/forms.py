@@ -76,3 +76,8 @@ class EmailForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
     recipient = forms.EmailField()
     attachment = forms.FileField(required=False)
+
+
+
+class BookingForm(forms.Form):
+    time_slot = forms.DateTimeField(label='Select a time slot', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))

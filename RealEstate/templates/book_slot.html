@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Book Slot
+{% endblock %}
+
+{% block styles %}
+    <!-- Add your custom CSS links or static files here -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Book a Time Slot</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <button type="submit">Book Slot</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Add your custom JavaScript links or static files here -->
+    <script src="{% static 'js/custom.js' %}"></script>
+{% endblock %}
