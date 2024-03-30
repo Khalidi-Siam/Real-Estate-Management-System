@@ -51,55 +51,31 @@
               </table>
             </div>
             
-            <div class="text-center mt-4">
-              <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
-              <button class="btn btn-danger" id="delete-account-btn">Delete Account</button>
-            </div>
-            <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Account Deletion</h5>
-                      </div>
-                      <div class="modal-body">
-                          Are you sure you want to delete your account? This action cannot be undone.
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" id = "cancel-delete-btn" data-dismiss="modal">No</button>
-                          <button type="button" class="btn btn-danger" id="confirm-delete-btn">Yes</button>
-                      </div>
+          <div class="text-center mt-4">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            <button class="btn btn-danger" id="delete-account-btn">Delete Account</button>
+          </div>
+          <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Account Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                      <!-- Error message for invalid password -->
+                      <div id="password-error-msg" class="alert alert-danger d-none" role="alert"></div>
+                      <!-- Password input -->
+                      <input type="password" id="delete-account-password" class="form-control mt-3" placeholder="Enter your password">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" id="cancel-delete-btn" data-dismiss="modal">Cancel</button>
+                      <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+                    </div>
                   </div>
+                </div>
               </div>
-            </div>
-            
-            <script>
-              document.getElementById('delete-account-btn').addEventListener('click', function() {
-                  $('#deleteConfirmationModal').modal('show');
-              });
-          
-              document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-                  // Create a form element
-                  var form = document.createElement('form');
-                  form.method = 'POST';
-                  form.action = "{% url 'delete_account' %}";  // URL for the delete_account view
-          
-                  // Create a hidden input field for CSRF token
-                  var csrfInput = document.createElement('input');
-                  csrfInput.type = 'hidden';
-                  csrfInput.name = 'csrfmiddlewaretoken';
-                  csrfInput.value = '{{ csrf_token }}';  // Use Django template tag to get CSRF token
-                  form.appendChild(csrfInput);
-          
-                  // Append the form to the document body and submit it
-                  document.body.appendChild(form);
-                  form.submit();
-              });
-          
-              document.getElementById('cancel-delete-btn').addEventListener('click', function() {
-                  // Close the modal
-                  $('#deleteConfirmationModal').modal('hide');
-              });
-          </script>          
+
           {% else %}
             <p class="text-muted text-center">No profile found</p>
           {% endif %}
@@ -109,4 +85,57 @@
     </div>    
   </div>  
 </div>
+
+<script>
+  // Show delete confirmation modal when delete button is clicked
+  document.getElementById('delete-account-btn').addEventListener('click', function() {
+    $('#deleteConfirmationModal').modal('show');
+  });
+
+  // Submit the delete form when confirm button is clicked
+  document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+    // Validate password
+    var password = document.getElementById('delete-account-password').value;
+    if (!password) {
+      // Show error message if password is empty
+      document.getElementById('password-error-msg').innerText = 'Password is required.';
+      document.getElementById('password-error-msg').classList.remove('d-none');
+      return;
+    }
+    // Create a form element
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{% url 'delete_account' %}";  // URL for the delete_account view
+
+    // Create a hidden input field for CSRF token
+    var csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrfmiddlewaretoken';
+    csrfInput.value = '{{ csrf_token }}';  // Use Django template tag to get CSRF token
+    form.appendChild(csrfInput);
+
+    // Append the password to the form data
+    var passwordInput = document.createElement('input');
+    passwordInput.type = 'hidden';
+    passwordInput.name = 'password';
+    passwordInput.value = password;
+    form.appendChild(passwordInput);
+
+    // Append the form to the document body and submit it
+    document.body.appendChild(form);
+    form.submit();
+  });
+
+  // Close the delete confirmation modal when cancel button is clicked
+  document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+    $('#deleteConfirmationModal').modal('hide');
+  });
+
+  // Reset error message when password input is focused
+  document.getElementById('delete-account-password').addEventListener('focus', function() {
+    document.getElementById('password-error-msg').innerText = '';
+    document.getElementById('password-error-msg').classList.add('d-none');
+  });
+</script>
+
 {% endblock %}

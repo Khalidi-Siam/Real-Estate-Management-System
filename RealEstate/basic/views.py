@@ -6,18 +6,14 @@ from django.contrib import messages
 from django.core.mail import send_mail
 import os
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
-from django.template.loader import render_to_string
 from django.conf import settings  
 from django.urls import reverse
-
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 def about(request):
     return render(request, "about.html")
-
-# def contact(request):
-#     return render(request, "contact.html")
 
 def faqs(request):
     return render(request, "faqs.html")
@@ -29,23 +25,38 @@ def terms(request):
     return render(request, "terms.html")
 
 def testimonial(request):
-    all_review = Reviews.objects.all()
+    all_review = Reviews.objects.all().order_by('-rating')
+
+    # Pagination
+    paginator = Paginator(all_review, 2)
+    page_number = request.GET.get('page')
+    try:
+        all_review = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        all_review = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results
+        all_review = paginator.page(paginator.num_pages)
 
     if request.method == "POST":
         if request.user.is_authenticated:
             user_review = Reviews.objects.filter(user = request.user.UserProfile).first()
-
-            if user_review: #condtion check whether user already reviewed the specific property. one review per property allowed
-                messages.error(request, "You have already give your feedback")
+            
+            form = ReviewForm(request.POST, instance=user_review)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.user = request.user.UserProfile
+                review.save()
+                if user_review:
+                    messages.success(request, "Your review has been updated successfully")
+                else:
+                    messages.success(request, "Your review has been submitted successfully")
                 return redirect('testimonial')
             else:
-                form = ReviewForm(request.POST)
-                if form.is_valid():
-                    review = form.save(commit=False)
-                    review.user = request.user.UserProfile
-                    review.save()
-                    messages.success(request, "Reviewed successfully")
-                    return redirect('testimonial')
+                messages.error(request, "You can't leave any field blank")
+            
+            return redirect('testimonial')
         
         else:
             return redirect(reverse('signin') + '?next=' + request.path)
@@ -85,40 +96,46 @@ def subscribe(request):
     return render(request, 'base.html', {'form': form})
 
 
-
+@login_required
 def send_email(request):
-    if request.method == 'POST':
-        form = SendEmailForm(request.POST, request.FILES)
-        if form.is_valid():
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
+    if request.user.UserProfile.is_agent:
+        if request.method == 'POST':
+            form = SendEmailForm(request.POST, request.FILES)
+            if form.is_valid():
+                subject = form.cleaned_data['subject']
+                message = form.cleaned_data['message']
 
-            # Fetching subscribers' email addresses
-            subscribers = Subscriber.objects.values_list('email', flat=True)
+                # Fetching subscribers' email addresses
+                subscribers = Subscriber.objects.values_list('email', flat=True)
 
-            # Creating email message
-            email = EmailMessage(
-                subject=subject,
-                body=message,
-                from_email=settings.EMAIL_HOST_USER,  # Use host email from Django settings
-                to=subscribers,  # Using subscribers' email addresses
-            )
+                # Creating email message
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=settings.EMAIL_HOST_USER,  # Use host email from Django settings
+                    to=subscribers,  # Using subscribers' email addresses
+                )
 
-            # Adding attachment if exists
-            attachment = request.FILES.get('attachment')
-            if attachment:
-                email.attach(attachment.name, attachment.read(), attachment.content_type)
+                # Adding attachment if exists
+                attachment = request.FILES.get('attachment')
+                if attachment:
+                    email.attach(attachment.name, attachment.read(), attachment.content_type)
 
-            # Sending email
-            try:
-                email.send()
-                return HttpResponse('Email sent successfully!')
-            except Exception as e:
-                return HttpResponse(f'Failed to send email. Error: {e}')
+                # Sending email
+                try:
+                    email.send()
+                    messages.success(request, "Email sent successfully!")
+                    return redirect("send_email")
+                except Exception as e:
+                    messages.error(request, f"Failed to send email. Error: {e}")
+                    return redirect("send_email")
+        else:
+            form = SendEmailForm()
+        return render(request, 'send_email.html', {'form': form})
+
     else:
-        form = SendEmailForm()
-    return render(request, 'send_email.html', {'form': form})
-
+        messages.error(request, "You are not allowed to authorize to view")
+        return redirect("/")
 
 def contact(request):
     success_message = None
@@ -147,7 +164,9 @@ def contact(request):
             )
 
             # Save the form data to the database
-            contact = Contact.objects.create(name=name, email=email, subject=subject, message=message)
+            Contact.objects.create(name=name, email=email, subject=subject, message=message)
             success_message = "Query submitted successfully. We will contact you soon."
+            messages.success(request, success_message)
+            return redirect('contact')
 
-    return render(request, 'contact.html', {'success_message': success_message})
+    return render(request, 'contact.html')

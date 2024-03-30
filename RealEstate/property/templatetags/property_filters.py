@@ -4,7 +4,11 @@ register = template.Library()
 
 @register.filter
 def format_field_name(value):
-    return value.capitalize().replace('_', ' ')
+    if value == "Block":
+        value = "Block/Sector"
+    else:
+        value = value.capitalize().replace('_', ' ')
+    return value
 
 @register.filter
 def get_type(value):

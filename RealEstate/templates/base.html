@@ -83,7 +83,7 @@
                         <a href="{%url 'saved_searches'%}?next={{request.path}}" class="nav-item nav-link"> Saved Search </a>
 
                         <div class="nav-item dropdown">
-                            {% if is_logged_in %}
+                            {% if request.user.is_authenticated %}
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ name }}</a>
                                 <div class="dropdown-menu rounded-0 m-0">
                                 <a href="{%url 'profile'%}" class="dropdown-item"> Profile </a>
@@ -108,13 +108,24 @@
                 </div>
             </nav>
         </div>
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
-            {{ message }}
+        {% if messages %}
+        <div class="container-fluid bg-white p-0">
+            <div class="row justify-content-center">
+                <div class="col-md-8 mt-3" style="position: relative; z-index: 999;">
+                    <div class="alert-container">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% endif %} alert-dismissible fade show" role="alert" style="border-radius: 10px;">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endfor %}
-{% endif %}
+        {% endif %}
+        
+    
 
 
         {%block getStarted%}

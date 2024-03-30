@@ -1,8 +1,5 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 
 {%block title%}
 <title> Property Listings </title>
@@ -23,7 +20,7 @@
                         {% comment %} <label for="saved_searches_dropdown" class="form-label">Saved Searches</label> {% endcomment %}
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="saved_searches_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select From Your Saved Search
+                                Load From Your Saved Search
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="saved_searches_dropdown">
                                 <!-- List of 5 saved searches -->
@@ -67,6 +64,16 @@
                                 <option value="shop" {% if request.GET.business_type == "shop" %} selected {% endif %}>Shop</option>
                                 <option value="other" {% if request.GET.business_type == "other" %} selected {% endif %}>Other</option>
                             </select>
+                            <br>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="has_conference" name="has_conference" {% if request.GET.has_conference %}checked{% endif %}>
+                                <label class="form-check-label" for="has_conference">Has Conference Room</label>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="has_security" name="has_security" {% if request.GET.has_security %}checked{% endif %}>
+                                <label class="form-check-label" for="has_security">Has Security System</label>
+                            </div>
                         </div>
                         <!-- Land Type -->
                         <div class="mb-3" id="land_type_field" style="display: none;">
@@ -102,7 +109,8 @@
                         <div class="mb-3">
                             <label for="ordering_choices" class="form-label">Order By</label>
                             <select class="form-select" id="ordering_choices" name="ordering_choices">
-                                <option value="">Price: Low to High</option>
+                                <option value="">Default</option>
+                                <option value="price_asc" {% if request.GET.ordering_choices == "price_asc" %} selected {% endif %}>Price: Low to High</option>
                                 <option value="price_desc" {% if request.GET.ordering_choices == "price_desc" %} selected {% endif %}>Price: High to Low</option>
                             </select>
                         </div>
@@ -167,6 +175,65 @@
     </div>
 </div>
 
+<nav aria-label="Page navigation example">
+    <ul id="paginationLinks" class="pagination justify-content-center">
+        <!-- Previous Button -->
+        {% if filtered_properties.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ filtered_properties.previous_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Previous</span>
+        </li>
+        {% endif %}
+        
+        <!-- First Page -->
+        <li class="page-item {% if filtered_properties.number == 1 %}active{% endif %}">
+            <a class="page-link" href="?page=1{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">1</a>
+        </li>
+        
+        <!-- Ellipsis if applicable -->
+        {% if filtered_properties.number > 3 %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Pages within range -->
+        {% for i in filtered_properties.paginator.page_range %}
+            {% if i > filtered_properties.number|add:'-2' and i < filtered_properties.number|add:'2' %}
+                {% if i != 1 and i != filtered_properties.paginator.num_pages %}
+                <li class="page-item {% if filtered_properties.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Ellipsis if applicable -->
+        {% if filtered_properties.paginator.num_pages > filtered_properties.number|add:'3' %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Last Page -->
+        {% if filtered_properties.paginator.num_pages > 1 %}
+        <li class="page-item {% if filtered_properties.number == filtered_properties.paginator.num_pages %}active{% endif %}">
+            <a class="page-link" href="?page={{ filtered_properties.paginator.num_pages }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ filtered_properties.paginator.num_pages }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- Next Button -->
+        {% if filtered_properties.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ filtered_properties.next_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -227,8 +294,32 @@
                 $('#filterForm').submit();
             }
         });
+        // Function to remove saved_search_name parameter from URL
+        function removeSavedSearchParameter() {
+            var urlWithoutSavedSearch = window.location.href.replace(/[?&]saved_search_name=[^&]*/g, '');
+            history.replaceState({}, document.title, urlWithoutSavedSearch);
+        }
 
+        // Call the function to remove saved_search_name parameter when the page loads
+        removeSavedSearchParameter();
+
+        // Function to append filter parameters to pagination links
+        function appendFilterParamsToPaginationLinks() {
+            var filterParams = $('#filterForm').serialize();
+            $('#paginationLinks a').each(function() {
+                var href = $(this).attr('href');
+                if (href.includes('?')) {
+                    $(this).attr('href', href + '&' + filterParams);
+                } else {
+                    $(this).attr('href', href + '?' + filterParams);
+                }
+            });
+        }
+
+        // Call the function to append filter parameters to pagination links
+        appendFilterParamsToPaginationLinks();
     });
+
 </script>
 
 {% endblock %}

@@ -2,22 +2,23 @@ from django import forms
 from .models import *
 
 
-class PropertyForm(forms.ModelForm):
-    
+class PropertyForm(forms.ModelForm):    
     class Meta:
         model = AllProperty
         fields = '__all__'
-        exclude = ['Approval_by_Agent']
-
+        exclude = ['Approval_by_Agent', 'user']
 
 class CommercialPropertyForm(forms.ModelForm):
     class Meta:
         model = CommercialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
 
 class LandPropertyForm(forms.ModelForm):
     class Meta:
@@ -25,14 +26,22 @@ class LandPropertyForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['user', 'Property_type','Approval_by_Agent']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
+
 class ResidentialPropertyForm(forms.ModelForm):
     class Meta:
         model = ResidentialProperty
         fields = '__all__'
         exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Year'].widget = forms.DateInput(attrs={'type': 'date'})
+        self.fields['Block'].required = False
+        self.fields['Block'].label = "Block/Sector"
 
 class PropertyTypeForm(forms.Form):
     Type = forms.ChoiceField(choices=[
@@ -67,7 +76,7 @@ class PropertyFilterForm(forms.Form):
 
     land_type = forms.ChoiceField(choices=[('', 'All'), ('Farmland', 'Farmland'), ('Playground', 'Playground'), ('warehouse', 'Warehouse')], required=False)
 
-    ordering_choices = forms.ChoiceField(choices=[('', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
+    ordering_choices = forms.ChoiceField(choices=[('', 'Default'), ('price_asc', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
 
 
 
@@ -81,3 +90,4 @@ class EmailForm(forms.Form):
 
 class BookingForm(forms.Form):
     time_slot = forms.DateTimeField(label='Select a time slot', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+
