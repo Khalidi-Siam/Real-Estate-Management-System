@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ auction.title }}</h1>
+    <p>Name: {{ auction.Property_Name }}</p>
+    <p>Start Price: {{ auction.start_price }}</p>
+    <p>End Time: {{ auction.end_time }}</p>
+    
+    <h2>Bids</h2>
+    <ul>
+        {% for bid in bids %}
+            <li>{{ bid.amount }} - {{ bid.timestamp }}</li>
+        {% endfor %}
+    </ul>
+    {% comment %} {%if request.Auc_Property.seller != request.user.UserProfile%} {% endcomment %}
+    <h2>Place a Bid</h2>
+    <form method="post" action="{% url 'place_bid' pk=auction.pk %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Place Bid</button>
+    </form>
+    {% comment %} {%endif%} {% endcomment %}
+{% endblock %}

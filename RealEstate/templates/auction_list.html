@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %} <title> Auction List </title>{% endblock %}
+
+{% block content %}
+    <h2>Auction List</h2>
+    <!-- Add Create Auction Button for Sellers -->
+    
+    <ul>
+        {% for auction in auctions %}
+            <li>
+                <a href="{% url 'auction_detail' pk=auction.pk %}">{{ auction.Property_Name }}</a>
+                - Current Price: {{ auction.current_price }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if user.is_authenticated and request.user.UserProfile.is_agent == False %}
+        <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
+    {% endif %}
+{% endblock %}

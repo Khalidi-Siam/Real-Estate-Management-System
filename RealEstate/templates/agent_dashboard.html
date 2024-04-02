@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}
+    Agent Dashboard
+{% endblock %}
+
+{% block styles %}
+    <!-- Add your custom CSS links or static files here -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
   <h1>Welcome to Agent Dashboard</h1>
@@ -19,7 +28,7 @@
           <tr>
             <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
             <td><p>Pending</p></td>
-            {% comment %} <td><a href="{% url 'approve_property' property.pk %}" class="btn btn-primary">Approve</a></td> {% endcomment %}
+            <!-- You can add additional actions here -->
           </tr>
         {% endfor %}
       {% else %}
@@ -29,5 +38,38 @@
       {% endif %}
     </tbody>
   </table>
+
+  <hr>
+
+  <h2>Pending Bookings</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Property Name</th>
+        <th>Time Slot</th>
+        <!-- Add additional columns as needed -->
+      </tr>
+    </thead>
+    <tbody>
+      {% if pending_bookings %}
+        {% for booking in pending_bookings %}
+          <tr>
+            <td>{{ booking.property.Property_Name }}</td>
+            <td>{{ booking.time_slot }}</td>
+            <!-- Add additional data here -->
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="2">No pending bookings found.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Add your custom JavaScript links or static files here -->
+    <script src="{% static 'js/custom.js' %}"></script>
 {% endblock %}

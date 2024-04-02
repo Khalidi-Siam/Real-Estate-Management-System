@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from urllib.parse import urlencode
+from Agents.models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def add_property(request):
@@ -288,3 +289,27 @@ def view_property_documents(request, property_id):
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
 
+
+@login_required
+def book_slot(request, property_id):
+    property_instance = AllProperty.objects.get(pk=property_id)
+    agent = property_instance.user
+
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+
+        if form.is_valid():
+            time_slot = form.cleaned_data['time_slot']
+            booking = Booking.objects.create(
+                property=property_instance,
+                agent=agent,
+                seller=request.user.UserProfile,  # Assuming the logged-in user is the seller
+                time_slot=time_slot,
+            )
+
+            messages.success(request, 'Booking request sent successfully!')
+            return redirect('property_detail',property_id)
+    else:
+        form = BookingForm()
+
+    return render(request, 'book_slot.html', {'form': form, 'property': property_instance})

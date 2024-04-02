@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'basic',
     'Agents',
     'Payment',
+    'auction',
 ]
 
 MIDDLEWARE = [
@@ -161,7 +162,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('DB_MAIL')
-
 EMAIL_HOST_PASSWORD = "xajgbonknoonuwcw"
 STRIPE_PUBLIC_KEY = "pk_test_51P0pKPAKoPQghNOn7AtGJvnzdcPab1BaKbgCVQxsVX8ASb7GgpvFRN4FUl2EHqwgyCHzb3nybKDf8Bo2A8c4VBCZ00vGavm1sP"
 STRIPE_SECRET_KEY = "sk_test_51P0pKPAKoPQghNOnBa2banlfgUcF9bKDVyECEt0kDmLk2C2io1lntHdACQvTP1ttlRll5gnFNQbok2mIF1Q1JP2a00utYUpWEf"
