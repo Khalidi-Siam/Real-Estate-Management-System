@@ -6,6 +6,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+import os
 
 # Create your models here.
 class Auc_Property(models.Model):
@@ -31,16 +34,15 @@ class Auc_Property(models.Model):
 
     Property_Name = models.CharField(max_length=200)
     Total_area_in_sqft = models.DecimalField(max_digits=8, decimal_places=2,null=True)
-    Property_Pictures = models.ImageField(upload_to='pics',default=None)
+    Property_Pictures = models.ImageField(upload_to='pics')
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
     Postal_code = models.CharField(max_length=4)
     Area = models.CharField(max_length=100, choices=AREA_CHOICES)
-    #Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     #Approval_by_Agent = models.CharField(max_length = 50, null = True)
-    Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
+    Property_Documents = models.FileField(upload_to='property_documents')
     start_price = models.DecimalField(max_digits=10, decimal_places=2)
     current_price = models.DecimalField(max_digits=10, decimal_places=2,null = True,default = 0.00)
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='auctions')
@@ -54,9 +56,21 @@ class Auc_Property(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.Property_Name
+    
 
+@receiver(pre_delete, sender=Auc_Property)
+def delete_property_pictures(sender, instance, **kwargs):
+    # Delete associated property pictures
+    if instance.Property_Pictures:
+        if os.path.isfile(instance.Property_Pictures.path):
+            os.remove(instance.Property_Pictures.path)
 
-
+@receiver(pre_delete, sender=Auc_Property)
+def delete_property_documents(sender, instance, **kwargs):
+    # Delete associated property documents
+    if instance.Property_Documents:
+        if os.path.isfile(instance.Property_Documents.path):
+            os.remove(instance.Property_Documents.path)
 
 
 

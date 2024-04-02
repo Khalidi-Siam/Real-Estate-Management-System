@@ -3,6 +3,9 @@ from authentication.models import UserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+import os
 
 # Create your models here.
 class AllProperty(models.Model):
@@ -31,7 +34,7 @@ class AllProperty(models.Model):
     Property_Description = models.TextField(null=True, blank=True)
     Total_area_in_sqft = models.DecimalField(max_digits=8, decimal_places=2,null=True)
     Price = models.IntegerField(default=0)
-    Property_Pictures = models.ImageField(upload_to='pics',default=None)
+    Property_Pictures = models.ImageField(upload_to='pics')
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
@@ -40,16 +43,26 @@ class AllProperty(models.Model):
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     Approval_by_Agent = models.CharField(max_length = 50, null = True)
-    Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
-    sold = models.BooleanField(default = False)
-    soldDate = models.DateTimeField(auto_now_add = True)
+    Property_Documents = models.FileField(upload_to='property_documents')
 
     def __str__(self):
         return self.Property_Name
 
 
 
+@receiver(pre_delete, sender=AllProperty)
+def delete_property_pictures(sender, instance, **kwargs):
+    # Delete associated property pictures
+    if instance.Property_Pictures:
+        if os.path.isfile(instance.Property_Pictures.path):
+            os.remove(instance.Property_Pictures.path)
 
+@receiver(pre_delete, sender=AllProperty)
+def delete_property_documents(sender, instance, **kwargs):
+    # Delete associated property documents
+    if instance.Property_Documents:
+        if os.path.isfile(instance.Property_Documents.path):
+            os.remove(instance.Property_Documents.path)
 
 
 class ResidentialProperty(AllProperty):
