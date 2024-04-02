@@ -1,0 +1,35 @@
+```<!-- checkout.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Checkout</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <img class="card-img-top img-fluid rounded-top" src="{{ property.Property_Pictures.url }}" alt="{{ property.Property_Name}}">
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">{{ property.Property_Name }}</h1>
+          <p>{{ property.description }}</p>
+          <p>Price: {{ property.Price }}</p>
+          <!-- Add a checkout button -->
+          <form action="{% url 'checkout' property_id=property.id%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="property_id" value="{{property.id}}">
+            <button type="submit" class="btn btn-primary">Checkout</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -40,5 +40,6 @@ urlpatterns = [
          name='password_reset_complete'),
     # Other URL patterns 
     path('agents/', include('Agents.urls')),
+    path('payment/', include("Payment.urls")),              
     path('auction/', include('auction.urls')),        
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

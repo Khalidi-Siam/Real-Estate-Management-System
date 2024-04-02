@@ -1,74 +1,66 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
 {% load property_filters %}
-{%block title%}
-<title> Property Details </title>
-{%endblock%}
+
+{% block title %}
+<title>Property Details</title>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  <div class="row">
-    <!-- Property Image Section -->
-    <div class="col-md-6">
-      <div class="card shadow-lg">
-        <img class="card-img-top img-fluid rounded-top" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}">
-      </div>
-    </div>
-    
-    <!-- Property Details Section -->
-    <div class="col-md-6">
-      <div class="card shadow-lg">
-        <div class="card-body">
-          <h1 class="card-title text-center mb-4">{{ property_fields.Property_Name }}</h1>
-          <div class="table-responsive">
-            <table class="table table-borderless">
-              <tbody>
-                {% for field, value in property_fields.items %}
-                  {% if value %}
-                    {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' %}
-                      <tr>
-                        <th class="text-muted">{{ field|format_field_name }}</th>
-                        <td>
-                          {%if value|get_type == 'bool'%}
-                            {% if value == True %}
-                              <span class="text-success">&#10004;</span> <!-- Green tick -->
-                            {% else %}
-                              <span class="text-danger">&#10006;</span> <!-- Red cross -->
-                            {%endif%}
-                          {% else %}
-                            {{ value|title }}
-                          {% endif %}
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+    <div class="row">
+        <!-- Property Image Section -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <img class="card-img-top img-fluid rounded-top" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}">
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card shadow-lg">
-            <div class="card-body">
-                <h5 class="card-title">Property Description</h5>
-                <p>{{ property_fields.Property_Description }}</p>
+
+        <!-- Property Details Section -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">{{ property_fields.Property_Name }}</h1>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                {% for field, value in property_fields.items %}
+                                    {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' %}
+                                        <tr>
+                                            <th class="text-muted">{{ field|format_field_name }}</th>
+                                            <td>
+                                                {% if value|get_type == 'bool' %}
+                                                    {% if value == True %}
+                                                        <span class="text-success">&#10004;</span> <!-- Green tick -->
+                                                    {% else %}
+                                                        <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ value|title }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-  </div>
-
-  {% if request.user.UserProfile.is_agent %}
     <div class="row mt-4">
         <div class="col-md-12">
-            <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
-        </div>
-    </div>
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Property Description</h5>
+                    <p>{{ property_fields.Property_Description }}</p>
+                    {% if request.user.UserProfile.is_agent %}
+                        <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
+                    {% endif %}
+                    {% if request.user.UserProfile.id == property_fields.user_id %}
+                        <a href="{% url 'update_property' property_fields.id %}" class="btn btn-primary">Update Property</a>
+                    {% endif %}                
   {% endif %}
 
   
@@ -99,47 +91,17 @@
             </div>
         </div>
     </div>
+
   {%else%}
   <div class="row mt-4">
           <div class="col-md-12">
               <div class="text-center">
                    <a href="{% url 'book_slot' property_fields.id %}" class="btn btn-primary">Book Slot</a>
+                   <a href="{% url 'checkout' property_id=property_fields.id %}" class="btn btn-primary">Buy Now</a>
               </div>
           </div>
       </div>
   {% endif %}
 
 </div>
-
-<script>
-  // Show delete confirmation modal when delete button is clicked
-  document.getElementById('delete-property-btn').addEventListener('click', function() {
-      $('#deleteConfirmationModal').modal('show');
-  });
-
-  // Close the delete confirmation modal when cancel button is clicked
-  document.getElementById('cancel-delete-btn').addEventListener('click', function() {
-      $('#deleteConfirmationModal').modal('hide');
-  });
-
-  // Submit the delete form when confirm button is clicked
-  document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-      // Create a form element
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = "{% url 'delete_property' property_fields.id %}";  // URL for the delete_account view
-
-      // Create a hidden input field for CSRF token
-      var csrfInput = document.createElement('input');
-      csrfInput.type = 'hidden';
-      csrfInput.name = 'csrfmiddlewaretoken';
-      csrfInput.value = '{{ csrf_token }}';  // Use Django template tag to get CSRF token
-      form.appendChild(csrfInput);
-
-      // Append the form to the document body and submit it
-      document.body.appendChild(form);
-      form.submit();
-  });
-</script>
-
 {% endblock %}
