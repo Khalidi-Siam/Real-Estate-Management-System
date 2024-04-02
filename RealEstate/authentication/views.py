@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .forms import SignUpForm, SignInForm, EditProfileForm
 from .models import UserProfile
+from basic.models import Subscriber
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
@@ -12,6 +13,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib import messages
 from django.urls import reverse
+import os
+from django.core.mail import send_mail
 
 # Create your views here.
 User = get_user_model()
@@ -50,6 +53,7 @@ def signup(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             nid = form.cleaned_data['nid']
+            subscribe = form.cleaned_data['subscribe']
 
 
             user = User.objects.create_user(username=email, email = email, password = password)
@@ -57,6 +61,14 @@ def signup(request):
             user_profile = UserProfile.objects.create(name = name.capitalize(), email = email, nid = nid)
             user_profile.user = user
             user_profile.save()
+
+            if subscribe:
+                subject = 'Thank you for subscribing!'
+                message = 'We appreciate your subscription.'
+                from_email = os.environ.get('DB_MAIL')
+                recipient_list = [email]                
+                send_mail(subject, message, from_email, recipient_list)
+                Subscriber.objects.create(email = email)
 
             messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')

@@ -26,7 +26,7 @@ def auction_detail(request, pk):
             # Auction has ended, handle this case as needed
             pass
         bids = auction.bids.all().order_by('-amount')
-        return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids})
+        return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids, 'current_time':timezone.now()})
     
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
