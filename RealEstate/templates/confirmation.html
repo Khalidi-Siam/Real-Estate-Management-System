@@ -1,0 +1,32 @@
+<!-- confirmation.html -->
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <title>Payment Confirmation</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">Payment {{ payment_status }}</h1>
+          <p>Thank you, {{ buyer_name }}, for your payment.</p>
+          <p>Property: {{ property_name }}</p>
+          <p>Status: {{ payment_status }}</p>
+          {% if payment_status == 'success' %}
+            <!-- Additional information for successful payment -->
+            <p>Your payment was successful.</p>
+          {% else %}
+            <!-- Additional information for canceled payment -->
+            <p>Your payment was canceled.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
