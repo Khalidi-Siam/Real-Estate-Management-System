@@ -84,7 +84,7 @@ def subscribe(request):
             # Send email
             subject = 'Thank you for subscribing!'
             message = 'We appreciate your subscription.'
-            from_email = os.environ.get('DB_MAIL')  # Replace with your email
+            from_email = os.environ.get('DB_MAIL')
             recipient_list = [email]
             
             send_mail(subject, message, from_email, recipient_list)
