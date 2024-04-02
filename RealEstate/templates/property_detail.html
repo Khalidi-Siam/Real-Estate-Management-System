@@ -55,14 +55,19 @@
                 <div class="card-body">
                     <h5 class="card-title">Property Description</h5>
                     <p>{{ property_fields.Property_Description }}</p>
-                    {% if request.user.UserProfile.is_agent %}
-                        <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
-                    {% endif %}
-                    {% if request.user.UserProfile.id == property_fields.user_id %}
-                        <a href="{% url 'update_property' property_fields.id %}" class="btn btn-primary">Update Property</a>
-                    {% endif %}                
-  {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
+  {% if request.user.UserProfile.is_agent %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
+        </div>
+    </div>
+  {% endif %}
+                
   
 
   {% if request.user.UserProfile.id == property_fields.user_id %}
@@ -100,8 +105,40 @@
                    <a href="{% url 'checkout' property_id=property_fields.id %}" class="btn btn-primary">Buy Now</a>
               </div>
           </div>
-      </div>
+    </div>
   {% endif %}
 
 </div>
+
+<script>
+  // Show delete confirmation modal when delete button is clicked
+  document.getElementById('delete-property-btn').addEventListener('click', function() {
+      $('#deleteConfirmationModal').modal('show');
+  });
+
+  // Close the delete confirmation modal when cancel button is clicked
+  document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+      $('#deleteConfirmationModal').modal('hide');
+  });
+
+  // Submit the delete form when confirm button is clicked
+  document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+      // Create a form element
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = "{% url 'delete_property' property_fields.id %}";  // URL for the delete_account view
+
+      // Create a hidden input field for CSRF token
+      var csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'csrfmiddlewaretoken';
+      csrfInput.value = '{{ csrf_token }}';  // Use Django template tag to get CSRF token
+      form.appendChild(csrfInput);
+
+      // Append the form to the document body and submit it
+      document.body.appendChild(form);
+      form.submit();
+  });
+</script>
+
 {% endblock %}
