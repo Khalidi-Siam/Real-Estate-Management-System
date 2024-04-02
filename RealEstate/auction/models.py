@@ -42,7 +42,7 @@ class Auc_Property(models.Model):
     #Approval_by_Agent = models.CharField(max_length = 50, null = True)
     Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
     start_price = models.DecimalField(max_digits=10, decimal_places=2)
-    current_price = models.DecimalField(max_digits=10, decimal_places=2)
+    current_price = models.DecimalField(max_digits=10, decimal_places=2,null = True,default = 0.00)
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='auctions')
     winner = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='won_auctions')
     start_time = models.DateTimeField(default=timezone.now)

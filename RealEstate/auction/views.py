@@ -80,13 +80,14 @@ def place_bid(request, pk):
     if auction.end_time <= timezone.now():
         # Auction has ended, handle this case
         # For example, determine the winner and update the auction status
-        if auction.bids.exists():
+        if auction.current_price.exists():
             # Determine the winner based on the highest bid
             winning_bid = auction.bids.order_by('-bid_amount').first()
             auction.winner = winning_bid.bidder
         else:
             # No bids were placed, handle this case by setting the winner to None
             auction.winner = None
+            
             
         auction.save()
         return redirect('auction_detail', pk=auction.pk)
