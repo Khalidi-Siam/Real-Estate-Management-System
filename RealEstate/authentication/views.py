@@ -49,11 +49,12 @@ def signup(request):
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
+            nid = form.cleaned_data['nid']
 
 
             user = User.objects.create_user(username=email, email = email, password = password)
 
-            user_profile = UserProfile.objects.create(name = name.capitalize(), email = email)
+            user_profile = UserProfile.objects.create(name = name.capitalize(), email = email, nid = nid)
             user_profile.user = user
             user_profile.save()
 

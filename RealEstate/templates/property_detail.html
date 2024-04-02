@@ -25,22 +25,24 @@
                         <table class="table table-borderless">
                             <tbody>
                                 {% for field, value in property_fields.items %}
-                                    {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' %}
-                                        <tr>
-                                            <th class="text-muted">{{ field|format_field_name }}</th>
-                                            <td>
-                                                {% if value|get_type == 'bool' %}
-                                                    {% if value == True %}
-                                                        <span class="text-success">&#10004;</span> <!-- Green tick -->
+                                    {%if value %}
+                                        {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' %}
+                                            <tr>
+                                                <th class="text-muted">{{ field|format_field_name }}</th>
+                                                <td>
+                                                    {% if value|get_type == 'bool' %}
+                                                        {% if value == True %}
+                                                            <span class="text-success">&#10004;</span> <!-- Green tick -->
+                                                        {% else %}
+                                                            <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                                                        {% endif %}
                                                     {% else %}
-                                                        <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                                                        {{ value|title }}
                                                     {% endif %}
-                                                {% else %}
-                                                    {{ value|title }}
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {%endif%}
                                 {% endfor %}
                             </tbody>
                         </table>

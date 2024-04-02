@@ -134,8 +134,7 @@ def send_email(request):
         return render(request, 'send_email.html', {'form': form})
 
     else:
-        messages.error(request, "You are not allowed to authorize to view")
-        return redirect("/")
+        return redirect("PageNotFound")
 
 def contact(request):
     success_message = None
