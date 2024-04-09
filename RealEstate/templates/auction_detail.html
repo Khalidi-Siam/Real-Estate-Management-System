@@ -10,11 +10,15 @@
     <div class="row">
         <div class="col-md-8">
             <h1>{{ auction.title }}</h1>
-            <p><strong>Name:</strong> {{ auction.Property_Name }}</p>
-            <p><strong>Start Price:</strong> {{ auction.start_price }}</p>           
+            <p>Name: {{ auction.Property_Name }}</p>
+            <p>Seller: {{auction.seller}}</p>
+            <p>Start Price: {{ auction.start_price }}</p>
+            <p>End Time: {{ auction.end_time }}</p>
+            <p>Current Price: {{auction.current_price}}</p>
+            <p>Current Bidder: {{current_bidder}}</p>          
             <ul>
                 {% for bid in bids %}
-                    <li>{{ bid.amount }} - {{ bid.timestamp }}</li>
+                    <li>Bidder Name: {{bid.bidder}} ---> Amount: {{ bid.amount }} - {{ bid.timestamp }}</li>
                 {% endfor %}
             </ul>
             
@@ -79,4 +83,5 @@
         currentTime.setTime(currentTime.getTime() + 1000);
     }, 1000);
 </script>
+
 {% endblock %}
