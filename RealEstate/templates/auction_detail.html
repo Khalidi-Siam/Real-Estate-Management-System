@@ -3,13 +3,16 @@
 {% block content %}
     <h1>{{ auction.title }}</h1>
     <p>Name: {{ auction.Property_Name }}</p>
+    <p>Seller: {{auction.seller}}</p>
     <p>Start Price: {{ auction.start_price }}</p>
     <p>End Time: {{ auction.end_time }}</p>
+    <p>Current Price: {{auction.current_price}}</p>
+    <p>Current Bidder: {{current_bidder}}</p>
     
     <h2>Bids</h2>
     <ul>
         {% for bid in bids %}
-            <li>{{ bid.amount }} - {{ bid.timestamp }}</li>
+            <li>Bidder Name: {{bid.bidder}} ---> Amount: {{ bid.amount }} - {{ bid.timestamp }}</li>
         {% endfor %}
     </ul>
     {% comment %} {%if request.Auc_Property.seller != request.user.UserProfile%} {% endcomment %}
