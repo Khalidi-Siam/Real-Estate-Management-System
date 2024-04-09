@@ -11,28 +11,24 @@ from django.urls import reverse
 
 
 def auction_list(request):
-    if request.user.is_authenticated:
-        auctions = Auc_Property.objects.filter(end_time__gt=timezone.now())
-        return render(request, 'auction_list.html', {'auctions': auctions})
+
+    auctions = Auc_Property.objects.filter(end_time__gt=timezone.now())
+    return render(request, 'auction_list.html', {'auctions': auctions})
     
-    else:
-        return redirect(reverse('signin') + '?next=' + request.path)
 
 
 def auction_detail(request, pk):
-    if request.user.is_authenticated:
-      auction = get_object_or_404(Auc_Property, pk=pk)
-      if auction.end_time <= timezone.now():
-          # Auction has ended, handle this case as needed
-          pass
-      bids = auction.bids.all().order_by('-amount')
-      if auction.bids.exists():
-          current_bidder = auction.bids.order_by('amount').first().bidder
-      else:
-          current_bidder = None
-      return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now()})
+    auction = get_object_or_404(Auc_Property, pk=pk)
+    if auction.end_time <= timezone.now():
+        # Auction has ended, handle this case as needed
+        pass
+    bids = auction.bids.all().order_by('-amount')
+    if auction.bids.exists():
+        current_bidder = auction.bids.order_by('amount').first().bidder
     else:
-        return redirect(reverse('signin') + '?next=' + request.path)
+        current_bidder = None
+    return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now()})
+    
 
 def create_auction(request):
     if request.user.is_authenticated:        
@@ -142,6 +138,6 @@ def place_bid(request, pk):
         else:
             form = BidForm()
         return render(request, 'place_bid.html', {'form': form, 'auction': auction})
-   else:
+    else:
         return redirect(reverse('signin') + '?next=' + request.path)
 
