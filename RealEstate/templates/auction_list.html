@@ -14,7 +14,7 @@
             </li>
         {% endfor %}
     </ul>
-    {% if user.is_authenticated and request.user.UserProfile.is_agent == False %}
+    {% if request.user.UserProfile.is_agent == False or request.user.is_authenticated == False  %}
         <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
     {% endif %}
 {% endblock %}
