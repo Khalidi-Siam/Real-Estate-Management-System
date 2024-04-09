@@ -7,10 +7,11 @@ from django.contrib.auth.forms import AuthenticationForm
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    subscribe = forms.BooleanField(label='Subscribe to our newsletter', required=False)
 
     class Meta:
         model = UserProfile
-        fields = ['name', 'email', 'password', 'confirm_password', 'nid']
+        fields = ['name', 'email', 'password', 'confirm_password', 'nid', 'subscribe']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

@@ -1,26 +1,87 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<title>Place a Bid</title>
+{% endblock %}
+
 {% block content %}
-    <h1>{{ auction.title }}</h1>
-    <p>Name: {{ auction.Property_Name }}</p>
-    <p>Seller: {{auction.seller}}</p>
-    <p>Start Price: {{ auction.start_price }}</p>
-    <p>End Time: {{ auction.end_time }}</p>
-    <p>Current Price: {{auction.current_price}}</p>
-    <p>Current Bidder: {{current_bidder}}</p>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ auction.title }}</h1>
+            <p>Name: {{ auction.Property_Name }}</p>
+            <p>Seller: {{auction.seller}}</p>
+            <p>Start Price: {{ auction.start_price }}</p>
+            <p>End Time: {{ auction.end_time }}</p>
+            <p>Current Price: {{auction.current_price}}</p>
+            <p>Current Bidder: {{current_bidder}}</p>          
+            <ul>
+                {% for bid in bids %}
+                    <li>Bidder Name: {{bid.bidder}} ---> Amount: {{ bid.amount }} - {{ bid.timestamp }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h2>Place a Bid</h2>
+            <form method="post" action="{% url 'place_bid' pk=auction.pk %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Place Bid</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center">Time Remaining</h2>
+                    <p class="text-center"><strong>End Time:</strong> {{ auction.end_time }}</p>
+                    <div id="countdown" class="countdown-timer text-center"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .countdown-timer {
+        font-size: 48px;
+        font-family: 'Roboto', sans-serif;
+        margin-top: 20px;
+        color: #000000; /* Deep green color for the timer */
+    }
+
+    .countdown-value {
+        font-weight: bold;
+        color: #25BE80; /* Deep green color for the countdown values */
+    }
+</style>
+
+
+
+<script>
+    // Get the current time and end time from the server
+    var currentTime = new Date("{{ current_time|date:'Y-m-d H:i:s' }}");
+    var endTime = new Date("{{ auction.end_time|date:'Y-m-d H:i:s' }}");
     
-    <h2>Bids</h2>
-    <ul>
-        {% for bid in bids %}
-            <li>Bidder Name: {{bid.bidder}} ---> Amount: {{ bid.amount }} - {{ bid.timestamp }}</li>
-        {% endfor %}
-    </ul>
-    {% comment %} {%if request.Auc_Property.seller != request.user.UserProfile%} {% endcomment %}
-    <h2>Place a Bid</h2>
-    <form method="post" action="{% url 'place_bid' pk=auction.pk %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Place Bid</button>
-    </form>
-    {% comment %} {%endif%} {% endcomment %}
+    // Update the countdown timer every second
+    setInterval(function() {
+        // Calculate the time difference
+        var timeDiff = Math.max(endTime.getTime() - currentTime.getTime(), 0); // Ensure time difference is non-negative
+        
+        // Calculate days, hours, minutes, and seconds
+        var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        
+        // Display the countdown timer
+        var countdownElement = document.getElementById("countdown");
+        countdownElement.innerHTML = "<span class='countdown-value'>" + days + "</span>d "
+                                     + "<span class='countdown-value'>" + hours + "</span>h "
+                                     + "<span class='countdown-value'>" + minutes + "</span>m "
+                                     + "<span class='countdown-value'>" + seconds + "</span>s";
+        
+        // Update the current time every second
+        currentTime.setTime(currentTime.getTime() + 1000);
+    }, 1000);
+</script>
+
 {% endblock %}
