@@ -16,47 +16,54 @@ from datetime import datetime
 from auction.models import *
 from .models import *
 from authentication.models import *
+from django.contrib.auth.decorators import login_required
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 class CheckoutView(View):
     def get(self, request, property_id):
-        try:
-            property = Auc_Property.objects.get(pk=property_id)
-        except Auc_Property.DoesNotExist:
-            # Handle property not found
-            return redirect('home')  # Redirect to home page or an error page
-        
-        return render(request, 'checkout.html', {'property': property})
-
+        if request.user.is_authenticated:
+            try:
+                property = Auc_Property.objects.get(pk=property_id)
+            except Auc_Property.DoesNotExist:
+                # Handle property not found
+                return redirect('home')  # Redirect to home page or an error page
+            
+            return render(request, 'checkout.html', {'property': property})
+        else:
+            return redirect(reverse('signin') + '?next=' + request.path)
     def post(self, request, *args, **kwargs):
-        property_id = request.POST.get('property_id')
-        property = Auc_Property.objects.get(pk=property_id)
+        if request.user.is_authenticated:
+            property_id = request.POST.get('property_id')
+            property = Auc_Property.objects.get(pk=property_id)
 
-        # Create a checkout session with Stripe
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'usd',  # Change to your currency
-                        'unit_amount': 2000 * 100,  # Convert price to cents
-                        'product_data': {
-                            'name': property.Property_Name,
-                            # 'images': [property.Property_Pictures.url],  # Access the URL of the image
+            # Create a checkout session with Stripe
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',  # Change to your currency
+                            'unit_amount': 2000 * 100,  # Convert price to cents
+                            'product_data': {
+                                'name': property.Property_Name,
+                                # 'images': [property.Property_Pictures.url],  # Access the URL of the image
+                            },
                         },
+                        'quantity': 1,
                     },
-                    'quantity': 1,
+                ],
+                mode='payment',
+                metadata={
+                    'property_id': property_id,
                 },
-            ],
-            mode='payment',
-            metadata={
-                'property_id': property_id,
-            },
-            success_url=request.build_absolute_uri(reverse('payment_success')+'?property_id=' + str(property.id)),
-            cancel_url=request.build_absolute_uri(reverse('payment_cancel')+'?property_id=' + str(property.id)),
-        )
+                success_url=request.build_absolute_uri(reverse('payment_success')+'?property_id=' + str(property.id)),
+                cancel_url=request.build_absolute_uri(reverse('payment_cancel')+'?property_id=' + str(property.id)),
+            )
 
-        return redirect(checkout_session.url, code=303)
+            return redirect(checkout_session.url, code=303)
+        else:
+            return redirect(reverse('signin') + '?next=' + request.path)
 
 def PaymentSuccessView(request):
 
@@ -88,6 +95,7 @@ def PaymentSuccessView(request):
         'payment_status': 'success',
         'property_name': property_name,
         'buyer_name': buyer_name,
+        'property_id': property.id,
     }
     return render(request, 'confirmation.html', context)
 

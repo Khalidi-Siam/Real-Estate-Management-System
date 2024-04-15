@@ -63,12 +63,15 @@ def signup(request):
             user_profile.save()
 
             if subscribe:
-                subject = 'Thank you for subscribing!'
-                message = 'We appreciate your subscription.'
-                from_email = os.environ.get('DB_MAIL')
-                recipient_list = [email]                
-                send_mail(subject, message, from_email, recipient_list)
-                Subscriber.objects.create(email = email)
+                
+               if not Subscriber.objects.filter(email = email).exists():
+                   
+                    subject = 'Thank you for subscribing!'
+                    message = 'We appreciate your subscription.'
+                    from_email = os.environ.get('DB_MAIL')
+                    recipient_list = [email]                
+                    send_mail(subject, message, from_email, recipient_list)
+                    Subscriber.objects.create(email = email)
 
             messages.success(request, "Registration successful. Please sign in.")
             return redirect('signin')

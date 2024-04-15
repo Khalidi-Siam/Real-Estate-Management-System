@@ -20,6 +20,7 @@
           {% if payment_status == 'success' %}
             <!-- Additional information for successful payment -->
             <p>Your payment was successful.</p>
+            <a href="{% url 'auction_detail' property_id %}">Place Bid Now</a>
           {% else %}
             <!-- Additional information for canceled payment -->
             <p>Your payment was canceled.</p>
