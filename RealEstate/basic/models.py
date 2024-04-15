@@ -14,7 +14,7 @@ class Reviews(models.Model):
         return self.user.name
     
 class Subscriber(models.Model):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=False)
 
     def __str__(self):
         return self.email

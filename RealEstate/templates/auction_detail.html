@@ -27,6 +27,7 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Place Bid</button>
+                <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Buy Now</a>
             </form>
         </div>
         <div class="col-md-4">
