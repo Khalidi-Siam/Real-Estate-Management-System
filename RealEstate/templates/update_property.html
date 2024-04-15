@@ -12,8 +12,10 @@
                 <div class="card-body">
                     <h2 class="text-center">Update Property</h2>
                     <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ form|crispy }}
+                        {% csrf_token %} 
+                        {% if specific_form %}
+                            {{ specific_form|crispy }}
+                        {% endif %}
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
                 </div>

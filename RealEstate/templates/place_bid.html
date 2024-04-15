@@ -4,9 +4,26 @@
     <h1>Place Bid</h1>
     <p>Auction Title: {{ auction.title }}</p>
     <p>Current Price: {{ auction.current_price }}</p>
-    <form method="post">
+    <form method="post" id="bidForm">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <p>Suggested Bid Options:</p>
+        {% if auction.current_price %}
+            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:100 }}" onchange="setAmount(this)"> Current Price + $100</p>
+            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:200 }}" onchange="setAmount(this)"> Current Price + $200</p>
+            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:300 }}" onchange="setAmount(this)"> Current Price + $300</p>
+        {% else %}
+            <p><input type="radio" name="suggested_bid" value="{{ auction.start_price }}" onchange="setAmount(this)"> Start Price</p>
+        {% endif %}
+
+        <p>Or enter custom bid amount:</p>
+        <input type="number" name="amount" id="customAmount" step="100" min="{{ auction.current_price|default:auction.start_price }}" required>
         <button type="submit">Place Bid</button>
     </form>
+
+    <script>
+        function setAmount(input) {
+            document.getElementById("customAmount").value = input.value;
+        }
+    </script>
 {% endblock %}

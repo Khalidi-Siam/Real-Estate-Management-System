@@ -62,18 +62,35 @@ def add_property_data(request, property_type):
 
 def update_property(request, property_id):
     if request.user.is_authenticated:
-        property_instance = AllProperty.objects.get(pk=property_id)
+        property_instance = get_object_or_404(AllProperty, pk=property_id)
+    
         if request.method == 'POST':
-            form = PropertyForm(request.POST, request.FILES, instance=property_instance)
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Property updated Successfully")
-                return redirect('property_list')  
-            
+            property_instance.needs_approval = True 
+            property_instance.save()
+                
+                # Determine the specific type of property and update its related fields
+            if property_instance.Property_type == 'commercial':
+                specific_form = CommercialPropertyForm(request.POST, instance=property_instance.commercialproperty)
+            elif property_instance.Property_type == 'land':
+                specific_form = LandPropertyForm(request.POST, instance=property_instance.landproperty)
+            elif property_instance.Property_type == 'residential':
+                specific_form = ResidentialPropertyForm(request.POST, instance=property_instance.residentialproperty)
+
+            if specific_form.is_valid():                
+                specific_form.save()
+                
+                return redirect('property_detail', pk=property_id)  # Redirect to property detail view after update
+                
         else:
-            form = PropertyForm(instance=property_instance)
-            
-        return render(request, 'update_property.html', {'form': form})
+            #property_form = PropertyForm(instance=property_instance)
+            if property_instance.Property_type == 'commercial':
+                specific_form = CommercialPropertyForm(instance=property_instance.commercialproperty)
+            elif property_instance.Property_type == 'land':
+                specific_form = LandPropertyForm(instance=property_instance.landproperty)
+            elif property_instance.Property_type == 'residential':
+                specific_form = ResidentialPropertyForm(instance=property_instance.residentialproperty)
+        
+        return render(request, 'update_property.html', { 'specific_form': specific_form})
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
     
@@ -176,7 +193,7 @@ def filtering(request, properties):
 
 def property_list(request):
     properties = AllProperty.objects.filter(
-    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel')
+    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel') & ~Q(needs_approval = True)
 )
 
     properties, filter_form = filtering(request, properties)     
@@ -247,18 +264,24 @@ def saved_searches(request):
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
     
-@login_required
+
 def delete_saved_search(request, saved_search_id):
-    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
-    if saved_search.user == request.user:
-        saved_search.delete()
-    return redirect('saved_searches')
+    if request.user.is_authenticated:
+        saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+        if saved_search.user == request.user:
+            saved_search.delete()
+        return redirect('saved_searches')
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
     
-@login_required
+
 def apply_saved_search(request, saved_search_id):
-    saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
-    criteria_str = urlencode(saved_search.criteria)
-    return redirect(reverse('property_list') + '?' + criteria_str)
+    if request.user.is_authenticated:
+        saved_search = get_object_or_404(SavedSearch, id=saved_search_id)
+        criteria_str = urlencode(saved_search.criteria)
+        return redirect(reverse('property_list') + '?' + criteria_str)
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
 
 def posted_properties(request):
     if request.user.is_authenticated:
@@ -290,26 +313,29 @@ def view_property_documents(request, property_id):
         return redirect(reverse('signin') + '?next=' + request.path)
 
 
-@login_required
+
 def book_slot(request, property_id):
-    property_instance = AllProperty.objects.get(pk=property_id)
-    agent = property_instance.user
+    if request.user.is_authenticated:
+        property_instance = AllProperty.objects.get(pk=property_id)
+        agent = property_instance.user
 
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
+        if request.method == 'POST':
+            form = BookingForm(request.POST)
 
-        if form.is_valid():
-            time_slot = form.cleaned_data['time_slot']
-            booking = Booking.objects.create(
-                property=property_instance,
-                agent=agent,
-                seller=request.user.UserProfile,  # Assuming the logged-in user is the seller
-                time_slot=time_slot,
-            )
+            if form.is_valid():
+                time_slot = form.cleaned_data['time_slot']
+                booking = Booking.objects.create(
+                    property=property_instance,
+                    agent=agent,
+                    seller=request.user.UserProfile,  # Assuming the logged-in user is the seller
+                    time_slot=time_slot,
+                )
 
-            messages.success(request, 'Booking request sent successfully!')
-            return redirect('property_detail',property_id)
+                messages.success(request, 'Booking request sent successfully!')
+                return redirect('property_detail',property_id)
+        else:
+            form = BookingForm()
+
+        return render(request, 'book_slot.html', {'form': form, 'property': property_instance})
     else:
-        form = BookingForm()
-
-    return render(request, 'book_slot.html', {'form': form, 'property': property_instance})
+        return redirect(reverse('signin') + '?next=' + request.path)

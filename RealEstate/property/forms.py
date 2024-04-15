@@ -6,13 +6,13 @@ class PropertyForm(forms.ModelForm):
     class Meta:
         model = AllProperty
         fields = '__all__'
-        exclude = ['Approval_by_Agent', 'user']
+        exclude = ['Approval_by_Agent', 'user','needs_approval']
 
 class CommercialPropertyForm(forms.ModelForm):
     class Meta:
         model = CommercialProperty
         fields = '__all__'
-        exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+        exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent','needs_approval']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,7 +24,7 @@ class LandPropertyForm(forms.ModelForm):
     class Meta:
         model = LandProperty
         fields = '__all__'
-        exclude = ['user', 'Property_type','Approval_by_Agent']
+        exclude = ['user', 'Property_type','Approval_by_Agent','needs_approval']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,7 +35,7 @@ class ResidentialPropertyForm(forms.ModelForm):
     class Meta:
         model = ResidentialProperty
         fields = '__all__'
-        exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent']
+        exclude = ['user', 'Property_type', 'year_built','Approval_by_Agent','needs_approval']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
