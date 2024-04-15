@@ -99,7 +99,7 @@
         </div>
     </div>
 
-  {%else%}
+  {%elif request.user.UserProfile.is_agent == False or request.user.is_authenticated == False %}
   <div class="row mt-4">
           <div class="col-md-12">
               <div class="text-center">

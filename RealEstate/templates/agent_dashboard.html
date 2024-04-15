@@ -67,6 +67,31 @@
     </tbody>
   </table>
 </div>
+
+<h2>Pending Updates</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Property Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if pending_updates %}
+        {% for property in pending_updates %}
+          <tr>
+            <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
+            <td><p>Pending</p></td>
+            <!-- You can add additional actions here -->
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="2">No pending properties found.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
 {% endblock %}
 
 {% block scripts %}

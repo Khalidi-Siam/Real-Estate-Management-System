@@ -37,18 +37,19 @@ class Auc_Property(models.Model):
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
     Postal_code = models.CharField(max_length=4)
     Area = models.CharField(max_length=100, choices=AREA_CHOICES)
-    #Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
-    #Approval_by_Agent = models.CharField(max_length = 50, null = True)
+    Approval_by_Agent = models.CharField(max_length = 50, null = True)
     Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
-    start_price = models.DecimalField(max_digits=10, decimal_places=2)
-    current_price = models.DecimalField(max_digits=10, decimal_places=2,null = True,default = 0.00)
+    start_price = models.PositiveIntegerField(default=1)
+    current_price = models.PositiveIntegerField(default=1)
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='auctions')
     winner = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='won_auctions')
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        if self.current_price==1:
+            self.current_price = self.start_price
         if not self.pk:  # If the instance is being created
             self.end_time = self.start_time + timezone.timedelta(days=2)
         super().save(*args, **kwargs)
@@ -108,5 +109,5 @@ class Auc_LandProperty(Auc_Property):
 class Bid(models.Model):
     auction = models.ForeignKey(Auc_Property, on_delete=models.CASCADE, related_name='bids')
     bidder = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.PositiveIntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)

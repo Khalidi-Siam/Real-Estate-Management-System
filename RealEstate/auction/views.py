@@ -84,23 +84,21 @@ def create_auction_data(request, property_type):
 
 
 def place_bid(request, pk):
-
     if request.user.is_authenticated:
         auction = get_object_or_404(Auc_Property, pk=pk)
 
-      # Check if the auction has ended
+        # Check if the auction has ended
         if auction.end_time <= timezone.now():
             # Auction has ended, handle this case
-            # For example, determine the winner and update the auction status
-            if auction.current_price.exists():
+            if auction.current_price is not None:
                 # Determine the winner based on the highest bid
-                winning_bid = auction.bids.order_by('amount').first()
-                auction.winner = winning_bid.bidder
-            else:
-                # No bids were placed, handle this case by setting the winner to None
-                auction.winner = None
+                winning_bid = auction.bids.order_by('-amount').first()
+                if winning_bid:
+                    auction.winner = winning_bid.bidder
+                else:
+                    auction.winner = None
 
-            auction.save()
+                auction.save()
             return redirect('auction_detail', pk=auction.pk)
 
         if request.method == 'POST':
@@ -113,28 +111,27 @@ def place_bid(request, pk):
             if form.is_valid():
                 bid_amount = form.cleaned_data['amount']
 
-                # Ensure bid amount is greater than or equal to start price
-                if not auction.bids.exists() and bid_amount < auction.start_price:
-                    messages.error(request, "Bid amount cannot be less than the starting price.")
-                    return redirect('auction_detail', pk=auction.pk)
-
-                if bid_amount > 0 and bid_amount % 100 == 0:
-                    bid = form.save(commit=False)
-                    bid.bidder = request.user.UserProfile  # Assuming UserProfile is related to User
-                    bid.auction = auction
-                    bid.save()
-
-                    # If no bids were placed before, set current price to start price
-                    if not auction.bids.exists():
-                        auction.current_price = auction.start_price
-
-                    auction.current_price += bid_amount  # Add bid amount to current price
-                    auction.save()
-
-                    messages.success(request, "Bid placed successfully.")
-                    return redirect('auction_detail', pk=auction.pk)
+                # Ensure bid amount is greater than or equal to current price
+                if auction.current_price is None:
+                    if bid_amount != auction.start_price:
+                        messages.error(request, "The initial bid must be the starting price.")
+                        return redirect('auction_detail', pk=auction.pk)
                 else:
-                    messages.error(request, "Bid amount must be a positive multiple of 100.")
+                    if bid_amount <= auction.current_price or (bid_amount - auction.current_price) % 100 != 0:
+                        messages.error(request, "Bid amount must be at least 100 greater than the current price.")
+                        return redirect('auction_detail', pk=auction.pk)
+
+                bid = form.save(commit=False)
+                bid.bidder = request.user.UserProfile
+                bid.auction = auction
+                bid.save()
+
+                # Update current price
+                auction.current_price = bid_amount
+                auction.save()
+
+                messages.success(request, "Bid placed successfully.")
+                return redirect('auction_detail', pk=auction.pk)
         else:
             form = BidForm()
         return render(request, 'place_bid.html', {'form': form, 'auction': auction})
