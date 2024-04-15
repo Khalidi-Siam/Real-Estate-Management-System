@@ -26,8 +26,11 @@
             <form method="post" action="{% url 'place_bid' pk=auction.pk %}">
                 {% csrf_token %}
                 {{ form.as_p }}
+            {%if paid%}
                 <button type="submit" class="btn btn-primary">Place Bid</button>
-                <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Buy Now</a>
+            {%else%}
+                <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to place Bid</a>
+            {%endif%}
             </form>
         </div>
         <div class="col-md-4">

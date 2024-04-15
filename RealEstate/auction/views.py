@@ -7,7 +7,7 @@ from property.forms import *
 from django.contrib import messages
 from authentication.models import UserProfile
 from django.urls import reverse
-
+from Payment.models import *
 
 
 def auction_list(request):
@@ -27,7 +27,10 @@ def auction_detail(request, pk):
         current_bidder = auction.bids.order_by('amount').first().bidder
     else:
         current_bidder = None
-    return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now()})
+    id1 = request.user.id
+    property_id =auction.id
+    paid = PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists()
+    return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now(),'paid': paid })
     
 
 def create_auction(request):

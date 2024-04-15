@@ -10,6 +10,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
 # Create your views here.
 
 def about(request):
@@ -80,21 +81,29 @@ def subscribe(request):
         form = SubscribeForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            
-            # Send email
-            subject = 'Thank you for subscribing!'
-            message = 'We appreciate your subscription.'
-            from_email = os.environ.get('DB_MAIL')
-            recipient_list = [email]
-            
-            send_mail(subject, message, from_email, recipient_list)
-            
-            form.save()
-            return render(request, 'base.html', {'form': SubscribeForm(), 'success': True})
+            if not Subscriber.objects.filter(email=email).exists():
+                # Send email
+                subject = 'Thank you for subscribing!'
+                message = 'We appreciate your subscription.'
+                from_email = os.environ.get('DB_MAIL')
+                recipient_list = [email]
+                
+                send_mail(subject, message, from_email, recipient_list)
+                
+                form.save()
+                print("Email sent to: ", email)
+                print()
+                return JsonResponse({'success': True})  # Return success response as JSON
+            else:
+                print("Email already exists: ", email)
+                print()
+                return JsonResponse({'exists': True})  # Return email exists response as JSON
+        else:
+            print('failed')
+            return JsonResponse({'success': False})  # Return form is invalid response as JSON
     else:
         form = SubscribeForm()
     return render(request, 'base.html', {'form': form})
-
 
 @login_required
 def send_email(request):

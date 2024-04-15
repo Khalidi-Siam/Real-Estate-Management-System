@@ -228,6 +228,7 @@
                             #subscribe-button {
                                 flex-shrink: 0; /* Prevent the button from shrinking */
                             }
+                            
                         </style>
                         
                         <form id="subscribe-form" method="POST" action="{% url 'subscribe' %}">
@@ -242,49 +243,110 @@
                             <!-- Error message container -->
                             <div id="subscribe-message" class="mt-2"></div> <!-- This will display error messages -->
                         </form>
-                        
-                        <script>
-                            document.getElementById('subscribe-form').addEventListener('submit', function(event) {
-                                event.preventDefault();  // Prevent default form submission behavior
-                                var formData = new FormData(this);
-                                var email = formData.get('email');
-                                
-                                // Email validation
-                                if (!isValidEmail(email)) {
-                                    document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">Please enter a valid email address.</p>';
-                                    return; // Stop further execution
+                         
+                        <style>
+                                .fade-in {
+                                    animation: fadeIn 0.5s ease-in-out;
                                 }
-                                
-                                fetch(this.action, {
-                                    method: 'POST',
-                                    body: formData,
-                                    headers: {
-                                        'X-CSRFToken': '{{ csrf_token }}'
+
+                                .fade-out {
+                                    animation: fadeOut 0.5s ease-in-out;
+                                }
+
+                                @keyframes fadeIn {
+                                    0% {
+                                        opacity: 0;
                                     }
-                                })
-                                .then(response => {
-                                    if (response.ok) {
-                                        // Form submission successful
-                                        document.getElementById('subscribe-message').innerHTML = '<p class="text-success">Thank you for subscribing!</p>';
-                                    } else {
-                                        // Form submission failed
-                                        document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
+                                    100% {
+                                        opacity: 1;
                                     }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    document.getElementById('subscribe-message').innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
-                                });
-                            });
-                        
-                            // Function to validate email address
-                            function isValidEmail(email) {
-                                // Regular expression for email validation
-                                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                                return emailRegex.test(email);
+                                }
+
+                                @keyframes fadeOut {
+                                    0% {
+                                        opacity: 1;
+                                    }
+                                    100% {
+                                        opacity: 0;
+                                    }
+                                }
+
+ 
+                        </style>
+                    <script>
+                        document.getElementById('subscribe-form').addEventListener('submit', function(event) {
+                            event.preventDefault();  // Prevent default form submission behavior
+                            var formData = new FormData(this);
+                            var email = formData.get('email');
+                            
+                            // Email validation
+                            if (!isValidEmail(email)) {
+                                var messageElement = document.getElementById('subscribe-message');
+                                messageElement.innerHTML = '<p class="text-danger">Please enter a valid email address.</p>';
+                                messageElement.classList.add('fade-in');
+                                setTimeout(function() {
+                                    messageElement.classList.add('fade-out');  // Add fade-out class after 3 seconds
+                                    setTimeout(function() {
+                                        messageElement.classList.remove('fade-in', 'fade-out');  // Remove both classes after fade-out animation
+                                        messageElement.innerHTML = '';  // Clear the message
+                                    }, 500);  // Wait for fade-out animation to complete (0.5 seconds)
+                                }, 3000);
+                                return; // Stop further execution
                             }
-                        </script>
-                        
+                            
+                            fetch(this.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                }
+                            })
+                            .then(response => response.json())  // Parse response as JSON
+                            .then(data => {
+                                var messageElement = document.getElementById('subscribe-message');
+                                if (data.exists) {
+                                    // Email already exists
+                                    messageElement.innerHTML = '<p class="text-warning">You have already Subscribed.</p>';
+                                } else if (data.success) {
+                                    // Form submission successful
+                                    messageElement.innerHTML = '<p class="text-success">Thank you for subscribing!</p>';
+                                } else {
+                                    // Form submission failed
+                                    messageElement.innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
+                                }
+                                messageElement.classList.add('fade-in');
+                                setTimeout(function() {
+                                    messageElement.classList.add('fade-out');  // Add fade-out class after 3 seconds
+                                    setTimeout(function() {
+                                        messageElement.classList.remove('fade-in', 'fade-out');  // Remove both classes after fade-out animation
+                                        messageElement.innerHTML = '';  // Clear the message
+                                    }, 500);  // Wait for fade-out animation to complete (0.5 seconds)
+                                }, 3000);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                var messageElement = document.getElementById('subscribe-message');
+                                messageElement.innerHTML = '<p class="text-danger">An error occurred. Please try again later.</p>';
+                                messageElement.classList.add('fade-in');
+                                setTimeout(function() {
+                                    messageElement.classList.add('fade-out');  // Add fade-out class after 3 seconds
+                                    setTimeout(function() {
+                                        messageElement.classList.remove('fade-in', 'fade-out');  // Remove both classes after fade-out animation
+                                        messageElement.innerHTML = '';  // Clear the message
+                                    }, 500);  // Wait for fade-out animation to complete (0.5 seconds)
+                                }, 3000);
+                            });
+                        });
+                    
+                        // Function to validate email address
+                        function isValidEmail(email) {
+                            // Regular expression for email validation
+                            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            return emailRegex.test(email);
+                        }
+                    </script>
+                    
+                                                
                         
                         
                         
