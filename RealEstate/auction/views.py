@@ -7,21 +7,25 @@ from property.forms import *
 from django.contrib import messages
 from authentication.models import UserProfile
 from django.urls import reverse
-
+from .models import *
+from django.db.models import Q
 
 
 def auction_list(request):
 
-    auctions = Auc_Property.objects.filter(end_time__gt=timezone.now())
+    auctions = Auc_Property.objects.filter(
+    Q(Approval_by_Agent__isnull=False) & ~Q(Approval_by_Agent='Cancel') & Q(end_time__gt=timezone.now())
+)
     return render(request, 'auction_list.html', {'auctions': auctions})
     
 
 
 def auction_detail(request, pk):
     auction = get_object_or_404(Auc_Property, pk=pk)
-    if auction.end_time <= timezone.now():
-        # Auction has ended, handle this case as needed
-        pass
+    if auction.end_time is not None:
+        if auction.end_time <= timezone.now():
+            # Auction has ended, handle this case as needed
+            pass
     bids = auction.bids.all().order_by('-amount')
     if auction.bids.exists():
         current_bidder = auction.bids.order_by('amount').first().bidder

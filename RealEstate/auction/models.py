@@ -44,14 +44,14 @@ class Auc_Property(models.Model):
     current_price = models.PositiveIntegerField(default=1)
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='auctions')
     winner = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='won_auctions')
-    start_time = models.DateTimeField(default=timezone.now)
+    start_time = models.DateTimeField(null = True, blank = True)
     end_time = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.current_price==1:
             self.current_price = self.start_price
-        if not self.pk:  # If the instance is being created
-            self.end_time = self.start_time + timezone.timedelta(days=2)
+        # if not self.pk:  # If the instance is being created
+        #     self.end_time = self.start_time + timezone.timedelta(days=2)
         super().save(*args, **kwargs)
     def __str__(self):
         return self.Property_Name

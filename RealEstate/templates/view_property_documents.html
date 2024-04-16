@@ -12,15 +12,17 @@
         
     </ul>
 
-    {% if request.user.is_authenticated and request.user.UserProfile.is_agent %}
-        <form action="{% url 'approve_property' property_instance.id %}" method="post" action ="{%url 'agent_dashboard' %}"class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Approve Property</button>
-        </form>
-        <form action="{% url 'cancel_approval' property_instance.id %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Cancel Approval</button>
-        </form>
+    {% if request.user.UserProfile.is_agent %}
+        {%if property_instance.Approval_by_Agent == Null%}
+            <form action="{% url 'approve_property' property_instance.id %}" method="post" action ="{%url 'agent_dashboard' %}"class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Approve Property</button>
+            </form>
+            <form action="{% url 'cancel_approval' property_instance.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Cancel Approval</button>
+            </form>
+        {%endif%}
     {% endif %}
 </div>
 {% endblock %}
