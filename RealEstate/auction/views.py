@@ -19,17 +19,19 @@ def auction_list(request):
 
 def auction_detail(request, pk):
     auction = get_object_or_404(Auc_Property, pk=pk)
-    if auction.end_time <= timezone.now():
-        # Auction has ended, handle this case as needed
-        pass
+    if auction.end_time is not None:
+        if auction.end_time <= timezone.now():
+            # Auction has ended, handle this case as needed
+            pass
     bids = auction.bids.all().order_by('-amount')
     if auction.bids.exists():
         current_bidder = auction.bids.order_by('amount').first().bidder
     else:
         current_bidder = None
-    id1 = request.user.id
+    id1 = request.user.UserProfile.id
     property_id =auction.id
     paid = PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists()
+    print(paid,"payment")
     return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now(),'paid': paid })
     
 

@@ -2,99 +2,170 @@
 {% load static %}
 
 {% block title %}
-    <title> Agent Dashboard </title>
+    <title>Agent Dashboard</title>
 {% endblock %}
 
-{% block styles %}
-    <!-- Add your custom CSS links or static files here -->
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-{% endblock %}
+
 
 {% block content %}
+
+
+
+
+    <style>
+        /* Custom styles specific to this page */
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            border-radius: 10px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .badge-pending {
+            background-color: #ffc107;
+        }
+    </style>
+
+
 <div class="container mt-5">
-  <h1>Welcome to Agent Dashboard</h1>
-  <hr>
-  <h2>Pending Properties</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Property Name</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if pending_properties %}
-        {% for property in pending_properties %}
-          <tr>
-            <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
-            <td><p>Pending</p></td>
-            <!-- You can add additional actions here -->
-          </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="2">No pending properties found.</td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
-
-  <hr>
-
-  <h2>Pending Bookings</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Property Name</th>
-        <th>Time Slot</th>
-        <!-- Add additional columns as needed -->
-      </tr>
-    </thead>
-    <tbody>
-      {% if pending_bookings %}
-        {% for booking in pending_bookings %}
-          <tr>
-            <td>{{ booking.property.Property_Name }}</td>
-            <td>{{ booking.time_slot }}</td>
-            <!-- Add additional data here -->
-          </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="2">No pending bookings found.</td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-md-12 text-center">
+        <h2 class="mb-4">Welcome to Your Dashboard</h2>
+    </div>
 </div>
 
-<h2>Pending Updates</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Property Name</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% if pending_updates %}
-        {% for property in pending_updates %}
-          <tr>
-            <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
-            <td><p>Pending</p></td>
-            <!-- You can add additional actions here -->
-          </tr>
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td colspan="2">No pending properties found.</td>
-        </tr>
-      {% endif %}
-    </tbody>
-  </table>
-{% endblock %}
 
-{% block scripts %}
-    <!-- Add your custom JavaScript links or static files here -->
-    <script src="{% static 'js/custom.js' %}"></script>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Pending Properties</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Property Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if pending_properties %}
+                                    {% for property in pending_properties %}
+                                        <tr>
+                                            <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
+                                            <td><span class="badge badge-pill badge-pending">Pending</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No pending properties found.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Pending Bookings</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Property Name</th>
+                                    <th>Time Slot</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if pending_bookings %}
+                                    {% for booking in pending_bookings %}
+                                        <tr>
+                                            <td>{{ booking.property.Property_Name }}</td>
+                                            <td>{{ booking.time_slot }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No pending bookings found.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Pending Auction</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Property Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if pending_auction %}
+                                    {% for property in pending_auction %}
+                                        <tr>
+                                            <td><a href="{% url 'auction_detail' property.pk %}">{{ property.Property_Name }}</a></td>
+                                            <td><span class="badge badge-pill badge-pending">Pending</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No pending auction found.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Pending Updates</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Property Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if pending_updates %}
+                                    {% for property in pending_updates %}
+                                        <tr>
+                                            <td><a href="{% url 'property_detail' property.pk %}">{{ property.Property_Name }}</a></td>
+                                            <td><span class="badge badge-pill badge-pending">Pending</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2">No pending updates found.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
