@@ -5,38 +5,44 @@
 {% endblock %}
 
 {% block content %}
-<br>
-<div class="container">
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-8">
-            <h1>{{ auction.title }}</h1>
-            <p>Name: {{ auction.Property_Name }}</p>
-            <p>Seller: {{auction.seller}}</p>
-            <p>Start Price: {{ auction.start_price }}</p>
-            <p>End Time: {{ auction.end_time }}</p>
-            <p>Current Price: {{auction.current_price}}</p>
-            <p>Current Bidder: {{current_bidder}}</p>          
-            <ul>
-                {% for bid in bids %}
-                    <li>Bidder Name: {{bid.bidder}} ---> Amount: {{ bid.amount }} - {{ bid.timestamp }}</li>
-                {% endfor %}
-            </ul>
-            
-            <h2>Place a Bid</h2>
-            <form method="post" action="{% url 'place_bid' pk=auction.pk %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-            {%if paid%}
-                <button type="submit" class="btn btn-primary">Place Bid</button>
-            {%else%}
-                <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to place Bid</a>
-            {%endif%}
-            </form>
-        </div>
-        <div class="col-md-4">
+        <div class="col-lg-8">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="text-center">Time Remaining</h2>
+                    <h1 class="card-title">{{ auction.title }}</h1>
+                    <p class="card-text"><strong>Name:</strong> {{ auction.Property_Name }}</p>
+                    <p class="card-text"><strong>Seller:</strong> {{ auction.seller }}</p>
+                    <p class="card-text"><strong>Start Price:</strong> {{ auction.start_price }}</p>
+                    <p class="card-text"><strong>End Time:</strong> {{ auction.end_time }}</p>
+                    <p class="card-text"><strong>Current Price:</strong> {{ auction.current_price }}</p>
+                    <p class="card-text"><strong>Current Bidder:</strong> {{ current_bidder }}</p>
+                    <hr>
+                    {% if request.user.UserProfile.is_agent %}
+                        {% if auction.Approval_by_Agent == Null %}
+                            <form action="{% url 'approve_auction' auction.id %}" method="post" action="{% url 'agent_dashboard' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Approve Auction</button>
+                            </form>
+                            <form action="{% url 'cancel_auction' auction.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Cancel Auction</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        {%if paid%}
+                        <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Place Bid</a>
+                        {%else%}
+                            <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to place Bid</a>
+                        {%endif%}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Time Remaining</h2>
                     <p class="text-center"><strong>End Time:</strong> {{ auction.end_time }}</p>
                     <div id="countdown" class="countdown-timer text-center"></div>
                 </div>
@@ -44,21 +50,28 @@
         </div>
     </div>
 </div>
+
 <style>
     .countdown-timer {
-        font-size: 48px;
+        font-size: 36px;
         font-family: 'Roboto', sans-serif;
-        margin-top: 20px;
-        color: #000000; /* Deep green color for the timer */
+        color: #000000;
     }
 
-    .countdown-value {
-        font-weight: bold;
-        color: #25BE80; /* Deep green color for the countdown values */
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-success {
+        margin-top: 10px;
     }
 </style>
-
-
 
 <script>
     // Get the current time and end time from the server
