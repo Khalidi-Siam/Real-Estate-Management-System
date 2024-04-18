@@ -17,7 +17,7 @@
                     <p class="card-text"><strong>End Time:</strong> {{ auction.end_time }}</p>
                     <p class="card-text"><strong>Current Price:</strong> {{ auction.current_price }}</p>
                     <p class="card-text"><strong>Current Bidder:</strong> {{ current_bidder }}</p>
-                    <hr>
+                    
                     {% if request.user.UserProfile.is_agent %}
                         {% if auction.Approval_by_Agent == Null %}
                             <form action="{% url 'approve_auction' auction.id %}" method="post" action="{% url 'agent_dashboard' %}" class="d-inline">
@@ -30,10 +30,16 @@
                             </form>
                         {% endif %}
                     {% else %}
-                        {%if paid%}
-                        <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Place Bid</a>
+                    <hr>
+                        {%if request.user.is_authenticated%}
+                            {%if paid%}
+                                <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Place Bid</a>
+                            {%else%}
+                                <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to place Bid</a>
+                            {%endif%}
+
                         {%else%}
-                            <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to place Bid</a>
+                            <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Signin to Bid</a>
                         {%endif%}
                     {% endif %}
                 </div>

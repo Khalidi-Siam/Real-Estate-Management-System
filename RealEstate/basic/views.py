@@ -85,7 +85,7 @@ def subscribe(request):
                 # Send email
                 subject = 'Thank you for subscribing!'
                 message = 'We appreciate your subscription.'
-                from_email = os.environ.get('DB_MAIL')
+                from_email = "Hunters Support <reshad13102@gmail.com>"
                 recipient_list = [email]
                 
                 send_mail(subject, message, from_email, recipient_list)
@@ -121,7 +121,7 @@ def send_email(request):
                 email = EmailMessage(
                     subject=subject,
                     body=message,
-                    from_email=settings.EMAIL_HOST_USER,  # Use host email from Django settings
+                    from_email= f"Hunters NewsLetter <{settings.EMAIL_HOST_USER}>",  # Use host email from Django settings
                     to=subscribers,  # Using subscribers' email addresses
                 )
 

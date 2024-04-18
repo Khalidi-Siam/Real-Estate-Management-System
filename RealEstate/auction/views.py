@@ -8,12 +8,77 @@ from django.contrib import messages
 from authentication.models import UserProfile
 from django.urls import reverse
 from Payment.models import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
+def filtering(request, properties):
+    # Create an instance of the form
+    filter_form = PropertyFilterForm(request.GET or None)
+    # Check if form is submitted and valid
+    if filter_form.is_valid():
+        # Get cleaned data from the form
+        cleaned_data = filter_form.cleaned_data
+        property_type = cleaned_data.get('property_type')
+        area = cleaned_data.get('area')
+
+        # Filter properties based on form data
+        properties = properties.filter(Property_type=property_type) if property_type else properties
+        properties = properties.filter(Area=area) if area else properties
+
+        # Additional filters based on property type
+        if property_type == 'residential':
+            bedrooms = cleaned_data.get('bedrooms')
+            bathrooms = cleaned_data.get('bathrooms')
+
+            properties = properties.filter(auc_residentialproperty__Bedrooms=bedrooms) if bedrooms else properties
+            properties = properties.filter(auc_residentialproperty__Bathrooms=bathrooms) if bathrooms else properties
+
+        elif property_type == 'commercial':
+            business_type = cleaned_data.get('business_type')
+            has_conference = cleaned_data.get('has_conference')
+            has_security = cleaned_data.get('has_security')
+
+            properties = properties.filter(auc_commercialproperty__Business_type=business_type) if business_type else properties
+            properties = properties.filter(auc_commercialproperty__Has_conference_room=True) if has_conference else properties
+            properties = properties.filter(auc_commercialproperty__Has_security_system=True) if has_security else properties
+
+        elif property_type == 'land':
+            land_type = cleaned_data.get('land_type')
+
+            properties = properties.filter(auc_landproperty__Land_type=land_type) if land_type else properties
+
+
+        ordering_choice = cleaned_data.get('ordering_choices')
+        if ordering_choice == 'price_asc':
+            properties = properties.order_by('current_price')
+        elif ordering_choice == 'price_desc':
+            properties = properties.order_by('-current_price')
+
+    # Pagination
+    paginator = Paginator(properties, 3)
+    page_number = request.GET.get('page')
+    try:
+        properties = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        properties = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results
+        properties = paginator.page(paginator.num_pages)
+
+    return properties, filter_form
 
 def auction_list(request):
 
     auctions = Auc_Property.objects.filter(end_time__gt=timezone.now())
-    return render(request, 'auction_list.html', {'auctions': auctions})
+
+    auctions, filter_form = filtering(request, auctions)
+
+    context = {
+        'filtered_auctions': auctions,
+        'filter_form': filter_form,
+    }
+    return render(request, 'auction_list.html', context)
     
 
 
@@ -28,10 +93,13 @@ def auction_detail(request, pk):
         current_bidder = auction.bids.order_by('amount').first().bidder
     else:
         current_bidder = None
-    id1 = request.user.UserProfile.id
-    property_id =auction.id
-    paid = PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists()
-    print(paid,"payment")
+    if request.user.is_authenticated:
+        id1 = request.user.UserProfile.id
+        property_id =auction.id
+        paid = PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists()
+    else:
+        paid = None
+    # print(paid)
     return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now(),'paid': paid })
     
 

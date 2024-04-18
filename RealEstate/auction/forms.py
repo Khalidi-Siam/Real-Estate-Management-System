@@ -59,3 +59,23 @@ class BidForm(forms.ModelForm):
         if amount < 0:
             raise forms.ValidationError("Bid amount must be a positive number.")
         return amount
+    
+
+
+
+class PropertyFilterForm(forms.Form):
+    property_type = forms.ChoiceField(choices=[('', 'All'), ('residential', 'Residential'), ('commercial', 'Commercial'), ('land', 'Land')], required=False)
+    area = forms.ChoiceField(choices=[('','All'), ('Gulshan','Gulshan'), ('Dhanmondi','Dhanmondi'), ('Banani', 'Banani'), ('Bashundhara R/A', 'Bashundhara R/A')], required=False)
+
+
+    # Additional fields based on property type
+    bedrooms = forms.IntegerField(min_value=0, required=False)
+    bathrooms = forms.IntegerField(min_value=0, required=False)
+
+    business_type = forms.ChoiceField(choices=[('', 'All'), ('office', 'Office'), ('community_center', 'Community Center'), ('shop', 'Shop'), ('other', 'Other')], required=False)
+    has_conference = forms.BooleanField(required=False)
+    has_security = forms.BooleanField(required=False)
+
+    land_type = forms.ChoiceField(choices=[('', 'All'), ('Farmland', 'Farmland'), ('Playground', 'Playground'), ('warehouse', 'Warehouse')], required=False)
+
+    ordering_choices = forms.ChoiceField(choices=[('', 'Default'), ('price_asc', 'Price: Low to High'), ('price_desc', 'Price: High to Low')], required=False)
