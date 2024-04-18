@@ -1,20 +1,284 @@
 {% extends 'base.html' %}
 
-{% block title %} <title> Auction List </title>{% endblock %}
+{% block title %}<title>Auction List</title>{% endblock %}
 
 {% block content %}
-    <h2>Auction List</h2>
-    <!-- Add Create Auction Button for Sellers -->
-    
-    <ul>
-        {% for auction in auctions %}
-            <li>
-                <a href="{% url 'auction_detail' pk=auction.pk %}">{{ auction.Property_Name }}</a>
-                - Current Price: {{ auction.current_price }}
-            </li>
+<br>
+<div class="container-fluid">
+    <!-- Create Auction Section -->
+    <div class="row mb-4 shadow p-3 mb-5 bg-body rounded">
+        <div class="col">
+            <div class="create-auction-section">
+                <h2 class="mb-3">Welcome to the Auction House!</h2>
+                <p>Explore the available properties below or create your own auction to sell your property.</p>
+                <!-- Create Auction Button -->
+                {% if request.user.UserProfile.is_agent == False or not request.user.is_authenticated %}
+                <a href="{% url 'create_auction' %}" class="btn btn-primary">Create Auction</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 shadow p-3 mb-5 bg-white rounded">
+            <!-- Filtering Form as Left-side Panel -->
+            <div class="card filter-panel" style="height: 80vh; overflow-y: auto;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Filter Auction Property</h5>
+                    <br>
+                    
+                    <form method="get" action="" class="form-horizontal" id="filterForm">
+                        <!-- Property Type -->
+                        <div class="mb-3">
+                            <label for="property_type" class="form-label">Property Type</label>
+                            <select class="form-select" id="property_type" name="property_type">
+                                <option value="">All</option>
+                                <option value="residential" {% if request.GET.property_type == "residential" %} selected {% endif %}>Residential</option>
+                                <option value="commercial" {% if request.GET.property_type == "commercial" %} selected {% endif %}>Commercial</option>
+                                <option value="land" {% if request.GET.property_type == "land" %} selected {% endif %}>Land</option>
+                            </select>
+                        </div>
+                        <!-- Bedrooms -->
+                        <div class="mb-3" id="bedrooms_field" {% if request.GET.bedrooms %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                            <label for="bedrooms" class="form-label">Bedrooms</label>
+                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" placeholder="Bedrooms" value="{{ request.GET.bedrooms }}">
+                        </div>
+                        <!-- Bathrooms -->
+                        <div class="mb-3" id="bathrooms_field" {% if request.GET.bathrooms %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+                            <label for="bathrooms" class="form-label">Bathrooms</label>
+                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="Bathrooms" value="{{ request.GET.bathrooms }}">
+                        </div>
+                        <!-- Business Type -->
+                        <div class="mb-3" id="business_type_field" style="display: none;">
+                            <label for="business_type" class="form-label">Business Type</label>
+                            <select class="form-select" id="business_type" name="business_type">
+                                <option value="">All</option>
+                                <option value="office" {% if request.GET.business_type == "office" %} selected {% endif %}>Office</option>
+                                <option value="community_center" {% if request.GET.business_type == "community_center" %} selected {% endif %}>Community Center</option>
+                                <option value="shop" {% if request.GET.business_type == "shop" %} selected {% endif %}>Shop</option>
+                                <option value="other" {% if request.GET.business_type == "other" %} selected {% endif %}>Other</option>
+                            </select>
+                            <br>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="has_conference" name="has_conference" {% if request.GET.has_conference %}checked{% endif %}>
+                                <label class="form-check-label" for="has_conference">Has Conference Room</label>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="has_security" name="has_security" {% if request.GET.has_security %}checked{% endif %}>
+                                <label class="form-check-label" for="has_security">Has Security System</label>
+                            </div>
+                        </div>
+                        <!-- Land Type -->
+                        <div class="mb-3" id="land_type_field" style="display: none;">
+                            <label for="land_type" class="form-label">Land Type</label>
+                            <select class="form-select" id="land_type" name="land_type">
+                                <option value="">All</option>
+                                <option value="Farmland" {% if request.GET.land_type == "Farmland" %} selected {% endif %}>Farmland</option>
+                                <option value="Playground" {% if request.GET.land_type == "Playground" %} selected {% endif %}>Playground</option>
+                                <option value="warehouse" {% if request.GET.land_type == "warehouse" %} selected {% endif %}>Warehouse</option>
+                            </select>
+                        </div>
+                        <!-- Area -->
+                        <div class="mb-3">
+                            <label for="area" class="form-label">Area</label>
+                            <select class="form-select" id="area" name="area">
+                                <option value="">Area</option>
+                                <option value="Gulshan" {% if request.GET.area == "Gulshan" %} selected {% endif %}>Gulshan</option>
+                                <option value="Banani" {% if request.GET.area == "Banani" %} selected {% endif %}>Banani</option>
+                                <option value="Dhanmondi" {% if request.GET.area == "Dhanmondi" %} selected {% endif %}>Dhanmondi</option>
+                                <option value="Bashundhara R/A" {% if request.GET.area == "Bashundhara R/A" %} selected {% endif %}>Bashundhara R/A</option>
+                            </select>
+                        </div>
+                        <!-- Ordering -->
+                        <div class="mb-3">
+                            <label for="ordering_choices" class="form-label">Order By (Current Price)</label>
+                            <select class="form-select" id="ordering_choices" name="ordering_choices">
+                                <option value="">Default</option>
+                                <option value="price_asc" {% if request.GET.ordering_choices == "price_asc" %} selected {% endif %}>Price: Low to High</option>
+                                <option value="price_desc" {% if request.GET.ordering_choices == "price_desc" %} selected {% endif %}>Price: High to Low</option>
+                            </select>
+                        </div>    
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9  shadow p-3 mb-5 bg-white rounded">
+            <div class="property-list-container" style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;">
+                <!-- Auction List -->
+                {% comment %} <h2>Auction List</h2> {% endcomment %}
+                <div class="row g-4">
+                    {%if filtered_auctions%}
+                        {% for auction in filtered_auctions %}
+                            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="property-item rounded overflow-hidden">
+                                    <!-- Auction details -->
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="{% url 'auction_detail' pk=auction.pk %}">
+                                            <img class="img-fluid w-100" src="{{ auction.Property_Pictures.url }}" alt="{{ auction.Property_Name }}" style="width: 350px; height: 250px;">
+                                        </a>
+                                        <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">{{ auction.Property_type }}</div>
+                                    </div>
+                                    <div class="p-4 pb-0">
+                                        <h6 class="text-fw mb-3">Current Price: <span class="text-primary">{{ auction.current_price }}$</span></h6>
+                                        <p class="text-muted mb-3">End Time: <span class="text-muted fw-normal">{{ auction.end_time | date:"d.m.y" }} {{ auction.end_time | time:"h:iA" }}</span></p>
+                                        <a class="d-block h5 mb-2" href="{% url 'auction_detail' pk=auction.pk %}">{{ auction.Property_Name }}</a>
+                                        <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{ auction.City }}, {{ auction.Postal_code }}</p>
+                                    </div>
+                                    {% if auction.Property_type == "residential"%}
+                                    <div class="d-flex border-top">
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-bed text-primary me-2"></i>{{ auction.auc_residentialproperty.Bedrooms }} Bed</small>
+                                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-bath text-primary me-2"></i>{{ auction.auc_residentialproperty.Bathrooms }} Bath</small>    
+                                        <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ auction.Total_area_in_sqft }} Sqft</small>
+                                    </div>
+                                    {% elif auction.Property_type == "commercial" %}
+                                        <div class="d-flex border-top">
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ auction.auc_commercialproperty.Business_type }}</small>
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-car text-primary me-2"></i>{{ auction.auc_commercialproperty.Parking_spaces }} Sqft</small>    
+                                            <small class="flex-fill text-center py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ auction.Total_area_in_sqft }} Sqft</small>
+                                        </div>
+                                    {% elif auction.Property_type == "land" %}
+                                        <div class="d-flex border-top">
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-building text-primary me-2"></i>{{ auction.auc_landproperty.Land_type }}</small>
+                                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-ruler-combined text-primary me-2"></i>{{ auction.Total_area_in_sqft}} Sqft</small>    
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="col-lg-12 text-center my-5">
+                            <h2 class="text-muted">No results found.</h2>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Page navigation example">
+    <ul id="paginationLinks" class="pagination justify-content-center">
+        <!-- Previous Button -->
+        {% if filtered_auctions.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ filtered_properties.previous_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Previous</span>
+        </li>
+        {% endif %}
+        
+        <!-- First Page -->
+        <li class="page-item {% if filtered_properties.number == 1 %}active{% endif %}">
+            <a class="page-link" href="?page=1{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">1</a>
+        </li>
+        
+        <!-- Ellipsis if applicable -->
+        {% if filtered_auctions.number > 3 %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Pages within range -->
+        {% for i in filtered_auctions.paginator.page_range %}
+            {% if i > filtered_auctions.number|add:'-2' and i < filtered_auctions.number|add:'2' %}
+                {% if i != 1 and i != filtered_auctions.paginator.num_pages %}
+                <li class="page-item {% if filtered_properties.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endif %}
         {% endfor %}
+        
+        <!-- Ellipsis if applicable -->
+        {% if filtered_auctions.paginator.num_pages > filtered_auctions.number|add:'3' %}
+        <li class="page-item disabled"><span class="page-link" style="color: #6c757d;">...</span></li>
+        {% endif %}
+        
+        <!-- Last Page -->
+        {% if filtered_auctions.paginator.num_pages > 1 %}
+        <li class="page-item {% if filtered_properties.number == filtered_properties.paginator.num_pages %}active{% endif %}">
+            <a class="page-link" href="?page={{ filtered_properties.paginator.num_pages }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ filtered_auctions.paginator.num_pages }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- Next Button -->
+        {% if filtered_auctions.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ filtered_properties.next_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link" style="color: #6c757d;">Next</span>
+        </li>
+        {% endif %}
     </ul>
-    {% if request.user.UserProfile.is_agent == False or request.user.is_authenticated == False  %}
-        <a href="{% url 'create_auction' %}"><button>Create Auction</button></a>
-    {% endif %}
+</nav>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Function to show relevant fields based on the selected property type
+        function showFieldsForPropertyType(propertyType) {
+            if (propertyType == 'residential') {
+                $('#bedrooms_field').show();
+                $('#bathrooms_field').show();
+                $('#business_type_field').hide();
+                $('#land_type_field').hide();
+            } else if (propertyType == 'commercial') {
+                $('#bedrooms_field').hide();
+                $('#bathrooms_field').hide();
+                $('#business_type_field').show();
+                $('#land_type_field').hide();
+            } else if (propertyType == 'land') {
+                $('#bedrooms_field').hide();
+                $('#bathrooms_field').hide();
+                $('#business_type_field').hide();
+                $('#land_type_field').show();
+            } else {
+                $('#bedrooms_field').hide();
+                $('#bathrooms_field').hide();
+                $('#business_type_field').hide();
+                $('#land_type_field').hide();
+            }
+        }
+        
+        // Get the initial property type from the URL query parameter
+        var initialPropertyType = getUrlParameter('property_type');
+        // Show fields based on the initial property type selection
+        showFieldsForPropertyType(initialPropertyType);
+        
+        // Change event handler for property type selection
+        $('#property_type').change(function() {
+            var propertyType = $(this).val();
+            showFieldsForPropertyType(propertyType);
+        });
+        
+        // Function to get URL query parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+        // Function to append filter parameters to pagination links
+        function appendFilterParamsToPaginationLinks() {
+            var filterParams = $('#filterForm').serialize();
+            $('#paginationLinks a').each(function() {
+                var href = $(this).attr('href');
+                if (href.includes('?')) {
+                    $(this).attr('href', href + '&' + filterParams);
+                } else {
+                    $(this).attr('href', href + '?' + filterParams);
+                }
+            });
+        }
+
+        // Call the function to append filter parameters to pagination links
+        appendFilterParamsToPaginationLinks();
+    });
+
+</script>
 {% endblock %}
