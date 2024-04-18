@@ -18,6 +18,12 @@
                     <p class="card-text"><strong>Current Price:</strong> {{ auction.current_price }}</p>
                     <p class="card-text"><strong>Current Bidder:</strong> {{ current_bidder }}</p>
                     
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <a href="{% url 'view_auction_property_documents' property_id=auction.id %}" class="btn btn-primary">View Property Documents</a>
+                        </div>
+                    </div>
+                    
                     {% if request.user.UserProfile.is_agent %}
                         {% if auction.Approval_by_Agent == Null %}
                             <form action="{% url 'approve_auction' auction.id %}" method="post" action="{% url 'agent_dashboard' %}" class="d-inline">

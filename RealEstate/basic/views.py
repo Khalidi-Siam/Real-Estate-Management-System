@@ -122,6 +122,7 @@ def send_email(request):
                     subject=subject,
                     body=message,
                     from_email= f"Hunters NewsLetter <{settings.EMAIL_HOST_USER}>",  # Use host email from Django settings
+
                     to=subscribers,  # Using subscribers' email addresses
                 )
 
