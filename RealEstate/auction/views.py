@@ -23,7 +23,7 @@ def auction_detail(request, pk):
         if auction.end_time <= timezone.now():
             # Auction has ended, handle this case as needed
             pass
-    bids = auction.bids.all().order_by('-amount')
+    bids = auction.bids.all().order_by('amount')
     if auction.bids.exists():
         current_bidder = auction.bids.order_by('amount').first().bidder
     else:
@@ -143,3 +143,15 @@ def place_bid(request, pk):
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
 
+
+def view_auction_property_documents(request, property_id):
+    if request.user.is_authenticated:
+        
+        property_instance = get_object_or_404(Auc_Property, pk=property_id)
+        property_documents = property_instance.Property_Documents
+        
+        return render(request, 'view_auction_property_documents.html', {'property_instance': property_instance, 'property_documents': property_documents})
+        
+        
+    else:
+        return redirect(reverse('signin') + '?next=' + request.path)
