@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Property Documents</h1>
+    <h2>{{ property_instance.Property_Name }}</h2>
+    
+    <ul>
+
+            <li><a href="{{ property_documents.url }}" target="_blank">{{ property_instance.Property_Name }}</a></li>
+        
+    </ul>
+
+    
+</div>
+{% endblock %}
