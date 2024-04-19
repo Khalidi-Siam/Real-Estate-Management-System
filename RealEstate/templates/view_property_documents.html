@@ -3,24 +3,39 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Property Documents</h1>
-    {% comment %} <h2>{{ property_instance.Property_Name }}</h2> {% endcomment %}
-    
-    <ul>
-
-            <li><a href="{{ property_documents.url }}" target="_blank">{{ property_instance.Property_Name }}</a></li>
-        
-    </ul>
-
-    {% if request.user.is_authenticated and request.user.UserProfile.is_agent %}
-        <form action="{% url 'approve_property' property_instance.id %}" method="post" action ="{%url 'agent_dashboard' %}"class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Approve Property</button>
-        </form>
-        <form action="{% url 'cancel_approval' property_instance.id %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Cancel Approval</button>
-        </form>
-    {% endif %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Property Documents</h1>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="{{ property_documents.url }}" target="_blank">{{ property_instance.Property_Name }}</a>
+                        </li>
+                    </ul>
+                    {% if request.user.is_authenticated and request.user.UserProfile.is_agent %}
+                        {% if property_instance.Approval_by_Agent %}
+                            {%if property_instance.Approval_by_Agent == "Cancel"%}
+                                <p class="text-danger text-center mt-3">This property has been declined .</p>
+                            {%else%}
+                                <p class="text-success text-center mt-3">This property has been verified.</p>
+                            {%endif%}
+                        {% else %}
+                        <div class="text-center mt-4">
+                            <form action="{% url 'approve_property' property_instance.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary mr-2">Approve Property</button>
+                            </form>
+                            <form action="{% url 'cancel_approval' property_instance.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Cancel Approval</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
