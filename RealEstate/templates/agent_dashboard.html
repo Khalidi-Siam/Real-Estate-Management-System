@@ -85,7 +85,7 @@
                                 {% if pending_bookings %}
                                     {% for booking in pending_bookings %}
                                         <tr>
-                                            <td>{{ booking.property.Property_Name }}</td>
+                                            <td><a href="{% url 'booking_info' booking.id %}">{{ booking.property.Property_Name }}</a></td>
                                             <td>{{ booking.time_slot }}</td>
                                         </tr>
                                     {% endfor %}
@@ -100,7 +100,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <div class="row">
         <div class="col-md-6">

@@ -12,7 +12,7 @@ def agent_dashboard(request):
         if request.user.UserProfile.is_agent:
             pending_properties = AllProperty.objects.filter(Approval_by_Agent__isnull=True)
             pending_auction = Auc_Property.objects.filter(Approval_by_Agent__isnull = True)
-            pending_bookings = Booking.objects.filter(agent=request.user.UserProfile, status='pending')
+            pending_bookings = Booking.objects.filter(agent=request.user.UserProfile.name, status='pending')
             pending_updates = AllProperty.objects.filter(Approval_by_Agent = request.user.UserProfile, needs_approval = True)
             return render(request, 'agent_dashboard.html', {'pending_properties': pending_properties, 'pending_bookings': pending_bookings, 'pending_updates':pending_updates,'pending_auction':pending_auction})
         

@@ -86,8 +86,8 @@ def auction_detail(request, pk):
     auction = get_object_or_404(Auc_Property, pk=pk)
     if auction.end_time is not None:
         if auction.end_time <= timezone.now():
-            # Auction has ended, handle this case as needed
-            pass
+            messages.error(request, "Sorry, the auction has already ended.")
+            return redirect('auction_list')
     bids = auction.bids.all().order_by('amount')
     if auction.bids.exists():
         current_bidder = auction.bids.order_by('amount').first().bidder
@@ -99,7 +99,6 @@ def auction_detail(request, pk):
         paid = PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists()
     else:
         paid = None
-    # print(paid)
     return render(request, 'auction_detail.html', {'auction': auction, 'bids': bids,'current_bidder':current_bidder,'current_time':timezone.now(),'paid': paid })
     
 
@@ -158,14 +157,10 @@ def create_auction_data(request, property_type):
 
 def place_bid(request, pk):
     if request.user.is_authenticated:
-        auction = get_object_or_404(Auc_Property, pk=pk)
-
-        # Check if the auction has ended
+        auction = get_object_or_404(Auc_Property, pk=pk)       
         if auction.end_time <= timezone.now():
-            # Auction has ended, handle this case
             if auction.current_price is not None:
-                # Determine the winner based on the highest bid
-                winning_bid = auction.bids.order_by('-amount').first()
+                winning_bid = auction.bids.order_by('amount').first()
                 if winning_bid:
                     auction.winner = winning_bid.bidder
                 else:
@@ -175,7 +170,6 @@ def place_bid(request, pk):
             return redirect('auction_detail', pk=auction.pk)
 
         if request.method == 'POST':
-            # Check if the current user is the seller
             if auction.seller == request.user.UserProfile:
                 messages.error(request, "You cannot place a bid on your own auction.")
                 return redirect('auction_detail', pk=auction.pk)
@@ -183,8 +177,6 @@ def place_bid(request, pk):
             form = BidForm(request.POST)
             if form.is_valid():
                 bid_amount = form.cleaned_data['amount']
-
-                # Ensure bid amount is greater than or equal to current price
                 if auction.current_price is None:
                     if bid_amount != auction.start_price:
                         messages.error(request, "The initial bid must be the starting price.")
@@ -195,11 +187,13 @@ def place_bid(request, pk):
                         return redirect('auction_detail', pk=auction.pk)
 
                 bid = form.save(commit=False)
+                current_time = timezone.now()
+                if auction.end_time <= current_time + timezone.timedelta(days=1):
+                    auction.end_time += timezone.timedelta(days=2)
                 bid.bidder = request.user.UserProfile
                 bid.auction = auction
                 bid.save()
 
-                # Update current price
                 auction.current_price = bid_amount
                 auction.save()
 
@@ -216,10 +210,8 @@ def view_auction_property_documents(request, property_id):
     if request.user.is_authenticated:
         
         property_instance = get_object_or_404(Auc_Property, pk=property_id)
-        property_documents = property_instance.Property_Documents
-        
+        property_documents = property_instance.Property_Documents  
         return render(request, 'view_auction_property_documents.html', {'property_instance': property_instance, 'property_documents': property_documents})
-        
         
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
