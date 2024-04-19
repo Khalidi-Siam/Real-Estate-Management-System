@@ -298,12 +298,11 @@ def posted_properties(request):
         return redirect(reverse('signin') + '?next=' + request.path)
     
 
-def view_property_documents(request, property_id):
+def view_property_documents(request, property_id):    
     if request.user.is_authenticated:
-        if request.user.UserProfile.is_agent:
-            property_instance = get_object_or_404(AllProperty, pk=property_id)
-            property_documents = property_instance.Property_Documents
-            
+        property_instance = get_object_or_404(AllProperty, pk=property_id)
+        if request.user.UserProfile.is_agent or property_instance.user_id:
+            property_documents = property_instance.Property_Documents            
             return render(request, 'view_property_documents.html', {'property_instance': property_instance, 'property_documents': property_documents})
         else:
             messages.error(request, "You are not authorized to view the page")

@@ -46,6 +46,11 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                        {% if request.user.UserProfile.is_agent or request.user.UserProfile.id == property_fields.user_id%}
+                        <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
+                        {%else%}
+                        <a href="{% url 'book_slot' property_fields.id %}" class="btn btn-primary">Book Slot</a>
+                        {%endif%}
                     </div>
                 </div>
             </div>
@@ -60,16 +65,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-  {% if request.user.UserProfile.is_agent %}
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <a href="{% url 'view_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
-        </div>
-    </div>
-  {% endif %}
-                
+    </div>             
   
 
   {% if request.user.UserProfile.id == property_fields.user_id %}
@@ -98,17 +94,7 @@
             </div>
         </div>
     </div>
-
-  {%elif request.user.UserProfile.is_agent == False or request.user.is_authenticated == False %}
-  <div class="row mt-4">
-          <div class="col-md-12">
-              <div class="text-center">
-                   <a href="{% url 'book_slot' property_fields.id %}" class="btn btn-primary">Book Slot</a>
-              </div>
-          </div>
-    </div>
-  {% endif %}
-
+    {%endif%}
 </div>
 
 <script>

@@ -8,4 +8,5 @@ urlpatterns = [
     path('create_auction_data/<str:property_type>/', views.create_auction_data, name='create_auction_data'),
     path('auction/<int:pk>/bid/', views.place_bid, name='place_bid'),
     path('property/<int:property_id>/documents/', views.view_auction_property_documents, name='view_auction_property_documents'),
+    path('property/<int:property_id>/property-details/', views.auc_property_detail, name = 'auc_property_detail'),
 ]

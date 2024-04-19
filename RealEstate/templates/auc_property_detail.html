@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load auc_property_filters %}
+
+{% block title %}
+<title>Property Details</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Property Image Section -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <img class="card-img-top img-fluid rounded-top" src="{{ property_fields.Property_Pictures.url }}" alt="{{ property_fields.Property_Name }}">
+            </div>
+        </div>
+
+        <!-- Property Details Section -->
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">{{ property_fields.Property_Name }}</h1>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                {% for field, value in property_fields.items %}
+                                    {%if value %}
+                                        {% if field != 'Property_Pictures' and field != '_state' and field != 'id' and field != 'user_id' and field != 'allproperty_ptr_id' and field != 'Property_Name' and field != 'Property_Description' and field != 'Property_Documents' and field != 'seller_id' and field != 'auc_property_ptr_id' and field != 'start_time' and field != 'end_time'%}
+                                            <tr>
+                                                <th class="text-muted">{{ field|format_field_name }}</th>
+                                                <td>
+                                                    {% if value|get_type == 'bool' %}
+                                                        {% if value == True %}
+                                                            <span class="text-success">&#10004;</span> <!-- Green tick -->
+                                                        {% else %}
+                                                            <span class="text-danger">&#10006;</span> <!-- Red cross -->
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {{ value|title }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {%endif%}
+                                {% endfor %}
+                            </tbody>                            
+                        </table>
+                        <a href="{% url 'view_auction_property_documents' property_id=property_fields.id %}" class="btn btn-primary">View Property Documents</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>      
+</div>
+
+
+{% endblock %}
