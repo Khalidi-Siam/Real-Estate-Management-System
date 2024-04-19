@@ -1,29 +1,85 @@
 {% extends 'base.html' %}
 
+{%block title%}
+<title>Place Your Bid</title>
+{%endblock%}
+
 {% block content %}
-    <h1>Place Bid</h1>
-    <p>Auction Title: {{ auction.title }}</p>
-    <p>Current Price: {{ auction.current_price }}</p>
-    <form method="post" id="bidForm">
-        {% csrf_token %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Place Your Bid</h1>
+                    <p class="card-text">Auction Title: {{ auction.Property_Name|title }}</p>
+                    <p class="card-text">Current Price: ${{ auction.current_price }}</p>
+
+                    <form method="post" id="bidForm">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <p class="mb-2">Choose from suggested bid options:</p>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="card text-center bid-option" onclick="setAmount(this, {{ auction.current_price|add:100 }})">
+                                        <div class="card-body">
+                                            <p class="card-text">Current Price + $100</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card text-center bid-option" onclick="setAmount(this, {{ auction.current_price|add:200 }})">
+                                        <div class="card-body">
+                                            <p class="card-text">Current Price + $200</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="card text-center bid-option" onclick="setAmount(this, {{ auction.current_price|add:300 }})">
+                                        <div class="card-body">
+                                            <p class="card-text">Current Price + $300</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customAmount">Or enter your custom bid amount:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" class="form-control" id="customAmount" name="amount" step="100" min="{{ auction.current_price|default:auction.start_price }}" required>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary btn-block">Place Bid</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setAmount(card, amount) {
+        // Remove active class from all cards
+        var allCards = document.querySelectorAll('.bid-option');
+        allCards.forEach(function (item) {
+            item.classList.remove('active');
+        });
         
-        <p>Suggested Bid Options:</p>
-        {% if auction.current_price %}
-            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:100 }}" onchange="setAmount(this)"> Current Price + $100</p>
-            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:200 }}" onchange="setAmount(this)"> Current Price + $200</p>
-            <p><input type="radio" name="suggested_bid" value="{{ auction.current_price|add:300 }}" onchange="setAmount(this)"> Current Price + $300</p>
-        {% else %}
-            <p><input type="radio" name="suggested_bid" value="{{ auction.start_price }}" onchange="setAmount(this)"> Start Price</p>
-        {% endif %}
-
-        <p>Or enter custom bid amount:</p>
-        <input type="number" name="amount" id="customAmount" step="100" min="{{ auction.current_price|default:auction.start_price }}" required>
-        <button type="submit">Place Bid</button>
-    </form>
-
-    <script>
-        function setAmount(input) {
-            document.getElementById("customAmount").value = input.value;
-        }
-    </script>
+        // Set the selected card to active
+        card.classList.add('active');
+        
+        // Set the amount to the custom input
+        document.getElementById("customAmount").value = amount;
+    }
+</script>
+<style>
+    .bid-option.active {
+        border-color: #25BE80; /* your primary color */
+    }
+</style>
 {% endblock %}

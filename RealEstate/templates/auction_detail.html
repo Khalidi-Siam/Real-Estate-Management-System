@@ -60,20 +60,27 @@
                         {% endif %}
                     {% else %}
                         {% if request.user.is_authenticated %}
-                            {% if paid %}
-                                <p class="text-center">You can place a bid now!</p>
-                            {% else %}
-                                <p class="text-center">To place a bid, please pay the security money.</p>
-                            {% endif %}
-                                <div class="text-center"> <!-- Wrap buttons in a div with text-center class -->
-                                    <a href="{% if paid %}{% url 'place_bid' pk=auction.pk %}{% else %}{% url 'checkout' property_id=auction.pk %}{% endif %}" class="btn btn-primary">Place Bid</a>
-                                </div>
-                            {% else %}
-                                <p class="text-center">Sign in to place a bid on this auction.</p>
-                                <div class="text-center"> <!-- Wrap buttons in a div with text-center class -->
-                                    <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Sign in to Bid</a>
-                                </div>
-                            {% endif %}                
+                            {% if request.user.UserProfile.id != auction.seller.id%}
+                                {% if paid %}
+                                    <p class="text-center">You can place a bid now!</p>
+                                    <div class="text-center">
+                                        <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Place Bid</a>
+                                    </div>
+                                {% else %}
+                                    <p class="text-center">To place a bid, please pay the security money.</p>
+                                    <div class="text-center">
+                                        <a href="{% url 'checkout' property_id=auction.pk %}" class="btn btn-primary">Pay to Place Bid</a>
+                                    </div>
+                                {% endif %}
+                            {%else%}
+                                <p class="text-center">Dear Mr. {{ auction.seller }}, your auction is currently in progress. Sit back and watch the bids roll in!</p>
+                            {%endif%}
+                        {% else %}
+                            <p class="text-center">Sign in to place a bid on this auction.</p>
+                            <div class="text-center"> <!-- Wrap buttons in a div with text-center class -->
+                                <a href="{% url 'place_bid' pk=auction.pk %}" class="btn btn-primary">Sign in to Bid</a>
+                            </div>
+                        {% endif %}                
                     {% endif %}
                 </div>
             </div>
