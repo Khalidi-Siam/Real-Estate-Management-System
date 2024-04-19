@@ -316,7 +316,7 @@ def view_property_documents(request, property_id):
 def book_slot(request, property_id):
     if request.user.is_authenticated:
         property_instance = AllProperty.objects.get(pk=property_id)
-        agent = property_instance.user
+        agent = property_instance.Approval_by_Agent
 
         if request.method == 'POST':
             form = BookingForm(request.POST)
@@ -326,10 +326,10 @@ def book_slot(request, property_id):
                 booking = Booking.objects.create(
                     property=property_instance,
                     agent=agent,
-                    seller=request.user.UserProfile,  # Assuming the logged-in user is the seller
+                    viewer=request.user.UserProfile,  # Assuming the logged-in user is the seller
                     time_slot=time_slot,
                 )
-
+                booking.save()
                 messages.success(request, 'Booking request sent successfully!')
                 return redirect('property_detail',property_id)
         else:
@@ -338,3 +338,17 @@ def book_slot(request, property_id):
         return render(request, 'book_slot.html', {'form': form, 'property': property_instance})
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
+    
+
+def booking_info(request, booking_id):
+    booking = get_object_or_404(Booking, pk=booking_id)
+    viewer_profile = booking.viewer  # Assuming viewer is a UserProfile instance
+    return render(request, 'booking_info.html', {'booking': booking, 'viewer_profile': viewer_profile})
+
+def update_booking_status(request, booking_id):
+    if request.method == 'POST':
+        booking = get_object_or_404(Booking, pk=booking_id)
+        new_status = request.POST.get('status')
+        booking.status = new_status
+        booking.save()
+    return redirect('booking_info', booking_id=booking_id)

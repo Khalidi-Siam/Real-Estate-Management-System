@@ -9,8 +9,8 @@ class Booking(models.Model):
     ]
     
     property = models.ForeignKey(AllProperty, on_delete=models.CASCADE, related_name='bookings')
-    agent = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='bookings_as_seller')
+    agent = models.CharField(max_length=100)
+    viewer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='bookings_as_seller')
     time_slot = models.DateTimeField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 

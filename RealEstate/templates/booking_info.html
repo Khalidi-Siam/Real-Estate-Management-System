@@ -1,0 +1,28 @@
+<!-- booking_info.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Booking Information{% endblock %}
+
+{% block content %}
+    <h1>Booking Information</h1>
+    <h2>Property Name: {{ booking.property.Property_Name }}</h2>
+    <p>Agent: {{ booking.agent }}</p>
+    <p>Viewer: {{ viewer_profile.name }}</p>
+    <p>Email: {{ viewer_profile.email }}</p>
+    <p>Contact No: {{ viewer_profile.contact_no }}</p>
+    <p>Gender: {{ viewer_profile.get_gender_display }}</p>
+    <p>Date of Birth: {{ viewer_profile.dob }}</p>
+    <p>Address: {{ viewer_profile.address }}</p>
+    <!-- Add other fields as needed -->
+    <p>Time Slot: {{ booking.time_slot }}</p>
+    <p>Status: {{ booking.status }}</p>
+    
+    {% if booking.status == 'pending' %}
+    <form method="post" action="{% url 'update_booking_status' booking.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="resolved">
+        <button type="submit" class="btn btn-success">Mark as Resolved</button>
+    </form>
+    {% endif %}
+{% endblock %}
