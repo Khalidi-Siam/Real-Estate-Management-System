@@ -111,7 +111,10 @@ def place_bid(request, pk):
             if auction.seller == request.user.UserProfile:
                 messages.error(request, "You cannot place a bid on your own auction.")
                 return redirect('auction_detail', pk=auction.pk)
-
+            id1 = request.user.UserProfile.id
+            property_id =auction.id
+            if not PaymentDetails.objects.filter(owner_id_id = id1, property_id_id = property_id).exists():
+                return redirect('checkout', pk=auction.pk)
             form = BidForm(request.POST)
             if form.is_valid():
                 bid_amount = form.cleaned_data['amount']
