@@ -3,14 +3,21 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Property Documents</h1>
-    <h2>{{ property_instance.Property_Name }}</h2>
-    
+    <h1>Property Documents</h1>    
     <ul>
-
-            <li><a href="{{ property_documents.url }}" target="_blank">{{ property_instance.Property_Name }}</a></li>
-        
+        <li><a href="{{ property_documents.url }}" target="_blank">{{ property_instance.Property_Name }}</a></li>        
     </ul>
+
+    {% if request.user.is_authenticated and request.user.UserProfile.is_agent %}
+    <form action="{% url 'approve_auction' property_instance.id %}" method="post" action="{% url 'agent_dashboard' %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Approve Auction</button>
+    </form>
+    <form action="{% url 'cancel_auction' property_instance.id %}" method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Cancel Auction</button>
+    </form>
+{% endif %}
 
     
 </div>

@@ -223,3 +223,26 @@ def view_auction_property_documents(request, property_id):
         
     else:
         return redirect(reverse('signin') + '?next=' + request.path)
+    
+def auc_property_detail(request, property_id):
+    property_instance = get_object_or_404(Auc_Property, pk=property_id)
+    
+    if hasattr(property_instance, 'auc_residentialproperty'):
+        specific_property_instance = property_instance.auc_residentialproperty
+    elif hasattr(property_instance, 'auc_commercialproperty'):
+        specific_property_instance = property_instance.auc_commercialproperty
+    elif hasattr(property_instance, 'auc_landproperty'):
+        specific_property_instance = property_instance.auc_landproperty
+    else:
+        # Handle the case where the property instance does not belong to any specific type
+        specific_property_instance = None
+
+
+    property_fields = {}
+    
+    if(specific_property_instance):
+        property_fields = vars(specific_property_instance)
+        property_fields['Property_Pictures'] = property_instance.Property_Pictures
+    print(type(property_fields["start_time"]))
+        
+    return render(request, 'auc_property_detail.html', {'property_fields':property_fields, 'auc_property.id':property_id})

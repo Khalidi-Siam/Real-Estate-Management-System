@@ -162,7 +162,7 @@
         <!-- Previous Button -->
         {% if filtered_auctions.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ filtered_properties.previous_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Previous</a>
+            <a class="page-link" href="?page={{ filtered_auctions.previous_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Previous</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -171,7 +171,7 @@
         {% endif %}
         
         <!-- First Page -->
-        <li class="page-item {% if filtered_properties.number == 1 %}active{% endif %}">
+        <li class="page-item {% if filtered_auctions.number == 1 %}active{% endif %}">
             <a class="page-link" href="?page=1{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">1</a>
         </li>
         
@@ -184,7 +184,7 @@
         {% for i in filtered_auctions.paginator.page_range %}
             {% if i > filtered_auctions.number|add:'-2' and i < filtered_auctions.number|add:'2' %}
                 {% if i != 1 and i != filtered_auctions.paginator.num_pages %}
-                <li class="page-item {% if filtered_properties.number == i %}active{% endif %}">
+                <li class="page-item {% if filtered_auctions.number == i %}active{% endif %}">
                     <a class="page-link" href="?page={{ i }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ i }}</a>
                 </li>
                 {% endif %}
@@ -198,15 +198,15 @@
         
         <!-- Last Page -->
         {% if filtered_auctions.paginator.num_pages > 1 %}
-        <li class="page-item {% if filtered_properties.number == filtered_properties.paginator.num_pages %}active{% endif %}">
-            <a class="page-link" href="?page={{ filtered_properties.paginator.num_pages }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ filtered_auctions.paginator.num_pages }}</a>
+        <li class="page-item {% if filtered_auctions.number == filtered_auctions.paginator.num_pages %}active{% endif %}">
+            <a class="page-link" href="?page={{ filtered_auctions.paginator.num_pages }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">{{ filtered_auctions.paginator.num_pages }}</a>
         </li>
         {% endif %}
         
         <!-- Next Button -->
         {% if filtered_auctions.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ filtered_properties.next_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Next</a>
+            <a class="page-link" href="?page={{ filtered_auctions.next_page_number }}{% if filter_form.is_bound %}&{{ filter_form.as_url }}{% endif %}">Next</a>
         </li>
         {% else %}
         <li class="page-item disabled">
