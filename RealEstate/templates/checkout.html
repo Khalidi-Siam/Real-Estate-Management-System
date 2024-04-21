@@ -17,7 +17,6 @@
       <div class="card shadow-lg">
         <div class="card-body">
           <h1 class="card-title text-center mb-4">{{ property.Property_Name }}</h1>
-          <p>{{ property.description }}</p>
           <p>Price: 2000.00 </p>
           <!-- Add a checkout button -->
           <form action="{% url 'checkout' property_id=property.id%}" method="POST">

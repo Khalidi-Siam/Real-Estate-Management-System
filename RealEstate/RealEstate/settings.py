@@ -26,15 +26,11 @@ import os
 # # https://docs.djangoproject.com/en/5.0/ref/settings/
 
 # from pathlib import Path
-import environ
-
-env = environ.Env()
-environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = env("SECRET_KEY")
-DEBUG = env("DEBUG", default=False)
+SECRET_KEY = 'django-insecure-j52a&=qcqai&kv$)@_pzs4(v!0geeuaxdr37vxvz*3$b^(hi$9'
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -163,6 +159,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "reshad13102@gmail.com"
 EMAIL_HOST_PASSWORD = "xajgbonknoonuwcw"
-STRIPE_PUBLIC_KEY = "pk_test_51P0pKPAKoPQghNOn7AtGJvnzdcPab1BaKbgCVQxsVX8ASb7GgpvFRN4FUl2EHqwgyCHzb3nybKDf8Bo2A8c4VBCZ00vGavm1sP"
-STRIPE_SECRET_KEY = "sk_test_51P0pKPAKoPQghNOnBa2banlfgUcF9bKDVyECEt0kDmLk2C2io1lntHdACQvTP1ttlRll5gnFNQbok2mIF1Q1JP2a00utYUpWEf"
-STRIPE_WEBHOOK_SECRET = "whsec_2291a1c9edb67f26b3d2965b9bb0fd38e20e53d3f8ece80a33333093d48a060e"
+STRIPE_PUBLIC_KEY = 'pk_test_51NhyxRABqqnpfgXAz66V0qfDiLIHpUDZTgNdJtvpPlAfm8QwKCquRSFOSTRTCCmwu2DMrjBeLTS25UHEoSOHu9L000GANodZbd'
+STRIPE_SECRET_KEY = 'sk_test_51NhyxRABqqnpfgXA2PXYvkmZ2GzTpU9hcv6MrmfQhL9L6CrWaMW0SYuGT4e3KP1tHHXiwT5999ojDe85QrzglLVw00uz6e3Sp4'
+STRIPE_WEBHOOK_SECRET = ''

@@ -105,46 +105,51 @@ def subscribe(request):
         form = SubscribeForm()
     return render(request, 'base.html', {'form': form})
 
-@login_required
+
+
 def send_email(request):
-    if request.user.UserProfile.is_agent:
-        if request.method == 'POST':
-            form = SendEmailForm(request.POST, request.FILES)
-            if form.is_valid():
-                subject = form.cleaned_data['subject']
-                message = form.cleaned_data['message']
+    if request.user.is_authenticated:
+        if request.user.UserProfile.is_agent:
+            if request.method == 'POST':
+                form = SendEmailForm(request.POST, request.FILES)
+                if form.is_valid():
+                    subject = form.cleaned_data['subject']
+                    message = form.cleaned_data['message']
 
-                # Fetching subscribers' email addresses
-                subscribers = Subscriber.objects.values_list('email', flat=True)
+                    # Fetching subscribers' email addresses
+                    subscribers = Subscriber.objects.values_list('email', flat=True)
 
-                # Creating email message
-                email = EmailMessage(
-                    subject=subject,
-                    body=message,
-                    from_email= f"Hunters NewsLetter <{settings.EMAIL_HOST_USER}>",  # Use host email from Django settings
+                    # Creating email message
+                    email = EmailMessage(
+                        subject=subject,
+                        body=message,
+                        from_email= f"Hunters NewsLetter <{settings.EMAIL_HOST_USER}>",  # Use host email from Django settings
 
-                    to=subscribers,  # Using subscribers' email addresses
-                )
+                        to=subscribers,  # Using subscribers' email addresses
+                    )
 
-                # Adding attachment if exists
-                attachment = request.FILES.get('attachment')
-                if attachment:
-                    email.attach(attachment.name, attachment.read(), attachment.content_type)
+                    # Adding attachment if exists
+                    attachment = request.FILES.get('attachment')
+                    if attachment:
+                        email.attach(attachment.name, attachment.read(), attachment.content_type)
 
-                # Sending email
-                try:
-                    email.send()
-                    messages.success(request, "Email sent successfully!")
-                    return redirect("send_email")
-                except Exception as e:
-                    messages.error(request, f"Failed to send email. Error: {e}")
-                    return redirect("send_email")
+                    # Sending email
+                    try:
+                        email.send()
+                        messages.success(request, "Email sent successfully!")
+                        return redirect("send_email")
+                    except Exception as e:
+                        messages.error(request, f"Failed to send email. Error: {e}")
+                        return redirect("send_email")
+            else:
+                form = SendEmailForm()
+            return render(request, 'send_email.html', {'form': form})
+
         else:
-            form = SendEmailForm()
-        return render(request, 'send_email.html', {'form': form})
-
+            return redirect("PageNotFound")
+        
     else:
-        return redirect("PageNotFound")
+        return redirect(reverse('signin') + '?next=' + request.path)
 
 def contact(request):
     success_message = None
