@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 import os
+from RealEstate.cloudinary_utils import profile_picture_upload_to
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -21,7 +22,7 @@ class UserProfile(models.Model):
     dob = models.DateField(null = True)
 
     address = models.TextField(null = True)
-    profile_picture = models.ImageField(upload_to='profile_picture', null = True)
+    profile_picture = models.ImageField(upload_to=profile_picture_upload_to, null = True)
     is_agent = models.BooleanField(default = False)
 
     def __str__(self):
@@ -29,9 +30,9 @@ class UserProfile(models.Model):
     
 @receiver(pre_delete, sender=UserProfile)
 def delete_profile_pictures(sender, instance, **kwargs):
-    if instance.profile_picture:
-        if os.path.isfile(instance.profile_picture.path):
-            os.remove(instance.profile_picture.path)
+    # Cloudinary automatically handles file cleanup
+    # No manual deletion needed for cloud storage
+    pass
 
 
     

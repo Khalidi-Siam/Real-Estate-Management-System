@@ -6,6 +6,7 @@ from django.core.validators import FileExtensionValidator
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 import os
+from RealEstate.cloudinary_utils import property_pictures_upload_to, property_documents_upload_to
 
 # Create your models here.
 class AllProperty(models.Model):
@@ -34,7 +35,7 @@ class AllProperty(models.Model):
     Property_Description = models.TextField(null=True, blank=True)
     Total_area_in_sqft = models.DecimalField(max_digits=8, decimal_places=2,null=True)
     Price = models.IntegerField(default=0)
-    Property_Pictures = models.ImageField(upload_to='pics')
+    Property_Pictures = models.ImageField(upload_to=property_pictures_upload_to)
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
@@ -43,7 +44,7 @@ class AllProperty(models.Model):
     Property_on = models.CharField(max_length = 20, choices=Action, null =True)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     Approval_by_Agent = models.CharField(max_length = 50, null = True)
-    Property_Documents = models.FileField(upload_to='property_documents')
+    Property_Documents = models.FileField(upload_to=property_documents_upload_to)
     needs_approval = models.BooleanField(default= False)
 
     def __str__(self):
@@ -53,17 +54,15 @@ class AllProperty(models.Model):
 
 @receiver(pre_delete, sender=AllProperty)
 def delete_property_pictures(sender, instance, **kwargs):
-    # Delete associated property pictures
-    if instance.Property_Pictures:
-        if os.path.isfile(instance.Property_Pictures.path):
-            os.remove(instance.Property_Pictures.path)
+    # Cloudinary automatically handles file cleanup
+    # No manual deletion needed for cloud storage
+    pass
 
 @receiver(pre_delete, sender=AllProperty)
 def delete_property_documents(sender, instance, **kwargs):
-    # Delete associated property documents
-    if instance.Property_Documents:
-        if os.path.isfile(instance.Property_Documents.path):
-            os.remove(instance.Property_Documents.path)
+    # Cloudinary automatically handles file cleanup
+    # No manual deletion needed for cloud storage
+    pass
 
 
 class ResidentialProperty(AllProperty):

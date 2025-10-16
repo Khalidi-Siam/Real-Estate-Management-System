@@ -1,11 +1,10 @@
 from django.db import models
 from authentication.models import UserProfile
-from django.db import models
-from authentication.models import UserProfile
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
+from RealEstate.cloudinary_utils import auction_pictures_upload_to, auction_documents_upload_to
 
 # Create your models here.
 class Auc_Property(models.Model):
@@ -31,7 +30,7 @@ class Auc_Property(models.Model):
 
     Property_Name = models.CharField(max_length=200)
     Total_area_in_sqft = models.DecimalField(max_digits=8, decimal_places=2,null=True)
-    Property_Pictures = models.ImageField(upload_to='pics',default=None)
+    Property_Pictures = models.ImageField(upload_to=auction_pictures_upload_to,default=None)
     Road_No = models.CharField(max_length=4)
     Block = models.CharField(max_length=10)
     City = models.CharField(max_length=100, choices=CITY_CHOICES)
@@ -39,7 +38,7 @@ class Auc_Property(models.Model):
     Area = models.CharField(max_length=100, choices=AREA_CHOICES)
     Property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES)
     Approval_by_Agent = models.CharField(max_length = 50, null = True)
-    Property_Documents = models.FileField(upload_to='property_documents', null=True, blank=True)
+    Property_Documents = models.FileField(upload_to=auction_documents_upload_to, null=True, blank=True)
     start_price = models.PositiveIntegerField(default=1)
     current_price = models.PositiveIntegerField(default=1)
     seller = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='auctions')
