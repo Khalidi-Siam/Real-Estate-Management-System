@@ -5,6 +5,7 @@ cloudinary>=1.44.1
 crispy-bootstrap5>=2024.2
 dj-database-url>=3.0.1
 Django>=5.0.2
+django-anymail>=13.1
 django-cloudinary-storage>=0.3.0
 django-crispy-forms>=2.1
 django-environ>=0.11.2
